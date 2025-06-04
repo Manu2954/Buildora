@@ -17,10 +17,13 @@ const transporter = nodemailer.createTransport({
 
 exports.signup = async (req, res) => {
   const { email, password, phone } = req.body;
-console.log(email, password, phone)
+// console.log(email, password, phone)
   try {
     const existing = await User.findOne({ email });
-    if (existing) return res.status(400).json({ message: 'User already exists' });
+    if (existing) {
+      // console.log(res.status(400).json({ message: 'User already exists' }))
+      return res.status(400).json({ message: 'User already exists' });
+    }
 
     const hashedPassword = await bcrypt.hash(password, 10);
     const verificationToken = jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: '15m' });
@@ -33,7 +36,7 @@ console.log(email, password, phone)
       tokenExpiry: new Date(Date.now() + 15 * 60 * 1000)
     });
 
-    const verificationLink = `https://buildora.com/verify?token=${verificationToken}`;
+    const verificationLink = `http://localhost:3000/verify?token=${verificationToken}`;
 
     // Send Email
     await transporter.sendMail({
@@ -53,7 +56,7 @@ console.log(email, password, phone)
       console.log('WhatsApp sent successfully:', phone);
     }
 
-    res.status(201).json({ message: 'Verification link sent to email and WhatsApp' });
+    res.status(200).json({ message: 'Verification link sent to email and WhatsApp' });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Signup failed' });
@@ -62,10 +65,11 @@ console.log(email, password, phone)
 
 exports.verify = async (req, res) => {
   const { token } = req.query;
-
+  console.log('entered')
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const user = await User.findOne({ email: decoded.email });
+  console.log('user found')
 
     if (!user || user.isVerified || user.verificationToken !== token) {
       return res.status(400).json({ message: 'Invalid or expired token' });
@@ -75,9 +79,12 @@ exports.verify = async (req, res) => {
     user.verificationToken = null;
     user.tokenExpiry = null;
     await user.save();
+  console.log('user verified')
+    
 
     res.status(200).json({ message: 'Email verified successfully' });
   } catch (err) {
+    console.log(err)
     res.status(400).json({ message: 'Token is invalid or expired' });
   }
 };
