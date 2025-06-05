@@ -9,12 +9,14 @@ import {
   AlertCircle,
   User,
 } from "lucide-react";
+import { useAuth } from '../context/AuthContext';
 import { useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const Login = () => {
+  const { login } = useAuth();
   const [form, setForm] = useState({ email: "", password: "" });
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState({});
@@ -72,15 +74,9 @@ const Login = () => {
     setIsLoading(true);
 
     try {
-      // Simulate API call
-      // await new Promise(resolve => setTimeout(resolve, 2000));
-
-      // // Simulate successful login
-      // console.log('Login successful:', form);
-
-      // In real app, you would:
       const res = await api.post("/auth/login", form);
       localStorage.setItem("accessToken", res.data.accessToken);
+      login(res.data.accessToken); 
 
       // Show success message
       alert("Login successful!");
