@@ -16,7 +16,8 @@ const {
     updateProductInCompany,
     removeProductFromCompany,
     getAllProductsForCompany,
-    getProductInCompanyById
+    getProductInCompanyById, 
+    getAllProducts
 } = require('../controllers/admin/companyController'); // Adjust path
 
 const { adminAuth } = require('../middleware/adminAuth'); // Adjust path
@@ -86,6 +87,7 @@ router.post(
 
 router.get('/companies/:companyId/products', adminAuth, getAllProductsForCompany);
 router.get('/companies/:companyId/products/:productId', adminAuth, getProductInCompanyById);
+router.get('/products/all', adminAuth, getAllProducts);
 
 router.put(
     '/companies/:companyId/products/:productId',

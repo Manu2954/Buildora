@@ -1,5 +1,5 @@
 import ProductList from '../../../components/admin/products/ProductsList';
-import ProductFormModal from '../../../components/admin/products/ProductFormModal';
+import ProductFormModal from '../../../components/admin/products/ProductForm';
 import DeleteConfirmationModal from '../../../components/admin/products/DeleteConfirmationModal';
 import { useAdminAuth } from '../../../context/AdminAuthContext';
 import React, { useState, useEffect, useCallback } from 'react';

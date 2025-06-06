@@ -14,7 +14,7 @@ app.use(cors({
   credentials: true
 }));
 
-
+app.use('/images', express.static('public/images'));
 
 mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log('MongoDB connected'))

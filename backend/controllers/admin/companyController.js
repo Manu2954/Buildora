@@ -386,6 +386,68 @@ const getProductInCompanyById = async (req, res) => {
     }
 };
 
+const getAllProducts = async (req, res) => {
+    try {
+        const page = parseInt(req.query.page, 10) || 1;
+        const limit = parseInt(req.query.limit, 10) || 10;
+        const skip = (page - 1) * limit;
+
+        const aggregationPipeline = [
+            // Deconstruct the products array from each company document
+            { $unwind: '$products' },
+            // Shape the output for each product
+            {
+                $project: {
+                    _id: '$products._id', // Product ID
+                    name: '$products.name',
+                    sku: '$products.sku',
+                    category: '$products.category',
+                    basePrice: '$products.pricing.basePrice',
+                    quantity: '$products.stock.quantity',
+                    isActive: '$products.isActive',
+                    images: '$products.images', // Include images for frontend preview
+                    company: { // Embed parent company info
+                        _id: '$_id',
+                        name: '$name'
+                    },
+                    createdAt: '$products.createdAt'
+                }
+            },
+            // Sort by creation date, newest first
+            { $sort: { createdAt: -1 } },
+            // Facet for getting both total count and paginated data in one query
+            {
+                $facet: {
+                    products: [
+                        { $skip: skip },
+                        { $limit: limit }
+                    ],
+                    totalCount: [
+                        { $count: 'count' }
+                    ]
+                }
+            }
+        ];
+
+        const results = await Company.aggregate(aggregationPipeline);
+        
+        const products = results[0].products;
+        const totalCount = results[0].totalCount.length > 0 ? results[0].totalCount[0].count : 0;
+        const totalPages = Math.ceil(totalCount / limit);
+
+        res.status(200).json({
+            products,
+            page,
+            totalPages,
+            totalCount,
+            limit
+        });
+
+    } catch (error) {
+        console.error('Error fetching all products:', error);
+        res.status(500).json({ message: 'Server error fetching all products', error: error.message });
+    }
+};
 
 module.exports = {
     createCompany,
@@ -397,5 +459,6 @@ module.exports = {
     updateProductInCompany,
     removeProductFromCompany,
     getAllProductsForCompany,
-    getProductInCompanyById
+    getProductInCompanyById, 
+    getAllProducts
 };

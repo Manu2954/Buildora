@@ -36,8 +36,8 @@ import ViewCompanyPage from "./pages/admin/company/ViewCompanyPage";
 
 // Product Admin Pages (Placeholders - you'll create these next if needed)
  import ManageProductsPage from'./pages/admin/products/ManageProducts';
-// import AddProductToCompanyPage from './pages/admin/product/AddProductToCompanyPage';
-// import EditProductInCompanyPage from './pages/admin/product/EditProductInCompanyPage';
+import AddProductToCompanyPage from './pages/admin/products/AddProductToCompanyPage';
+import EditProductInCompanyPage from './pages/admin/products/EditProductInCompanyPage';
 
 function App() {
   return (
@@ -131,20 +131,17 @@ function App() {
             <Route index element={<Navigate to="dashboard" replace />} />
             <Route path="dashboard" element={<AdminDashboardPage />} />
            
-            <Route
-              path="companies/:companyId/products"
-              element={<ManageProductsPage />}
-            />
             <Route path="companies" element={<CompanyListPage />} />
             <Route path="companies/add" element={<AddCompanyPage />} />
             <Route
               path="companies/edit/:companyId"
               element={<EditCompanyPage />}
-            />
+              />
             <Route path="companies/:companyId" element={<ViewCompanyPage />} />
             {/* Placeholder for Product Management within a Company */}
-            {/* <Route path="companies/:companyId/products/add" element={<AddProductToCompanyPage />} /> */}
-            {/* <Route path="companies/:companyId/products/edit/:productId" element={<EditProductInCompanyPage />} /> */}
+            <Route path="companies/:companyId/products/add" element={<AddProductToCompanyPage />} />
+            <Route path="companies/:companyId/products/edit/:productId" element={<EditProductInCompanyPage />} />
+              <Route path="companies/:companyId/products"element={<ManageProductsPage />}/>
             {/* ... other protected admin routes would go here inside AdminLayout's Outlet ... */}
           </Route>
           {/* Fallback for unmatched admin routes (optional but good practice) */}
