@@ -5,6 +5,7 @@ import { useAdminAuth } from '../../../context/AdminAuthContext';
 import { getAllProducts } from '../../../services/companyService'; // You'll need to create this service
 import { Image as ImageIcon, Edit, AlertCircle } from 'lucide-react';
 import Pagination from '../../../components/common/Pagination';
+import ImageWithTooltip from '../../../components/common/ImageWithTooltip'; // Import the new component
 
 const AllProductsPage = () => {
     const { token } = useAdminAuth();
@@ -46,7 +47,7 @@ const AllProductsPage = () => {
 
             {!isLoading && !error && (
                 <>
-                    <div className="bg-white shadow-md rounded-lg overflow-hidden">
+                    <div className="bg-white shadow-md rounded-lg relative overflow-visible">
                         <div className="overflow-x-auto">
                             <table className="min-w-full divide-y divide-gray-200">
                                 <thead className="bg-gray-50">
@@ -60,18 +61,20 @@ const AllProductsPage = () => {
                                         <th scope="col" className="relative px-6 py-3"><span className="sr-only">Edit</span></th>
                                     </tr>
                                 </thead>
-                                <tbody className="bg-white divide-y divide-gray-200">
+                                <tbody className="relative overflow-visible bg-white divide-y divide-gray-200">
                                     {data.products.length > 0 ? data.products.map((product) => (
-                                        <tr key={product._id}>
-                                            <td className="px-6 py-4 whitespace-nowrap">
-                                                <div className="flex items-center">
-                                                    <div className="flex-shrink-0 h-10 w-10 bg-gray-100 rounded-md flex items-center justify-center">
+                                        <tr className='relative overflow-visible' key={product._id}>
+                                            <td className="px-6 py-4 whitespace-nowrap overflow-visible">
+                                                <div className="flex items-center relative overflow-visible">
+                                                    {/* <div className="flex-shrink-0 h-10 w-10 bg-gray-100 rounded-md flex items-center justify-center">
                                                         {product.images && product.images[0] ? (
                                                             <img className="h-10 w-10 rounded-md object-contain" src={product.images[0]} alt={product.name} />
                                                         ) : (
                                                             <ImageIcon className="h-6 w-6 text-gray-400" />
                                                         )}
-                                                    </div>
+                                                    </div> */}
+                                                    <ImageWithTooltip src={product.images && product.images[0]} alt={product.name} />
+                                                    
                                                     <div className="ml-4">
                                                         <div className="text-sm font-medium text-gray-900">{product.name}</div>
                                                         <div className="text-sm text-gray-500">{product.sku || 'N/A'}</div>

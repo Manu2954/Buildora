@@ -20,6 +20,7 @@ import {
   ChevronLeft,
 } from "lucide-react";
 import { Image as ImageIcon, Edit, AlertCircle } from 'lucide-react';
+import ImageWithTooltip from '../../../components/common/ImageWithTooltip'; // Import the new component
 
 
 const ViewCompanyPage = () => {
@@ -371,11 +372,7 @@ const ViewCompanyPage = () => {
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex-shrink-0 h-10 w-10 bg-gray-100 rounded-md flex items-center justify-center">
                           {product.images && product.images[0] ? (
-                            <img
-                              className="h-10 w-10 rounded-md object-contain"
-                              src={product.images[0]}
-                              alt={product.name}
-                            />
+                            <ImageWithTooltip src={product.images && product.images[0]} alt={product.name} />                                            
                           ) : (
                             <ImageIcon className="h-6 w-6 text-gray-400" />
                           )}
