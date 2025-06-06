@@ -28,13 +28,13 @@ const AdminDashboardPage = () => {
                 </Link>
 
                 {/* Placeholder Card for Product Management (Overall) */}
-                {/* <Link to="/admin/products" className="block p-6 bg-white rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
+                 <Link to="/admin/products" className="block p-6 bg-white rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
                     <div className="flex items-center mb-4">
                         <ShoppingBag size={32} className="mr-3 text-green-600" />
                         <h2 className="text-xl font-semibold text-gray-700">Manage Products</h2>
                     </div>
                     <p className="text-gray-600">Oversee all products across all companies.</p>
-                </Link> */}
+                </Link> 
                 
                 {/* Add more cards for other admin functionalities */}
                 <div className="p-6 bg-white rounded-lg shadow-lg">
