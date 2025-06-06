@@ -189,3 +189,12 @@ export const removeProductFromCompany = async (companyId, productId, token) => {
         throw error;
     }
 };
+
+export const getAllProducts = async (token, page = 1, limit = 10) => {
+    const response = await fetchAdminApi(`/products/all?page=${page}&limit=${limit}`, {
+         method: 'GET',
+            token: token,
+    });
+    console.log(response)
+    return response;
+};

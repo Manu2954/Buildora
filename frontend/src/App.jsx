@@ -36,6 +36,7 @@ import ViewCompanyPage from "./pages/admin/company/ViewCompanyPage";
 
 // Product Admin Pages (Placeholders - you'll create these next if needed)
  import ManageProductsPage from'./pages/admin/products/ManageProducts';
+ import AllProductsPage from'./pages/admin/products/AllProductsPage';
 import AddProductToCompanyPage from './pages/admin/products/AddProductToCompanyPage';
 import EditProductInCompanyPage from './pages/admin/products/EditProductInCompanyPage';
 
@@ -142,6 +143,7 @@ function App() {
             <Route path="companies/:companyId/products/add" element={<AddProductToCompanyPage />} />
             <Route path="companies/:companyId/products/edit/:productId" element={<EditProductInCompanyPage />} />
               <Route path="companies/:companyId/products"element={<ManageProductsPage />}/>
+              <Route path="products"element={<AllProductsPage />}/>
             {/* ... other protected admin routes would go here inside AdminLayout's Outlet ... */}
           </Route>
           {/* Fallback for unmatched admin routes (optional but good practice) */}
