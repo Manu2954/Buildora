@@ -75,6 +75,7 @@ const Login = () => {
 
     try {
       const res = await api.post("/auth/login", form);
+      console.log(res)
       localStorage.setItem("accessToken", res.data.accessToken);
       login(res.data.accessToken); 
 

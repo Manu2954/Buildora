@@ -35,10 +35,12 @@ import EditCompanyPage from "./pages/admin/company/EditCompanyPage";
 import ViewCompanyPage from "./pages/admin/company/ViewCompanyPage";
 
 // Product Admin Pages (Placeholders - you'll create these next if needed)
- import ManageProductsPage from'./pages/admin/products/ManageProducts';
- import AllProductsPage from'./pages/admin/products/AllProductsPage';
-import AddProductToCompanyPage from './pages/admin/products/AddProductToCompanyPage';
-import EditProductInCompanyPage from './pages/admin/products/EditProductInCompanyPage';
+import ManageProductsPage from "./pages/admin/products/ManageProducts";
+import AllProductsPage from "./pages/admin/products/AllProductsPage";
+import AddProductToCompanyPage from "./pages/admin/products/AddProductToCompanyPage";
+import EditProductInCompanyPage from "./pages/admin/products/EditProductInCompanyPage";
+import UserListPage from "./pages/admin/user/UserListPage";
+import ViewUserPage from "./pages/admin/user/ViewUserPage";
 
 function App() {
   return (
@@ -68,7 +70,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route
-            path="/verify-email"
+            path="/verify"
             element={
               <>
                 <Navbar />
@@ -131,19 +133,30 @@ function App() {
           >
             <Route index element={<Navigate to="dashboard" replace />} />
             <Route path="dashboard" element={<AdminDashboardPage />} />
-           
+
             <Route path="companies" element={<CompanyListPage />} />
             <Route path="companies/add" element={<AddCompanyPage />} />
             <Route
               path="companies/edit/:companyId"
               element={<EditCompanyPage />}
-              />
+            />
             <Route path="companies/:companyId" element={<ViewCompanyPage />} />
             {/* Placeholder for Product Management within a Company */}
-            <Route path="companies/:companyId/products/add" element={<AddProductToCompanyPage />} />
-            <Route path="companies/:companyId/products/edit/:productId" element={<EditProductInCompanyPage />} />
-              <Route path="companies/:companyId/products"element={<ManageProductsPage />}/>
-              <Route path="products"element={<AllProductsPage />}/>
+            <Route
+              path="companies/:companyId/products/add"
+              element={<AddProductToCompanyPage />}
+            />
+            <Route
+              path="companies/:companyId/products/edit/:productId"
+              element={<EditProductInCompanyPage />}
+            />
+            <Route
+              path="companies/:companyId/products"
+              element={<ManageProductsPage />}
+            />
+            <Route path="products" element={<AllProductsPage />} />
+            <Route path="users" element={<UserListPage />} />
+            <Route path="users/:userId" element={<ViewUserPage />} />
             {/* ... other protected admin routes would go here inside AdminLayout's Outlet ... */}
           </Route>
           {/* Fallback for unmatched admin routes (optional but good practice) */}

@@ -71,7 +71,7 @@ const AdminSidebar = ({ isOpen, toggleSidebar }) => {
         { to: "/admin/companies", icon: <Building size={20} />, label: "Companies" },
         // Future items:
         // { to: "/admin/products", icon: <ShoppingBag size={20} />, label: "Products" },
-        // { to: "/admin/users", icon: <Users size={20} />, label: "Users" },
+        { to: "/admin/users", icon: <Users size={20} />, label: "Users" },
         // { to: "/admin/orders", icon: <Briefcase size={20} />, label: "Orders" },
         // { to: "/admin/settings", icon: <Settings size={20} />, label: "Settings" },
     ];

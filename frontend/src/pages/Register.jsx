@@ -66,6 +66,7 @@ export default function Register() {
 
     try {
       const res = await api.post("auth/register", {
+        name: formData.name,
         email: formData.email,
         password: formData.password,
         phone: "+91" + formData.phoneNumber,
@@ -83,6 +84,7 @@ export default function Register() {
 
           // Reset form after successful registration
           setFormData({
+            name:"",
             email: "",
             password: "",
             confirmPassword: "",
@@ -207,6 +209,43 @@ export default function Register() {
             {/* Email Field */}
             <div className="relative">
               <label className="block text-sm font-medium text-gray-700 mb-2">
+                Name
+              </label>
+              <div className="relative">
+                <input
+                  type="text"
+                  name="name"
+                  value={formData.name}
+                  placeholder="Enter your name"
+                  className={`w-full px-4 py-3 pl-12 border rounded-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                    focusedField === "name"
+                      ? "border-blue-500 shadow-lg"
+                      : "border-gray-300"
+                  } hover:border-gray-400`}
+                  onChange={handleChange}
+                  onFocus={() => setFocusedField("name")}
+                  onBlur={() => setFocusedField(null)}
+                  required
+                />
+                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                  <svg
+                    className="h-5 w-5 text-gray-400"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"
+                    />
+                  </svg>
+                </div>
+              </div>
+            </div>
+ <div className="relative">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
                 Email Address
               </label>
               <div className="relative">
@@ -242,7 +281,6 @@ export default function Register() {
                 </div>
               </div>
             </div>
-
             {/* Password Field */}
             <div className="relative">
               <label className="block text-sm font-medium text-gray-700 mb-2">

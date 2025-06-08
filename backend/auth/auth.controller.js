@@ -16,7 +16,7 @@ const transporter = nodemailer.createTransport({
 });
 
 exports.signup = async (req, res) => {
-  const { email, password, phone } = req.body;
+  const { name, email, password, phone } = req.body;
 // console.log(email, password, phone)
   try {
     const existing = await User.findOne({ email });
@@ -24,11 +24,13 @@ exports.signup = async (req, res) => {
       // console.log(res.status(400).json({ message: 'User already exists' }))
       return res.status(400).json({ message: 'User already exists' });
     }
+    // let name = "manu"
 
     const hashedPassword = await bcrypt.hash(password, 10);
     const verificationToken = jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: '15m' });
 
     const user = await User.create({
+      name,
       email,
       phone,
       password: hashedPassword,
@@ -92,12 +94,16 @@ exports.verify = async (req, res) => {
 exports.login = async (req, res) => {
   const { email, password } = req.body;
 
+// console.log(req.body);
+// console.log(req.body.password);
   try {
     const user = await User.findOne({ email });
+    // console.log(user);
     if (!user) return res.status(400).json({ message: 'Invalid credentials' });
     if (!user.isVerified) return res.status(403).json({ message: 'Please verify your email first' });
 
     const isMatch = await bcrypt.compare(password, user.password);
+    // console.log(isMatch)
     if (!isMatch) return res.status(400).json({ message: 'Invalid credentials' });
 
     const accessToken = jwt.sign(
@@ -121,7 +127,7 @@ exports.login = async (req, res) => {
       })
       .json({ accessToken });
   } catch (err) {
-    res.status(500).json({ message: 'Login failed' });
+    res.status(500).json({ message: `Login failed ${err}` });
   }
 };
 
