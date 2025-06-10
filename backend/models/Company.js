@@ -1,87 +1,59 @@
 // backend/models/Company.js
 const mongoose = require('mongoose');
 
-// Define a schema for products that will be embedded in the Company model
-const productSchema = new mongoose.Schema({
+const VariantSchema = new mongoose.Schema({
     name: {
         type: String,
-        required: [true, "Product name is required"],
-        trim: true,
+        required: [true, 'Variant name (e.g., size, color) is required.'],
+        trim: true
     },
-    description: {
-        type: String,
-        required: [true, "Product description is required"],
-    },
-    sku: { // Stock Keeping Unit
-        type: String,
-        unique: true, // SKU should be unique across all products if possible, or at least within a company
-        sparse: true, // Allows multiple documents to have null for this field if not all products have SKUs initially
-        trim: true,
-    },
-    category: {
-        type: String, // Or mongoose.Schema.Types.ObjectId if referencing a Category collection
-        required: [true, "Product category is required"],
-    },
-    pricing: {
-        mrp: { // Maximum Retail Price (optional, could be a guideline)
-            type: Number,
-            min: [0, "MRP cannot be negative"],
-        },
-        basePrice: { // The price before any tier discounts, often the price for MOQ=1
-            type: Number,
-            required: [true, "Product base price is required"],
-            min: [0, "Base price cannot be negative"],
-        },
-        tiers: [{ // For handling MOQ and bulk discounts
-            minQuantity: {
-                type: Number,
-                required: [true, "Minimum quantity for tier is required"],
-                default: 1,
-                min: [1, "Minimum quantity must be at least 1"],
-            },
-            pricePerUnit: {
-                type: Number,
-                required: [true, "Price per unit for tier is required"],
-                min: [0, "Price per unit cannot be negative"],
-            },
-            _id: false // Don't create an _id for each tier object
-        }],
-        // taxRate: { type: Number, default: 0 } // Example: 18 for 18% tax
+    price: {
+        type: Number,
+        required: [true, 'Variant price is required.'],
     },
     stock: {
-        quantity: {
-            type: Number,
-            required: [true, "Stock quantity is required"],
-            min: [0, "Stock quantity cannot be negative"],
-            default: 0,
-        },
-        // lastRestocked: { type: Date }
+        type: Number,
+        required: [true, 'Variant stock quantity is required.'],
+        default: 0
     },
-    images: [{ // Array of image URLs
+    sku: { // Optional: Each variant can have its own SKU
         type: String,
-        trim: true,
-    }],
-    attributes: [{ // For additional product details like color, size, material
-        name: String,
-        value: String,
-        _id: false
-    }],
-    dimensions: { // Optional: for physical products
-        length: Number,
-        width: Number,
-        height: Number,
-        unit: { type: String, default: 'cm' } // e.g., cm, inch
+        trim: true
     },
-    weight: { // Optional
-        value: Number,
-        unit: { type: String, default: 'kg' } // e.g., kg, lb
+    unit: { // e.g., 'kg', 'cm', 'sq. ft.', 'piece'
+        type: String,
+        trim: true
+    }
+});
+
+// Updated Product Structure (embedded in Company)
+const ProductSchema = new mongoose.Schema({
+    name: { type: String, required: true },
+    description: { type: String, required: true },
+    sku: { type: String }, // Base SKU for the product
+    category: { type: String, required: true },
+    
+    // The basePrice and stock can now be considered defaults or a fallback
+    // if no variants are present. The variant-specific price/stock takes precedence.
+    pricing: {
+        mrp: Number,
+        basePrice: { type: Number, required: true },
     },
-    isActive: { // To control product visibility
-        type: Boolean,
-        default: true,
+    stock: {
+        quantity: { type: Number, required: true }
     },
-    // You can add more fields as needed: manufacturer, brand, tags, etc.
-}, { timestamps: true });
+    
+    // REPLACED 'sizes' with 'variants'
+    variants: [VariantSchema], // An array of product variants
+    
+    images: [String],
+    attributes: [{ name: String, value: String }],
+    dimensions: { length: Number, width: Number, height: Number, unit: String },
+    weight: { value: Number, unit: String },
+    isActive: { type: Boolean, default: true }
+}, {
+    timestamps: true
+});
 
 
 const companySchema = new mongoose.Schema({
@@ -121,7 +93,7 @@ const companySchema = new mongoose.Schema({
         trim: true,
     },
     // Products are embedded in the company document
-    products: [productSchema],
+    products: [ProductSchema],
     
     // Admin who created/manages this company record
     // This assumes an admin is creating company profiles

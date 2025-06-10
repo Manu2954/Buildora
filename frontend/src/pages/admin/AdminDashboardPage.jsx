@@ -85,7 +85,7 @@ const AdminDashboardPage = () => {
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
                 <StatCard title="Total Users" value={stats?.totalUsers ?? 0} icon={<Users size={28} />} color="from-blue-500 to-indigo-600" linkTo="/admin/users" />
                 <StatCard title="Total Companies" value={stats?.totalCompanies ?? 0} icon={<Building size={28} />} color="from-green-500 to-emerald-600" linkTo="/admin/companies" />
-                <StatCard title="Total Products" value={stats?.totalProducts ?? 0} icon={<Package size={28} />} color="from-amber-500 to-orange-600" linkTo="/admin/companies" />
+                <StatCard title="Total Products" value={stats?.totalProducts ?? 0} icon={<Package size={28} />} color="from-amber-500 to-orange-600" linkTo="/admin/products" />
             </div>
 
             {/* Charts and Recent Activity */}
