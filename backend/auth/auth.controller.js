@@ -3,7 +3,8 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
 const twilio = require('twilio');
-
+const ErrorResponse = require('../utils/errorResponse');
+const asyncHandler = require('../middleware/async');
 const client = twilio(process.env.TWILIO_SID, process.env.TWILIO_AUTH_TOKEN);
 
 // Email setup
@@ -215,3 +216,20 @@ exports.logout = (req, res) => {
   });
   res.json({ message: 'Logged out successfully' });
 };
+
+exports.getMe = asyncHandler(async (req, res, next) => {
+    // The `protect` middleware runs before this, decodes the token,
+    // finds the user, and attaches it to the request object as `req.user`.
+    
+    // We can just send back the user object from the request.
+    const user = await User.findById(req.user.id);
+
+    if (!user) {
+        return next(new ErrorResponse('User not found', 404));
+    }
+
+    res.status(200).json({
+        success: true,
+        data: user
+    });
+});

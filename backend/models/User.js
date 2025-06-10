@@ -45,4 +45,12 @@ const userSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+userSchema.methods.getSignedJwtToken = function () {
+    // It signs the token with the user's ID in the payload
+    // and uses the secret from your environment variables.
+    return jwt.sign({ id: this._id }, process.env.JWT_SECRET, {
+        expiresIn: process.env.JWT_EXPIRE,
+    });
+};
+
 module.exports = mongoose.model("User", userSchema);
