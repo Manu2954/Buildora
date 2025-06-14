@@ -15,6 +15,45 @@ const transporter = nodemailer.createTransport({
     pass: process.env.EMAIL_PASS
   }
 });
+// Helper function to get token from model, create cookie and send response
+const sendTokenResponse = (user, statusCode, res, message = 'Success') => {
+    // Create token
+    const token = user.getSignedJwtToken();
+
+    const options = {
+        // --- THE FIX IS HERE ---
+        // We now use parseInt() to ensure JWT_COOKIE_EXPIRE is a number.
+        // This prevents the calculation from resulting in an invalid date.
+        expires: new Date(
+            Date.now() + parseInt(process.env.JWT_COOKIE_EXPIRE) * 24 * 60 * 60 * 1000
+        ),
+        httpOnly: true // The cookie cannot be accessed by client-side scripts
+    };
+    
+    // In production, the cookie should only be sent over HTTPS
+    if (process.env.NODE_ENV === 'production') {
+        options.secure = true;
+    }
+
+    res
+        .status(statusCode)
+        .cookie('token', token, options) // Optional: set token in a cookie
+        .json({
+            success: true,
+            message,
+            token, // Send token in the body as well for mobile clients
+            data: { // Send back non-sensitive user data
+                _id: user._id,
+                name: user.name,
+                email: user.email,
+                role: user.role
+            }
+        });
+};
+
+// You would then call this from your login, register, and updatePassword functions, for example:
+// sendTokenResponse(user, 200, res, "Password updated successfully");
+
 
 exports.signup = async (req, res) => {
   const { name, email, password, phone } = req.body;
@@ -233,3 +272,48 @@ exports.getMe = asyncHandler(async (req, res, next) => {
         data: user
     });
 });
+
+
+exports.updateDetails = asyncHandler(async (req, res, next) => {
+    // Fields that the user is allowed to update
+    const fieldsToUpdate = {
+        name: req.body.name,
+        email: req.body.email,
+        address: req.body.address
+    };
+
+    const user = await User.findByIdAndUpdate(req.user.id, fieldsToUpdate, {
+        new: true,
+        runValidators: true
+    });
+    
+    res.status(200).json({
+        success: true,
+        data: user
+    });
+});
+
+// @desc    Update password
+// @route   PUT /api/auth/updatepassword
+// @access  Private
+exports.updatePassword = asyncHandler(async (req, res, next) => {
+    const { currentPassword, newPassword } = req.body;
+    
+    // Get user from the database, making sure to select the password field
+    const user = await User.findById(req.user.id).select('+password');
+
+    // Check if current password matches
+    const isMatch = await user.matchPassword(currentPassword);
+
+    if (!isMatch) {
+        return next(new ErrorResponse('The current password is incorrect', 401));
+    }
+    
+    // Set new password
+    user.password = newPassword;
+    await user.save();
+    
+    // Send a new token as good practice after a password change
+    sendTokenResponse(user, 200, res, "Password updated successfully");
+});
+

@@ -28,7 +28,7 @@ exports.protect = asyncHandler(async (req, res, next) => {
     try {
         // Verify token using the JWT_SECRET from your .env file
         const decoded = jwt.verify(token, process.env.JWT_ACCESS_SECRET);
-        console.log('Attempting to find user with ID from token:', decoded.userId);
+        // console.log('Attempting to find user with ID from token:', decoded.userId);
         
 
         // Find the user by the ID that was stored in the token's payload.

@@ -62,6 +62,7 @@ export const getMyOrders = async (token) => {
             token,
         });
         // Returns { success: true, count, data: [orders] }
+        console.log(data);
         return data.data;
     } catch (error) {
         console.error('Fetching my orders failed:', error);

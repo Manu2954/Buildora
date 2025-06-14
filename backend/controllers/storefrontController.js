@@ -166,3 +166,65 @@ exports.getProductById = asyncHandler(async (req, res, next) => {
         data: product,
     });
 });
+
+
+exports.getSearchSuggestions = asyncHandler(async (req, res, next) => {
+    const query = req.query.q || '';
+
+    if (!query) {
+        return res.status(200).json({ success: true, data: [] });
+    }
+
+    // This pipeline finds distinct categories and product names that match the search query.
+    const suggestions = await Company.aggregate([
+        // Only search within active companies and their active products
+        { $match: { isActive: true } },
+        { $unwind: '$products' },
+        { $match: { 'products.isActive': true } },
+        {
+            $project: {
+                productName: '$products.name',
+                category: '$products.category'
+            }
+        },
+        // Match against both product name and category
+        {
+            $match: {
+                $or: [
+                    { productName: { $regex: query, $options: 'i' } },
+                    { category: { $regex: query, $options: 'i' } }
+                ]
+            }
+        },
+        // Create two streams: one for products, one for categories
+        {
+            $facet: {
+                products: [
+                    { $match: { productName: { $regex: query, $options: 'i' } } },
+                    { $group: { _id: '$productName' } },
+                    { $limit: 5 },
+                    { $project: { _id: 0, type: 'Product', name: '$_id' } }
+                ],
+                categories: [
+                     { $match: { category: { $regex: query, $options: 'i' } } },
+                     { $group: { _id: '$category' } },
+                     { $limit: 3 },
+                     { $project: { _id: 0, type: 'Category', name: '$_id' } }
+                ]
+            }
+        },
+        // Combine the results from both streams
+        {
+            $project: {
+                suggestions: { $concatArrays: ['$categories', '$products'] }
+            }
+        },
+        { $unwind: '$suggestions' },
+        { $replaceRoot: { newRoot: '$suggestions' } }
+    ]);
+
+    res.status(200).json({
+        success: true,
+        data: suggestions
+    });
+});

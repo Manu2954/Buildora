@@ -1,4 +1,6 @@
 const mongoose = require("mongoose");
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 const userSchema = new mongoose.Schema(
   {
@@ -45,11 +47,26 @@ const userSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+// Middleware: Encrypt password using bcrypt before saving the user
+userSchema.pre('save', async function (next) {
+    if (!this.isModified('password')) {
+        next();
+    }
+    const salt = await bcrypt.genSalt(10);
+    this.password = await bcrypt.hash(this.password, salt);
+    next();
+});
+
+// Method to compare user-entered password with the hashed password in the database
+// THIS IS THE FUNCTION THAT WAS MISSING
+userSchema.methods.matchPassword = async function (enteredPassword) {
+    return await bcrypt.compare(enteredPassword, this.password);
+};
+
+// Method to sign and return a JWT for authentication
 userSchema.methods.getSignedJwtToken = function () {
-    // It signs the token with the user's ID in the payload
-    // and uses the secret from your environment variables.
-    return jwt.sign({ id: this._id }, process.env.JWT_SECRET, {
-        expiresIn: process.env.JWT_EXPIRE,
+    return jwt.sign({ userId: this._id }, process.env.JWT_ACCESS_SECRET, {
+        expiresIn: process.env.ACCESS_TOKEN_EXPIRES,
     });
 };
 

@@ -69,3 +69,24 @@ export const verifyUserEmail = async (verificationToken) => {
         method: 'GET',
     });
 };
+
+
+
+// Update user details (name, email, address)
+export const updateUserDetails = async (userData, token) => {
+    return fetchApi('/updatedetails', {
+        method: 'PUT',
+        body: JSON.stringify(userData),
+        token,
+    });
+};
+
+// Update user password
+export const updateUserPassword = async (passwordData, token) => {
+    // passwordData: { currentPassword, newPassword }
+    return fetchApi('/updatepassword', {
+        method: 'PUT',
+        body: JSON.stringify(passwordData),
+        token,
+    });
+};

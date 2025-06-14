@@ -12,6 +12,7 @@ const userRoutes = require('./routes/userAdminRoutes');
 const dashboardRoutes = require('./routes/dashboardRoutes')
 const orderRoutes = require('./routes/orderRoutes'); 
 const storefrontRoutes = require('./routes/storefrontRoutes');
+const adminOrderRoutes = require('./routes/adminOrderRoutes');
 
 const app = express();
 app.use(express.json());
@@ -25,11 +26,13 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use('/api/auth', authRoutes);
+app.use('/api/storefront', storefrontRoutes); 
+app.use('/api/orders', orderRoutes); 
+
 app.use('/api/admin', adminRoutes);
 app.use('/api/admin/users', userRoutes);
 app.use('/api/admin/dashboard', dashboardRoutes); 
-app.use('/api/storefront', storefrontRoutes); 
-app.use('/api/orders', orderRoutes); 
+app.use('/api/admin/orders', adminOrderRoutes);
 
 const PORT = process.env.PORT || 5000;
 
@@ -37,6 +40,7 @@ const startServer = async () => {
     try {
         // --- THIS IS THE CRITICAL STEP ---
         // Connect to the database FIRST.
+        console.log(process.env.NODE_ENV)
         await connectDB();
         console.log('MongoDB Connected...');
 

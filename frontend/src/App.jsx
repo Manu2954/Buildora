@@ -9,9 +9,10 @@ import { CartProvider } from './context/CartContext';
 // --- Layouts ---
 import CustomerLayout from './components/CustomerLayout';
 import AdminLayout from "./components/admin/AdminLayout";
+import ProfileLayout from './components/ProfileLayout'; 
 
 // --- Route Protectors ---
-import PrivateRoute from "./components/PrivateRoute"; // The NEW customer private route
+import PrivateRoute from "./components/PrivateRoute";
 import AdminPrivateRoute from "./components/admin/AdminPrivateRoute";
 
 // --- Customer Pages ---
@@ -24,8 +25,11 @@ import OrderSuccessPage from './pages/OrderSuccessPage';
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Dashboard from "./pages/Dasboard";
-import Orders from "./pages/Orders";
-import Profile from "./pages/Profile";
+import SecurityPage from "./pages/SecurityPage";
+
+import Profile from "./pages/ProfilePage";
+import OrderDetailPage from './pages/OrderDetailPage'; 
+import OrdersPage from './pages/OrdersPage';
 
 // --- Admin Pages ---
 import AdminLoginPage from "./pages/admin/AdminLoginPage";
@@ -38,7 +42,8 @@ import AddProductToCompanyPage from './pages/admin/products/AddProductToCompanyP
 import EditProductInCompanyPage from './pages/admin/products/EditProductInCompanyPage';
 import UserListPage from './pages/admin/user/UserListPage';
 import ViewUserPage from './pages/admin/user/ViewUserPage';
-
+import AdminOrdersPage from './pages/admin/order/AdminOrdersPage';
+import AdminOrderDetailPage from './pages/admin/order/AdminOrderDetailPage';
 
 function App() {
     return (
@@ -58,17 +63,21 @@ function App() {
                             {/* --- Standalone Routes (No Main Layout) --- */}
                             <Route path="/login" element={<Login />} />
                             <Route path="/register" element={<Register />} />
-                             <Route path="/order/:orderId/success" element={<OrderSuccessPage />} />
 
                             {/* --- Protected Customer Routes --- */}
                             {/* This grouping ensures all these routes use the new, robust PrivateRoute */}
-                            <Route element={<PrivateRoute><CustomerLayout /></PrivateRoute>}>
+                             <Route path="/account" element={<PrivateRoute><ProfileLayout /></PrivateRoute>}>
+                                <Route index element={<Navigate to="dashboard" replace />} />
                                 <Route path="dashboard" element={<Dashboard />} />
+                                <Route path="orders" element={<OrdersPage />} />
                                 <Route path="profile" element={<Profile />} />
-                                <Route path="profile/orders" element={<Orders />} />
-                                <Route path="checkout" element={<CheckoutPage />} />
+                                <Route path="security" element={<SecurityPage />} />
+                                {/* Route for a single order detail page */}
+                                <Route path="orders/:orderId" element={<OrderDetailPage />} />
                             </Route>
-                            
+                               {/* Standalone protected routes */}
+                            <Route path="/checkout" element={<PrivateRoute><CheckoutPage /></PrivateRoute>} />
+                            <Route path="/order/:orderId/success" element={<OrderSuccessPage />} />
                             {/* --- Admin Routes --- */}
                             <Route path="/admin/login" element={<AdminLoginPage />} />
                             <Route path="/admin" element={<AdminPrivateRoute><AdminLayout /></AdminPrivateRoute>}>
@@ -82,6 +91,8 @@ function App() {
                                 <Route path="companies/:companyId/products/edit/:productId" element={<EditProductInCompanyPage />} />
                                 <Route path="users" element={<UserListPage />} />
                                 <Route path="users/:userId" element={<ViewUserPage />} />
+                                <Route path="orders" element={<AdminOrdersPage />} />
+                                <Route path="orders/:orderId" element={<AdminOrderDetailPage />} />
                             </Route>
 
                         </Routes>

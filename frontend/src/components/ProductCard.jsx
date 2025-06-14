@@ -10,11 +10,14 @@ const ProductCard = ({ product }) => {
     return (
         <div className="relative flex flex-col overflow-hidden transition-transform duration-300 ease-in-out bg-white border border-gray-200 rounded-lg shadow-sm group hover:-translate-y-1 hover:shadow-lg">
             <Link to={`/products/${product._id}`} className="block">
-                <div className="overflow-hidden">
+                {/* The aspect-w-1 aspect-h-1 classes create a square container */}
+                <div className="overflow-hidden aspect-w-1 aspect-h-1 bg-gray-50">
                     <img
                         src={product.images && product.images[0] ? product.images[0] : placeholderImage}
                         alt={product.name}
-                        className="object-cover w-full h-48 transition-transform duration-500 group-hover:scale-105"
+                        // --- THE FIX IS HERE ---
+                        // Changed from object-cover to object-contain and added padding.
+                        className="object-contain w-full h-full p-2 transition-transform duration-500 group-hover:scale-105"
                         onError={(e) => { e.target.onerror = null; e.target.src = placeholderImage; }}
                     />
                 </div>

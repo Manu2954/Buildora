@@ -13,7 +13,7 @@ export const AuthProvider = ({ children }) => {
     useEffect(() => {
         // This effect runs only once when the app first loads.
         const loadUserProfile = async (currentToken) => {
-          console.log("current", currentToken)
+        //   console.log("current", currentToken)
             if (currentToken) {
                 try {
                     const response = await getProfile(currentToken);
@@ -31,7 +31,7 @@ export const AuthProvider = ({ children }) => {
             // We are done with the initial load check.
             setLoading(false);
         };
-console.log("loc", token)
+// console.log("loc", token)
         loadUserProfile(token);
     }, []); // Empty dependency array ensures this runs only once on mount.
 

@@ -54,7 +54,7 @@ const Navbar = () => {
                         <div className="hidden md:flex items-center space-x-2">
                             {isAuthenticated ? (
                                 <div className="relative group">
-                                    <Link to="/profile" className="flex items-center p-2 space-x-2 text-gray-600 rounded-full hover:bg-gray-100">
+                                    <Link to="/account/dashboard" className="flex items-center p-2 space-x-2 text-gray-600 rounded-full hover:bg-gray-100">
                                         <User size={22} />
                                     </Link>
                                 </div>

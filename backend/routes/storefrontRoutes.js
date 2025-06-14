@@ -4,7 +4,8 @@ const router = express.Router();
 const {
     getAllProducts,
     getProductById,
-    getFilterOptions // Import the new controller function
+    getFilterOptions,
+    getSearchSuggestions
 } = require('../controllers/storefrontController');
 
 // These routes are public and do not require authentication.
@@ -17,5 +18,5 @@ router.route('/products')
 
 router.route('/products/:productId')
     .get(getProductById);
-
+router.get('/suggestions', getSearchSuggestions);
 module.exports = router;
