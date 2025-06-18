@@ -1,0 +1,74 @@
+Demo Guide: Making Buildora Public with Localtunnel
+This guide contains the complete, corrected instructions for making your application public for a demo.
+
+Step 1: Install Localtunnel
+Open a terminal and run this command to install localtunnel globally:
+
+npm install -g localtunnel
+
+Step 2: Start Your Local Servers
+Start Backend: In one terminal, run node server.js inside your backend folder.
+
+Start Frontend: In a second terminal, run npm start inside your frontend folder.
+
+Step 3: Create Frontend .env File (Critical Fix)
+This step tells your frontend app what the public backend URL is.
+
+In the root of your frontend directory, create a new file named exactly .env.
+
+Add the following line to this new file, pasting the public backend URL you will get from localtunnel.
+
+REACT_APP_API_URL=https://buildora-api-demo.loca.lt
+
+Step 4: Update All Frontend Service Files
+You must now update all of your service files (storefrontService.js, authService.js, orderService.js, etc.) to use this new environment variable.
+
+Open each service file and change the API_BASE_URL line to look like this. This makes your code work for both local development and the public demo.
+
+Example (storefrontService.js):
+
+// Use the public URL from the .env file, or fall back to the proxy for local dev.
+const API_BASE_URL = process.env.REACT_APP_API_URL ? `${process.env.REACT_APP_API_URL}/api/storefront` : '/api/storefront';
+
+// ... rest of the service file
+
+You must apply this pattern to every service file in your frontend/src/services directory.
+
+Step 5: Configure Backend CORS
+This step tells your backend server to trust requests coming from your public frontend URL.
+
+Install CORS (if you haven't):
+
+npm install cors
+
+Update server.js: Open your backend's server.js file and add the following corsOptions:
+
+// server.js
+const cors = require('cors');
+// ...
+const corsOptions = {
+    origin: [
+        'http://localhost:3000', // For local development
+        'https://buildora-live-demo.loca.lt' // The public URL for your FRONTEND
+    ],
+    credentials: true,
+};
+app.use(cors(corsOptions));
+// ...
+
+Step 6: Run Tunnels and Restart Servers
+Restart Both Servers: After making these code changes, stop both your frontend and backend servers (Ctrl+C) and restart them.
+
+Run Tunnels: Open two new terminals and run the following commands:
+
+Backend Tunnel:
+
+lt --port 5000 --subdomain buildora-api-demo
+
+Frontend Tunnel:
+
+lt --port 3000 --subdomain buildora-live-demo
+
+Test: Open your public frontend URL (https://buildora-live-demo.loca.lt) in your browser.
+
+With these changes, the CORS error will be resolved, and your demo will work for remote users.

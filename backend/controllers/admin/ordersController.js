@@ -6,8 +6,47 @@ const ErrorResponse = require('../../utils/errorResponse');
 // @route   GET /api/admin/orders
 // @access  Private (Admin)
 exports.getAllOrders = asyncHandler(async (req, res, next) => {
-    // We can add filtering by status later if needed
-    const orders = await Order.find({})
+    // --- Build a dynamic query object based on request queries ---
+    const query = {};
+
+    // Filter by status
+    if (req.query.status) {
+        query.orderStatus = req.query.status;
+    }
+
+    // Filter by payment method
+    if (req.query.paymentMethod) {
+        query.paymentMethod = req.query.paymentMethod;
+    }
+
+    // Filter by date range
+    if (req.query.startDate || req.query.endDate) {
+        query.createdAt = {};
+        if (req.query.startDate) {
+            query.createdAt.$gte = new Date(req.query.startDate);
+        }
+        if (req.query.endDate) {
+            // Set the time to the end of the day to include all orders on that date
+            const endDate = new Date(req.query.endDate);
+            endDate.setHours(23, 59, 59, 999);
+            query.createdAt.$lte = endDate;
+        }
+    }
+
+    // Filter by price range
+    if (req.query.minPrice || req.query.maxPrice) {
+        query.totalPrice = {};
+        if (req.query.minPrice) {
+            query.totalPrice.$gte = parseInt(req.query.minPrice, 10);
+        }
+        if (req.query.maxPrice) {
+            query.totalPrice.$lte = parseInt(req.query.maxPrice, 10);
+        }
+    }
+    
+    // You can also add pagination here later if needed
+
+    const orders = await Order.find(query)
         .populate('user', 'id name email') // Populate with user's id, name, and email
         .sort({ createdAt: -1 });
 
@@ -17,7 +56,6 @@ exports.getAllOrders = asyncHandler(async (req, res, next) => {
         data: orders
     });
 });
-
 // @desc    Get single order by ID (reusing customer controller logic is also an option)
 // @route   GET /api/admin/orders/:id
 // @access  Private (Admin)

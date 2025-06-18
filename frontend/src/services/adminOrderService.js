@@ -1,6 +1,6 @@
 // This service handles API calls for the admin to manage orders
 
-const API_BASE_URL = 'http://localhost:5000/api/admin/orders';
+const API_BASE_URL = `${process.env.REACT_APP_API_URL}/api/admin/orders`;
 
 // Reusable helper for authenticated admin API requests
 async function fetchAdminApi(endpoint, options = {}) {
@@ -35,15 +35,16 @@ async function fetchAdminApi(endpoint, options = {}) {
     return data;
 }
 
-// Get all orders for the admin panel
-export const getAllOrders = async (token) => {
+// Get all orders with filtering
+export const getAllOrders = async (filters = {}, token) => {
+    // Convert the filters object into a URL query string
+    const query = new URLSearchParams(filters).toString();
     try {
-        const data = await fetchAdminApi('/', {
+        const data = await fetchAdminApi(`/?${query}`, {
             method: 'GET',
             token,
         });
-        // Returns { success, count, data: [orders] }
-        return data.data;
+        return data.data; // The API returns { success, count, data: [orders] }
     } catch (error) {
         console.error('Get all orders failed:', error);
         throw error;
@@ -66,7 +67,6 @@ export const getOrderById = async (orderId, token) => {
 
 // Update an order's status
 export const updateOrderStatus = async (orderId, status, token) => {
-    // status: 'Processing', 'Shipped', 'Delivered', 'Cancelled'
     try {
         const data = await fetchAdminApi(`/${orderId}/status`, {
             method: 'PUT',

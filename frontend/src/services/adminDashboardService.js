@@ -1,6 +1,6 @@
 // This service will interact with the /api/admin/dashboard endpoints
 
-const API_BASE_URL = 'http://localhost:5000/api/admin/dashboard';
+const API_BASE_URL = '/api/admin/dashboard';
 
 // Reusable helper function for API requests
 async function fetchAdminApi(endpoint, options = {}) {
@@ -16,7 +16,7 @@ async function fetchAdminApi(endpoint, options = {}) {
         headers['Authorization'] = `Bearer ${adminToken}`;
     } else {
         console.error('Admin token not found for API call to', endpoint);
-        throw new Error('Authentication required.');
+        throw new Error('Admin authentication required.');
     }
 
     const response = await fetch(`${API_BASE_URL}${endpoint}`, {
@@ -35,17 +35,19 @@ async function fetchAdminApi(endpoint, options = {}) {
     return data;
 }
 
-// Get dashboard statistics
-export const getDashboardStats = async (token) => {
+// Get advanced dashboard analytics with date filtering
+export const getAnalytics = async (filters = {}, token) => {
+    // Convert the filters object into a URL query string
+    const query = new URLSearchParams(filters).toString();
     try {
         // The backend returns an object: { success, data: { ...stats } }
-        const response = await fetchAdminApi(`/stats`, {
+        const response = await fetchAdminApi(`/analytics?${query}`, {
             method: 'GET',
             token,
         });
         return response.data; // Return the nested data object with all stats
     } catch (error) {
-        console.error('Get dashboard stats failed:', error);
+        console.error('Get dashboard analytics failed:', error);
         throw error;
     }
 };

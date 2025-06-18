@@ -1,6 +1,6 @@
 // This service handles API calls for customer orders
 
-const API_BASE_URL = 'http://localhost:5000/api/orders';
+const API_BASE_URL = `${process.env.REACT_APP_API_URL}/api/orders`;
 
 // Reusable helper for authenticated API requests
 async function fetchProtectedApi(endpoint, options = {}) {

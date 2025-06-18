@@ -1,5 +1,5 @@
 // This service handles API calls for customer authentication (login, register, etc.)
-const API_BASE_URL = 'http://localhost:5000/api/auth'; // The base URL for your customer auth backend routes
+const API_BASE_URL = `${process.env.REACT_APP_API_URL}/api/auth`;
 
 // A robust helper for making API calls
 async function fetchApi(endpoint, options = {}) {

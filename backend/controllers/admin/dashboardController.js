@@ -1,68 +1,112 @@
+const Order = require('../../models/Order');
 const User = require('../../models/User');
 const Company = require('../../models/Company');
-const Admin = require('../../models/Admin');
 const asyncHandler = require('../../middleware/async');
 const ErrorResponse = require('../../utils/errorResponse');
+const mongoose = require('mongoose');
 
-// @desc    Get dashboard statistics
-// @route   GET /api/admin/dashboard/stats
+// @desc    Get advanced analytics for the admin dashboard
+// @route   GET /api/admin/dashboard/analytics
 // @access  Private (Admin)
-exports.getDashboardStats = asyncHandler(async (req, res, next) => {
-    // 1. Get total users (excluding admins)
-    const adminEmails = (await Admin.find({}, 'email')).map(admin => admin.email);
-    const totalUsers = await User.countDocuments({ email: { $nin: adminEmails } });
-
-    // 2. Get total companies
-    const totalCompanies = await Company.countDocuments();
-
-    // 3. Get total products
-    // We need to aggregate the number of products from each company
-    const productStats = await Company.aggregate([
-        {
-            $project: {
-                productCount: { $size: '$products' } // Get the size of the products array
-            }
-        },
-        {
-            $group: {
-                _id: null,
-                totalProducts: { $sum: '$productCount' } // Sum up the counts
-            }
-        }
-    ]);
-    const totalProducts = productStats.length > 0 ? productStats[0].totalProducts : 0;
-
-    // 4. Get user role breakdown
-    const userRoles = await User.aggregate([
-        {
-            $match: { email: { $nin: adminEmails } } // Exclude admins
-        },
-        {
-            $group: {
-                _id: '$role', // Group by the role field
-                count: { $sum: 1 } // Count documents in each group
-            }
-        },
-        {
-            $project: { // Reshape the output
-                name: '$_id',
-                value: '$count',
-                _id: 0
-            }
-        }
-    ]);
+exports.getAdvancedAnalytics = asyncHandler(async (req, res, next) => {
     
-    // You could also add recent users/companies
-    const recentUsers = await User.find({ email: { $nin: adminEmails } }).sort({ createdAt: -1 }).limit(5).select('name email createdAt');
+    const dateFilter = {};
+    if (req.query.startDate) dateFilter.$gte = new Date(req.query.startDate);
+    if (req.query.endDate) {
+        const endDate = new Date(req.query.endDate);
+        endDate.setHours(23, 59, 59, 999);
+        dateFilter.$lte = endDate;
+    }
+    const dateMatch = Object.keys(dateFilter).length > 0 ? { createdAt: dateFilter } : {};
+
+    // Run all analytic aggregations in parallel for maximum performance
+    const [
+        revenueStats,
+        totalOrders,
+        totalCustomers,
+        salesOverTime,
+        orderStatusDistribution,
+        topSellingProducts,
+        topCustomers,
+        revenueByCategory,
+        revenueByLocation,
+        ordersByLocation,
+        newCustomerTrend // New analytic
+    ] = await Promise.all([
+        Order.aggregate([
+            { $match: { orderStatus: 'Delivered', ...dateMatch } },
+            { $group: { _id: null, totalRevenue: { $sum: '$totalPrice' } } }
+        ]),
+        Order.countDocuments(dateMatch),
+        User.countDocuments({ role: { $ne: 'admin' }, ...dateMatch }),
+        Order.aggregate([
+            { $match: { createdAt: (dateMatch.createdAt || { $gte: new Date(new Date().setDate(new Date().getDate() - 30)) }), orderStatus: 'Delivered' } },
+            { $group: { _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } }, totalSales: { $sum: "$totalPrice" } } },
+            { $sort: { _id: 1 } }, { $project: { _id: 0, date: '$_id', sales: '$totalSales' } }
+        ]),
+        Order.aggregate([
+            { $match: dateMatch },
+            { $group: { _id: '$orderStatus', count: { $sum: 1 } } },
+            { $project: { _id: 0, name: '$_id', value: '$count' } }
+        ]),
+        Order.aggregate([
+            { $match: dateMatch }, { $unwind: '$orderItems' },
+            { $group: { _id: '$orderItems._id', name: { $first: '$orderItems.name' }, totalQuantitySold: { $sum: '$orderItems.quantity' } } },
+            { $sort: { totalQuantitySold: -1 } }, { $limit: 5 }, { $project: { _id: 0, name: 1, quantity: '$totalQuantitySold' } }
+        ]),
+        Order.aggregate([
+            { $match: { orderStatus: 'Delivered', ...dateMatch } },
+            { $group: { _id: '$user', totalSpent: { $sum: '$totalPrice' } } },
+            { $sort: { totalSpent: -1 } }, { $limit: 5 },
+            { $lookup: { from: 'users', localField: '_id', foreignField: '_id', as: 'userData' } },
+            { $unwind: '$userData' }, { $project: { _id: 0, name: '$userData.name', email: '$userData.email', spent: '$totalSpent' } }
+        ]),
+        Order.aggregate([
+            { $match: { orderStatus: 'Delivered', ...dateMatch } }, { $unwind: '$orderItems' },
+            { $lookup: { from: 'companies', let: { productId: '$orderItems._id' }, pipeline: [ { $unwind: '$products' }, { $match: { $expr: { $eq: ['$products._id', '$$productId'] } } }, { $project: { _id: 0, category: '$products.category' } } ], as: 'productDetails' } },
+            { $unwind: '$productDetails' }, { $group: { _id: '$productDetails.category', totalRevenue: { $sum: { $multiply: ['$orderItems.price', '$orderItems.quantity'] } } } },
+            { $sort: { totalRevenue: -1 } }, { $project: { _id: 0, name: '$_id', value: '$totalRevenue' } }
+        ]),
+        Order.aggregate([
+            { $match: { orderStatus: 'Delivered', ...dateMatch } },
+            { $group: { _id: '$shippingAddress.city', totalRevenue: { $sum: '$totalPrice' } } },
+            { $sort: { totalRevenue: -1 } }, { $limit: 10 }, { $project: { _id: 0, name: '$_id', revenue: '$totalRevenue' } }
+        ]),
+        Order.aggregate([
+            { $match: dateMatch },
+            { $group: { _id: '$shippingAddress.city', count: { $sum: 1 } } },
+            { $sort: { count: -1 } }, { $limit: 10 }, { $project: { _id: 0, name: '$_id', orders: '$count' } }
+        ]),
+        // --- NEW: New Customer Acquisition Trend ---
+        User.aggregate([
+            { $match: { role: { $ne: 'admin' }, ...dateMatch } },
+            {
+                $group: {
+                    _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
+                    newCustomers: { $sum: 1 }
+                }
+            },
+            { $sort: { _id: 1 } },
+            { $project: { _id: 0, date: '$_id', count: '$newCustomers' } }
+        ])
+    ]);
+
+    const totalRevenue = revenueStats.length > 0 ? revenueStats[0].totalRevenue : 0;
 
     res.status(200).json({
         success: true,
         data: {
-            totalUsers,
-            totalCompanies,
-            totalProducts,
-            userRoles, // e.g., [{ name: 'customer', value: 10 }, { name: 'dealer', value: 2 }]
-            recentUsers
+            totalRevenue,
+            totalOrders,
+            totalCustomers,
+            salesOverTime,
+            orderStatusDistribution,
+            topSellingProducts,
+            topCustomers,
+            revenueByCategory,
+            revenueByLocation,
+            ordersByLocation,
+            newCustomerTrend // Add the new data to the response
         }
     });
 });

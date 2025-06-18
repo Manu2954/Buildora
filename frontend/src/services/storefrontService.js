@@ -1,7 +1,7 @@
 // This service handles all public API calls for the customer storefront.
 
-const API_BASE_URL = 'http://localhost:5000/api/storefront';
-
+const API_BASE_URL = `${process.env.REACT_APP_API_URL}/api/storefront`;
+console.log(API_BASE_URL)
 async function fetchPublicApi(endpoint) {
     try {
         const response = await fetch(`${API_BASE_URL}${endpoint}`);

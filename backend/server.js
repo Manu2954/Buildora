@@ -16,10 +16,14 @@ const adminOrderRoutes = require('./routes/adminOrderRoutes');
 
 const app = express();
 app.use(express.json());
-app.use(cors({
-  origin: 'http://localhost:3000',
-  credentials: true
-}));
+const corsOptions = {
+    origin: [
+        'http://localhost:3000', // For your local development
+        'https://buildora-live-demo.loca.lt' // The public URL for your FRONTEND
+    ],
+    credentials: true,
+};
+app.use(cors(corsOptions));
 
 app.use('/images', express.static('public/images'));
 app.use(express.json());

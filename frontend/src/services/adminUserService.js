@@ -1,6 +1,6 @@
 // This service will interact with the /api/admin/users endpoints
 
-const API_BASE_URL = 'http://localhost:5000/api/admin';
+const API_BASE_URL = `${process.env.REACT_APP_API_URL}/api/admin`;
 
 // Reusable helper function for API requests
 async function fetchAdminApi(endpoint, options = {}) {
