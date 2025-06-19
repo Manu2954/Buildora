@@ -1,8 +1,8 @@
 const Order = require('../../models/Order');
 const User = require('../../models/User');
 const Company = require('../../models/Company');
+const SearchLog = require('../../models/SearchLog'); // Import the new model
 const asyncHandler = require('../../middleware/async');
-const ErrorResponse = require('../../utils/errorResponse');
 const mongoose = require('mongoose');
 
 // @desc    Get advanced analytics for the admin dashboard
@@ -31,7 +31,8 @@ exports.getAdvancedAnalytics = asyncHandler(async (req, res, next) => {
         revenueByCategory,
         revenueByLocation,
         ordersByLocation,
-        newCustomerTrend // New analytic
+        newCustomerTrend,
+        topSearchTerms // New analytic
     ] = await Promise.all([
         Order.aggregate([
             { $match: { orderStatus: 'Delivered', ...dateMatch } },
@@ -77,17 +78,29 @@ exports.getAdvancedAnalytics = asyncHandler(async (req, res, next) => {
             { $group: { _id: '$shippingAddress.city', count: { $sum: 1 } } },
             { $sort: { count: -1 } }, { $limit: 10 }, { $project: { _id: 0, name: '$_id', orders: '$count' } }
         ]),
-        // --- NEW: New Customer Acquisition Trend ---
         User.aggregate([
             { $match: { role: { $ne: 'admin' }, ...dateMatch } },
+            { $group: { _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } }, newCustomers: { $sum: 1 } } },
+            { $sort: { _id: 1 } }, { $project: { _id: 0, date: '$_id', count: '$newCustomers' } }
+        ]),
+        // --- NEW: Top Search Terms Aggregation ---
+       SearchLog.aggregate([
+            { $match: dateMatch },
             {
                 $group: {
-                    _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
-                    newCustomers: { $sum: 1 }
+                    _id: '$term', // Group by the 'term' field
+                    count: { $sum: 1 }
                 }
             },
-            { $sort: { _id: 1 } },
-            { $project: { _id: 0, date: '$_id', count: '$newCustomers' } }
+            { $sort: { count: -1 } },
+            { $limit: 10 },
+            {
+                $project: {
+                    _id: 0,
+                    term: '$_id', // Project the grouped term into a 'term' field
+                    count: '$count'
+                }
+            }
         ])
     ]);
 
@@ -106,7 +119,8 @@ exports.getAdvancedAnalytics = asyncHandler(async (req, res, next) => {
             revenueByCategory,
             revenueByLocation,
             ordersByLocation,
-            newCustomerTrend // Add the new data to the response
+            newCustomerTrend,
+            topSearchTerms // Add the new data to the response
         }
     });
 });

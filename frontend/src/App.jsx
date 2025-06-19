@@ -44,6 +44,7 @@ import UserListPage from './pages/admin/user/UserListPage';
 import ViewUserPage from './pages/admin/user/ViewUserPage';
 import AdminOrdersPage from './pages/admin/order/AdminOrdersPage';
 import AdminOrderDetailPage from './pages/admin/order/AdminOrderDetailPage';
+import BulkUploadPage from './pages/admin/products/BulkUploadPage';
 
 function App() {
     return (
@@ -93,6 +94,7 @@ function App() {
                                 <Route path="users/:userId" element={<ViewUserPage />} />
                                 <Route path="orders" element={<AdminOrdersPage />} />
                                 <Route path="orders/:orderId" element={<AdminOrderDetailPage />} />
+                                <Route path="bulk-upload" element={<BulkUploadPage />} />
                             </Route>
 
                         </Routes>

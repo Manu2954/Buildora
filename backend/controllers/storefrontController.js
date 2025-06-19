@@ -228,3 +228,33 @@ exports.getSearchSuggestions = asyncHandler(async (req, res, next) => {
         data: suggestions
     });
 });
+
+
+exports.getRelatedProducts = asyncHandler(async (req, res, next) => {
+       const { productId } = req.params;
+    // --- THE FIX IS HERE ---
+    // We now get the category from a query parameter, which is more robust.
+    // Example URL: /api/storefront/related-products/someId?category=Bathroom%20Fittings
+    const { category } = req.query;
+
+    // Find other products in the same category, excluding the current product
+    const products = await Company.aggregate([
+        { $match: { isActive: true } },
+        { $unwind: '$products' },
+        { 
+            $match: {
+                'products.isActive': true,
+                'products.category': category,
+                'products._id': { $ne: new mongoose.Types.ObjectId(productId) }
+            }
+        },
+        { $replaceRoot: { newRoot: '$products' } },
+        { $limit: 4 } // Limit to 4 related products
+    ]);
+
+    res.status(200).json({
+        success: true,
+        count: products.length,
+        data: products
+    });
+});

@@ -55,3 +55,33 @@ export const getProductById = async (productId) => {
         throw error;
     }
 };
+
+
+// Log a search term
+export const logSearchTerm = async (term) => {
+    if (!term || term.trim() === '') return;
+    try {
+        // This is a "fire and forget" request, we don't need to wait for the response
+        fetch('/api/logs/search', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ term }),
+        });
+    } catch (error) {
+        // Don't block the user experience if logging fails
+        console.error("Failed to log search term:", error);
+    }
+};
+
+export const getRelatedProducts = async (productId, category) => {
+    try {
+        // We use encodeURIComponent to handle special characters in category names
+        const encodedCategory = encodeURIComponent(category);
+        const data = await fetchPublicApi(`/related-products/${productId}?category=${encodedCategory}`);
+        return data.data; // Return the array of related products
+    } catch (error) {
+        console.error(`Failed to fetch related products:`, error);
+        // Return an empty array on failure to prevent the page from crashing
+        return [];
+    }
+};

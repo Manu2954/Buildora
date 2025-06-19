@@ -60,7 +60,7 @@
 
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { LayoutDashboard, Briefcase, Users, ShoppingBag, Settings, Building } from 'lucide-react';
+import { LayoutDashboard, Users, Building, ShoppingBag, Upload } from 'lucide-react';
 
 const AdminSidebar = ({ isOpen, toggleSidebar }) => {
     const commonLinkClasses = "flex items-center px-4 py-3 text-gray-700 rounded-lg hover:bg-indigo-100 hover:text-indigo-700 transition-colors duration-150";
@@ -69,7 +69,8 @@ const AdminSidebar = ({ isOpen, toggleSidebar }) => {
     const navItems = [
         { to: "/admin/dashboard", icon: <LayoutDashboard size={20} />, label: "Dashboard" },
         { to: "/admin/companies", icon: <Building size={20} />, label: "Companies" },
-        // { to: "/admin/products", icon: <ShoppingBag size={20} />, label: "Products" },
+        { to: "/admin/products", icon: <ShoppingBag size={20} />, label: "Products" },
+          { to: "/admin/bulk-upload", icon: <Upload size={20} />, label: "Bulk Upload" },
         { to: "/admin/users", icon: <Users size={20} />, label: "Users" },
         { to: "/admin/orders", icon: <ShoppingBag size={20} />, label: "Orders" }
         // { to: "/admin/orders", icon: <Briefcase size={20} />, label: "Orders" },

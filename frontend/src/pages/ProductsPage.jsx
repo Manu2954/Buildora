@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { useSearchParams, Link, useNavigate } from 'react-router-dom';
-import { getProducts, getFilterOptions } from '../services/storefrontService';
+import { getProducts, getFilterOptions, logSearchTerm } from '../services/storefrontService';
 import ProductCard, { ProductCardSkeleton } from '../components/ProductCard';
 import { Search, X, ListFilter, AlertTriangle, ChevronDown, ChevronUp, SlidersHorizontal, Package, Tag } from 'lucide-react';
 
@@ -18,7 +18,8 @@ const useDebounce = (value, delay) => {
     return debouncedValue;
 };
 
-// --- THIS COMPONENT IS NOW DEFINED OUTSIDE ---
+
+// The New Advanced Search Bar Component
 const AdvancedSearchBar = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [suggestions, setSuggestions] = useState([]);
@@ -33,8 +34,12 @@ const AdvancedSearchBar = () => {
                 try {
                     const response = await fetch(`/api/storefront/suggestions?q=${debouncedSearchTerm}`);
                     const data = await response.json();
-                    if (data.success) setSuggestions(data.data);
-                } catch (error) { console.error("Failed to fetch search suggestions:", error); }
+                    if (data.success) {
+                        setSuggestions(data.data);
+                    }
+                } catch (error) {
+                    console.error("Failed to fetch search suggestions:", error);
+                }
             } else {
                 setSuggestions([]);
             }
@@ -42,33 +47,66 @@ const AdvancedSearchBar = () => {
         fetchSuggestions();
     }, [debouncedSearchTerm]);
     
+    // Close suggestions when clicking outside the search component
     useEffect(() => {
         const handleClickOutside = (event) => {
-            if (searchRef.current && !searchRef.current.contains(event.target)) setIsSuggestionsVisible(false);
+            if (searchRef.current && !searchRef.current.contains(event.target)) {
+                setIsSuggestionsVisible(false);
+            }
         };
         document.addEventListener("mousedown", handleClickOutside);
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, [searchRef]);
 
+
     const handleSubmit = (e) => {
         e.preventDefault();
-        setIsSuggestionsVisible(false);
-        navigate(`/products?search=${searchTerm}`);
+        if (searchTerm.trim()) {
+            logSearchTerm(searchTerm.trim());
+            setIsSuggestionsVisible(false);
+            navigate(`/products?search=${searchTerm}`);
+        }
     };
 
     return (
         <form onSubmit={handleSubmit} className="relative max-w-xl mx-auto" ref={searchRef}>
-            <div className="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none"><Search className="w-5 h-5 text-gray-400" /></div>
-            <input type="search" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} onFocus={() => setIsSuggestionsVisible(true)} placeholder="Search for products or categories..." className="w-full py-3 pl-12 pr-4 text-gray-900 bg-white border-2 border-gray-300 rounded-full shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" />
+            <div className="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none">
+                <Search className="w-5 h-5 text-gray-400" />
+            </div>
+            <input
+                type="search"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                onFocus={() => setIsSuggestionsVisible(true)}
+                placeholder="Search for products or categories..."
+                className="w-full py-3 pl-12 pr-4 text-gray-900 bg-white border-2 border-gray-300 rounded-full shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+            />
             {isSuggestionsVisible && suggestions.length > 0 && (
                 <div className="absolute z-10 w-full mt-2 overflow-hidden text-left bg-white border border-gray-200 rounded-lg shadow-lg">
                     <ul className="divide-y divide-gray-100">
-                        {suggestions.map((suggestion, index) => (
-                            <li key={index}><Link to={`/products?search=${suggestion.name}`} className="flex items-center w-full px-4 py-3 transition-colors hover:bg-gray-50" onClick={() => { setSearchTerm(suggestion.name); setIsSuggestionsVisible(false); }}>
-                                {suggestion.type === 'Product' ? <Package className="w-5 h-5 mr-3 text-gray-400"/> : <Tag className="w-5 h-5 mr-3 text-gray-400"/>}
-                                <span>{suggestion.name}</span>
-                            </Link></li>
-                        ))}
+                        {suggestions.map((suggestion, index) => {
+                            // --- THE FIX IS HERE ---
+                            // Conditionally create the correct URL based on suggestion type.
+                            const linkUrl = suggestion.type === 'Category' 
+                                ? `/products?categories=${suggestion.name}` 
+                                : `/products?search=${suggestion.name}`;
+
+                            return (
+                                <li key={index}>
+                                    <Link 
+                                        to={linkUrl} 
+                                        className="flex items-center w-full px-4 py-3 transition-colors hover:bg-gray-50"
+                                        onClick={() => {
+                                            setSearchTerm(suggestion.name);
+                                            setIsSuggestionsVisible(false);
+                                        }}
+                                    >
+                                        {suggestion.type === 'Product' ? <Package className="w-5 h-5 mr-3 text-gray-400"/> : <Tag className="w-5 h-5 mr-3 text-gray-400"/>}
+                                        <span>{suggestion.name}</span>
+                                    </Link>
+                                </li>
+                            );
+                        })}
                     </ul>
                 </div>
             )}
@@ -77,27 +115,23 @@ const AdvancedSearchBar = () => {
 };
 
 
-
 // Reusable component for a collapsible filter section
 const FilterSection = ({ title, children }) => {
     const [isOpen, setIsOpen] = useState(true);
     return (
         <div className="py-5 border-b border-gray-200">
-            <button
-                onClick={() => setIsOpen(!isOpen)}
-                className="flex items-center justify-between w-full text-left"
-            >
+            <button onClick={() => setIsOpen(!isOpen)} className="flex items-center justify-between w-full text-left">
                 <span className="text-base font-semibold text-gray-800">{title}</span>
                 {isOpen ? <ChevronUp className="w-5 h-5 text-gray-500" /> : <ChevronDown className="w-5 h-5 text-gray-500" />}
             </button>
-            <div className={`transition-all duration-300 ease-in-out overflow-hidden ${isOpen ? 'max-h-96 mt-4' : 'max-h-0'}`}>
+            <div className={`transition-all duration-300 ease-in-out overflow-hidden ${isOpen ? 'max-h-screen mt-4' : 'max-h-0'}`}>
                  <div className="space-y-3">{children}</div>
             </div>
         </div>
     );
 };
 
-
+// --- THIS COMPONENT IS NOW DEFINED OUTSIDE ---
 const FilterSidebar = ({ filterOptions, activeFilters, handleFilterChange, clearFilters, localSearchTerm, setLocalSearchTerm }) => (
     <aside className="p-6 bg-white rounded-lg shadow-sm h-fit">
         <div className="flex items-center justify-between pb-4 border-b">
@@ -152,15 +186,17 @@ const ProductsPage = () => {
     }), [searchParams]);
 
     useEffect(() => {
-        const newParams = new URLSearchParams(searchParams);
-        newParams.delete('page');
-        if (debouncedSearchTerm) {
-            newParams.set('search', debouncedSearchTerm);
-        } else {
-            newParams.delete('search');
-        }
-        if (searchParams.get('search') !== debouncedSearchTerm) {
-            setSearchParams(newParams);
+        const currentSearchInUrl = searchParams.get('search') || '';
+        if (debouncedSearchTerm !== currentSearchInUrl) {
+            const newParams = new URLSearchParams(searchParams);
+            if (debouncedSearchTerm) {
+                newParams.set('search', debouncedSearchTerm);
+                logSearchTerm(debouncedSearchTerm);
+            } else {
+                newParams.delete('search');
+            }
+            newParams.delete('page');
+            setSearchParams(newParams, { replace: true });
         }
     }, [debouncedSearchTerm, searchParams, setSearchParams]);
 
@@ -169,27 +205,8 @@ const ProductsPage = () => {
             setIsLoading(true);
             setError('');
             try {
-                // --- THE FIX IS HERE ---
-                // Manually build the params object to correctly handle multi-select arrays.
-                const params = {
-                    page: searchParams.get('page'),
-                    sort: searchParams.get('sort'),
-                    search: searchParams.get('search'),
-                    minPrice: searchParams.get('minPrice'),
-                    maxPrice: searchParams.get('maxPrice'),
-                    // Use getAll() and join() to create a comma-separated string for the API
-                    categories: searchParams.getAll('categories').join(','),
-                    companies: searchParams.getAll('companies').join(','),
-                };
-                
-                // Remove any empty params so we don't send `categories=` in the URL
-                Object.keys(params).forEach(key => !params[key] && delete params[key]);
-
-                const [productData, filtersData] = await Promise.all([
-                    getProducts(params),
-                    getFilterOptions()
-                ]);
-
+                const params = Object.fromEntries(searchParams.entries());
+                const [productData, filtersData] = await Promise.all([ getProducts(params), getFilterOptions() ]);
                 setProducts(productData.data || []);
                 setPagination(productData.pagination || {});
                 setFilterOptions(filtersData || { categories: [], companies: [] });
@@ -230,7 +247,7 @@ const ProductsPage = () => {
     const clearFilters = () => {
         setLocalSearchTerm('');
         setSearchParams({});
-    }
+    };
 
     return (
         <div className="min-h-screen bg-white">
@@ -238,7 +255,9 @@ const ProductsPage = () => {
                 <div className="container px-4 mx-auto text-center">
                     <h1 className="text-4xl font-extrabold tracking-tight text-gray-900 sm:text-5xl">Buildora Marketplace</h1>
                     <p className="max-w-2xl mx-auto mt-4 text-xl text-gray-600">Sourcing Made Simple. Building Made Easy.</p>
-                    <div className="mt-8"><AdvancedSearchBar /></div>
+                    <div className="mt-8">
+                        <AdvancedSearchBar />
+                    </div>
                 </div>
             </header>
 
@@ -249,9 +268,7 @@ const ProductsPage = () => {
                     </aside>
                     <main className="lg:col-span-3">
                          <div className="flex flex-col items-center justify-between gap-4 p-4 mb-6 bg-white border border-gray-200 rounded-lg sm:flex-row">
-                            <button onClick={() => setMobileFiltersOpen(true)} className="flex items-center w-full gap-2 px-4 py-2 font-semibold text-gray-700 bg-white border border-gray-300 rounded-md sm:w-auto lg:hidden">
-                                <SlidersHorizontal size={18}/> Show Filters
-                            </button>
+                            <button onClick={() => setMobileFiltersOpen(true)} className="flex items-center w-full gap-2 px-4 py-2 font-semibold text-gray-700 bg-white border border-gray-300 rounded-md sm:w-auto lg:hidden"><SlidersHorizontal size={18}/> Show Filters</button>
                              <p className="text-sm text-gray-700">Showing <span className="font-bold">{products.length}</span> of <span className="font-bold">{pagination.totalProducts ?? 0}</span> products</p>
                             <div className="flex items-center space-x-2">
                                 <label htmlFor="sort" className="text-sm font-medium text-gray-700">Sort by:</label>

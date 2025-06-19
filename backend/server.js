@@ -13,6 +13,10 @@ const dashboardRoutes = require('./routes/dashboardRoutes')
 const orderRoutes = require('./routes/orderRoutes'); 
 const storefrontRoutes = require('./routes/storefrontRoutes');
 const adminOrderRoutes = require('./routes/adminOrderRoutes');
+const searchLogRoutes = require('./routes/searchLogRoutes');
+const bulkUploadRoutes = require('./routes/bulkUploadRoutes'); 
+const companyRoutes = require('./routes/companyRoutes');
+const reviewRoutes = require('./routes/reviewRoutes');
 
 const app = express();
 app.use(express.json());
@@ -32,11 +36,14 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/api/auth', authRoutes);
 app.use('/api/storefront', storefrontRoutes); 
 app.use('/api/orders', orderRoutes); 
+app.use('/api/reviews', reviewRoutes);
 
 app.use('/api/admin', adminRoutes);
 app.use('/api/admin/users', userRoutes);
 app.use('/api/admin/dashboard', dashboardRoutes); 
 app.use('/api/admin/orders', adminOrderRoutes);
+app.use('/api/logs/search', searchLogRoutes);
+companyRoutes.use('/:companyId/products/bulk-upload', bulkUploadRoutes);
 
 const PORT = process.env.PORT || 5000;
 

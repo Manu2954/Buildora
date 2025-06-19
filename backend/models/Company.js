@@ -1,5 +1,6 @@
 // backend/models/Company.js
 const mongoose = require('mongoose');
+const ReviewSchema = require('./Review');
 
 const VariantSchema = new mongoose.Schema({
     name: {
@@ -45,7 +46,16 @@ const ProductSchema = new mongoose.Schema({
     
     // REPLACED 'sizes' with 'variants'
     variants: [VariantSchema], // An array of product variants
+    reviews: [ReviewSchema], // Add the new reviews array
     
+    ratingsAverage: {
+        type: Number,
+        default: 0
+    },
+    ratingsQuantity: {
+        type: Number,
+        default: 0
+    },
     images: [String],
     attributes: [{ name: String, value: String }],
     dimensions: { length: Number, width: Number, height: Number, unit: String },
