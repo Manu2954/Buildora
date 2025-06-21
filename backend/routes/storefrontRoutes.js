@@ -20,5 +20,5 @@ router.route('/products')
 router.route('/products/:productId')
     .get(getProductById);
 router.get('/suggestions', getSearchSuggestions);
-router.get('/related-products/:productId/:category', getRelatedProducts);
+router.get('/related-products/:productId', getRelatedProducts);
 module.exports = router;

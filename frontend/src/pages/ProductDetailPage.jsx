@@ -6,6 +6,9 @@ import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import ProductCard from '../components/ProductCard';
 import { Star, Minus, Plus, ShoppingCart, AlertTriangle, ChevronRight, Edit, Building, Lock, RefreshCw, Truck, MessageSquare } from 'lucide-react';
+import Slider from "react-slick"; // --- Import the new Slider component ---
+import "slick-carousel/slick/slick.css"; 
+import "slick-carousel/slick/slick-theme.css";
 
 // Skeleton Loader for a professional loading state
 const ProductDetailSkeleton = () => (
@@ -211,6 +214,29 @@ const ProductDetailPage = () => {
     const stockStatus = stock > 10 ? <p className="mt-2 text-lg font-semibold text-green-600">In Stock</p> 
                         : stock > 0 ? <p className="mt-2 text-lg font-semibold text-orange-500">Only {stock} left - order soon!</p> 
                         : <p className="mt-2 text-lg font-semibold text-red-600">Out of Stock</p>;
+    
+    // --- Carousel Settings ---
+    const carouselSettings = {
+        dots: true,
+        infinite: false,
+        speed: 500,
+        slidesToShow: 4,
+        slidesToScroll: 4,
+        responsive: [
+            {
+                breakpoint: 1024,
+                settings: { slidesToShow: 3, slidesToScroll: 3 }
+            },
+            {
+                breakpoint: 600,
+                settings: { slidesToShow: 2, slidesToScroll: 2 }
+            },
+             {
+                breakpoint: 480,
+                settings: { slidesToShow: 1, slidesToScroll: 1 }
+            }
+        ]
+    };
 
 
     return (
@@ -292,8 +318,24 @@ const ProductDetailPage = () => {
                 </div>
 
                 <div className="pt-16 mt-16 border-t">
-                    {relatedProducts.length > 0 && (<section><h2 className="text-2xl font-bold text-gray-900">Related Products</h2><div className="grid grid-cols-1 gap-6 mt-6 sm:grid-cols-2 lg:grid-cols-4">{relatedProducts.map(related => (<ProductCard key={related._id} product={related} />))}</div></section>)}
-                    <section className="mt-16"><h2 className="text-2xl font-bold text-gray-900">Customer Reviews</h2>
+                    {/* Related Products Section */}
+                    {relatedProducts.length > 0 && (
+                        <section>
+                             <h2 className="mb-6 text-2xl font-bold text-gray-900">Products related to this item</h2>
+                             {/* --- This now uses the Slider component --- */}
+                             <Slider {...carouselSettings}>
+                                {relatedProducts.map(related => (
+                                    <div key={related._id} className="px-2">
+                                        <ProductCard product={related} />
+                                    </div>
+                                ))}
+                             </Slider>
+                        </section>
+                    )}
+
+                     {/* Customer Reviews Section */}
+                     <section className="mt-16">
+                         <h2 className="text-2xl font-bold text-gray-900">Customer reviews</h2>
                          {product.reviews && product.reviews.length > 0 ? (<>
                                 <div className="flex items-center gap-4 p-4 mt-6 bg-gray-50 rounded-lg"><div className="flex-shrink-0"><p className="text-4xl font-bold">{product.ratingsAverage.toFixed(1)}</p><StarRating rating={product.ratingsAverage} readOnly /><p className="text-sm text-gray-600">Based on {product.ratingsQuantity} reviews</p></div></div>
                                 <div className="mt-8 space-y-8">{product.reviews.map(review => (<div key={review._id} className="flex gap-4"><div className="flex items-center justify-center w-12 h-12 text-lg font-bold text-white bg-indigo-500 rounded-full shrink-0">{review.name.charAt(0).toUpperCase()}</div><div><h4 className="font-bold">{review.name}</h4><div className="flex items-center mt-1"><StarRating rating={review.rating} readOnly /></div><p className="mt-2 text-gray-700">{review.comment}</p><p className="mt-2 text-xs text-gray-400">{new Date(review.createdAt).toLocaleDateString()}</p></div></div>))}</div>
