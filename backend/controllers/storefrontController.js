@@ -1,4 +1,5 @@
 const Company = require('../models/Company');
+const Order = require('../models/Order');
 const asyncHandler = require('../middleware/async');
 const ErrorResponse = require('../utils/errorResponse');
 const mongoose = require('mongoose');
@@ -256,5 +257,69 @@ exports.getRelatedProducts = asyncHandler(async (req, res, next) => {
         success: true,
         count: products.length,
         data: products
+    });
+});
+
+exports.getHomePageData = asyncHandler(async (req, res, next) => {
+
+    // Run aggregations in parallel for better performance
+    const [
+        featuredCategories,
+        bestsellingProducts
+    ] = await Promise.all([
+        // Get top 3 categories with the most products
+        Company.aggregate([
+            { $match: { isActive: true } },
+            { $unwind: '$products' },
+            { $match: { 'products.isActive': true } },
+            { $group: { _id: '$products.category', productCount: { $sum: 1 } } },
+            { $sort: { productCount: -1 } },
+            { $limit: 3 },
+            { $project: { _id: 0, name: '$_id' } }
+        ]),
+        // Get top 5 best-selling products (most ordered)
+        Order.aggregate([
+            { $unwind: '$orderItems' },
+            { 
+                $group: { 
+                    _id: '$orderItems._id', 
+                    totalQuantitySold: { $sum: '$orderItems.quantity' } 
+                } 
+            },
+            { $sort: { totalQuantitySold: -1 } },
+            { $limit: 5 },
+            { 
+                $lookup: { // Join with companies to get full product details
+                    from: 'companies',
+                    let: { productId: '$_id' },
+                    pipeline: [
+                        { $unwind: '$products' },
+                        { $match: { $expr: { $eq: ['$products._id', '$$productId'] } } },
+                        { $replaceRoot: { newRoot: '$products' } }
+                    ],
+                    as: 'productInfo'
+                }
+            },
+            { $unwind: '$productInfo' },
+            { $replaceRoot: { newRoot: '$productInfo' } }
+        ])
+    ]);
+    
+    // Add placeholder images for categories
+    const categoriesWithImages = featuredCategories.map((cat, index) => {
+        const images = [
+            '/images/img1.jpg', // Example image
+            '/images/img1.jpg', // Example image
+            '/images/img1.jpg', // Example image
+        ];
+        return { ...cat, image: images[index] || images[0] };
+    });
+
+    res.status(200).json({
+        success: true,
+        data: {
+            featuredCategories: categoriesWithImages,
+            bestsellingProducts
+        }
     });
 });

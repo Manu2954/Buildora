@@ -2,6 +2,7 @@ const dotenv = require('dotenv');
 dotenv.config();
 const express = require('express');
 const mongoose = require('mongoose');
+const path = require('path'); // Node.js module for working with file paths
 const cors = require('cors');
 const connectDB = require('./config/db'); 
 
@@ -17,6 +18,7 @@ const searchLogRoutes = require('./routes/searchLogRoutes');
 const bulkUploadRoutes = require('./routes/bulkUploadRoutes'); 
 const companyRoutes = require('./routes/companyRoutes');
 const reviewRoutes = require('./routes/reviewRoutes');
+const uploadRoutes = require('./routes/uploadRoutes'); // Your new upload routes
 
 const app = express();
 app.use(express.json());
@@ -30,6 +32,8 @@ const corsOptions = {
 app.use(cors(corsOptions));
 
 app.use('/images', express.static('public/images'));
+app.use('/videos', express.static('public/videos'));
+app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -44,6 +48,8 @@ app.use('/api/admin/dashboard', dashboardRoutes);
 app.use('/api/admin/orders', adminOrderRoutes);
 app.use('/api/logs/search', searchLogRoutes);
 companyRoutes.use('/:companyId/products/bulk-upload', bulkUploadRoutes);
+app.use('/api/admin/upload', uploadRoutes); 
+
 
 const PORT = process.env.PORT || 5000;
 

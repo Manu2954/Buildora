@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import ImageUpload, { ImagePreview } from '../ImageUpload';
 
 const CompanyForm = ({ onSubmit, initialData = null, isLoading = false, submitButtonText = "Submit" }) => {
     const [formData, setFormData] = useState({
@@ -82,6 +83,14 @@ const CompanyForm = ({ onSubmit, initialData = null, isLoading = false, submitBu
         return Object.keys(newErrors).length === 0;
     };
 
+    const handleLogoUpload = (url) => {
+        setFormData(prev => ({ ...prev, logoUrl: url }));
+    };
+
+    const handleLogoDelete = () => {
+        setFormData(prev => ({ ...prev, logoUrl: '' }));
+    };
+    
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (!validateForm()) return;
@@ -130,8 +139,14 @@ const CompanyForm = ({ onSubmit, initialData = null, isLoading = false, submitBu
 
             {/* Logo URL */}
             <div>
-                <label htmlFor="logoUrl" className={labelClass}>Logo URL</label>
-                <input type="url" name="logoUrl" id="logoUrl" value={formData.logoUrl} onChange={handleChange} className={inputClass} placeholder="https://example.com/logo.png" />
+                <label className="block text-sm font-medium text-gray-700">Company Logo</label>
+                <div className="flex items-center gap-4 mt-2">
+                    {formData.logoUrl ? (
+                        <ImagePreview url={formData.logoUrl} onDelete={handleLogoDelete} />
+                    ) : (
+                        <ImageUpload onUploadSuccess={handleLogoUpload} />
+                    )}
+                </div>
             </div>
 
             {/* Contact Email */}

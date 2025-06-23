@@ -85,3 +85,14 @@ export const getRelatedProducts = async (productId, category) => {
         return [];
     }
 };
+
+export const getHomePageData = async () => {
+    try {
+        const data = await fetchPublicApi(`/homepage`);
+        return data.data; // Return the nested data object { featuredCategories, bestsellingProducts }
+    } catch (error) {
+        console.error('Failed to fetch homepage data:', error);
+        // Return an empty object on failure to prevent the page from crashing
+        return { featuredCategories: [], bestsellingProducts: [] };
+    }
+};

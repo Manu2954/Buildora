@@ -10,12 +10,10 @@ const { Readable } = require('stream');
 exports.bulkUploadProducts = asyncHandler(async (req, res, next) => {
     const { companyId } = req.params;
 
-    // 1. Check if a file was uploaded
     if (!req.file) {
         return next(new ErrorResponse('Please upload a CSV file', 400));
     }
 
-    // 2. Find the company to add products to
     const company = await Company.findById(companyId);
     if (!company) {
         return next(new ErrorResponse(`Company not found with id of ${companyId}`, 404));
@@ -25,16 +23,12 @@ exports.bulkUploadProducts = asyncHandler(async (req, res, next) => {
     const errors = [];
     let rowCount = 0;
 
-    // 3. Create a readable stream from the uploaded file's buffer
     const stream = Readable.from(req.file.buffer.toString());
 
     stream
         .pipe(csv())
         .on('data', (row) => {
             rowCount++;
-            // 4. For each row, structure the product data
-            // This assumes your CSV has columns like 'name', 'description', 'category', 'basePrice', 'stock', etc.
-            // It also handles complex nested data for variants and attributes if provided in the CSV.
             
             const product = {
                 name: row.name,
@@ -48,13 +42,13 @@ exports.bulkUploadProducts = asyncHandler(async (req, res, next) => {
                 stock: {
                     quantity: parseInt(row.stock, 10),
                 },
-                images: row.images ? row.images.split('|') : [], // Assuming image URLs are separated by '|'
-                // Assuming variants are provided as a JSON string in a 'variants' column
+                // Assumes image URLs are provided in the CSV, separated by a pipe '|'
+                // These URLs should point to your self-hosted images
+                images: row.images ? row.images.split('|').map(url => url.trim()) : [],
                 variants: row.variants ? JSON.parse(row.variants) : [],
                 attributes: row.attributes ? JSON.parse(row.attributes) : [],
             };
 
-            // Basic validation
             if (!product.name || !product.category || !product.pricing.basePrice || !product.stock.quantity) {
                 errors.push(`Row ${rowCount}: Missing required fields (name, category, basePrice, stock).`);
             } else {
@@ -62,13 +56,11 @@ exports.bulkUploadProducts = asyncHandler(async (req, res, next) => {
             }
         })
         .on('end', async () => {
-            // 5. Once the file is fully parsed, add the new products to the company
             if (newProducts.length > 0) {
                 company.products.push(...newProducts);
                 await company.save();
             }
 
-            console.log('Bulk upload finished.');
             res.status(200).json({
                 success: true,
                 message: `Upload complete. Added ${newProducts.length} new products. Found ${errors.length} errors.`,

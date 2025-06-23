@@ -16,7 +16,7 @@ import PrivateRoute from "./components/PrivateRoute";
 import AdminPrivateRoute from "./components/admin/AdminPrivateRoute";
 
 // --- Customer Pages ---
-import Home from "./pages/Home";
+import Home from "./pages/HomePage";
 import ProductsPage from './pages/ProductsPage';
 import ProductDetailPage from './pages/ProductDetailPage';
 import CartPage from './pages/CartPage';
@@ -45,6 +45,7 @@ import ViewUserPage from './pages/admin/user/ViewUserPage';
 import AdminOrdersPage from './pages/admin/order/AdminOrdersPage';
 import AdminOrderDetailPage from './pages/admin/order/AdminOrderDetailPage';
 import BulkUploadPage from './pages/admin/products/BulkUploadPage';
+import Products from './pages/admin/products/AllProductsPage';
 
 function App() {
     return (
@@ -95,6 +96,7 @@ function App() {
                                 <Route path="orders" element={<AdminOrdersPage />} />
                                 <Route path="orders/:orderId" element={<AdminOrderDetailPage />} />
                                 <Route path="bulk-upload" element={<BulkUploadPage />} />
+                                <Route path="products" element={<Products />} />
                             </Route>
 
                         </Routes>

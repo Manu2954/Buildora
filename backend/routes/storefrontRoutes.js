@@ -6,7 +6,8 @@ const {
     getProductById,
     getFilterOptions,
     getSearchSuggestions,
-    getRelatedProducts
+    getRelatedProducts,
+    getHomePageData
 } = require('../controllers/storefrontController');
 
 // These routes are public and do not require authentication.
@@ -20,5 +21,6 @@ router.route('/products')
 router.route('/products/:productId')
     .get(getProductById);
 router.get('/suggestions', getSearchSuggestions);
+router.get('/homepage', getHomePageData);
 router.get('/related-products/:productId', getRelatedProducts);
 module.exports = router;

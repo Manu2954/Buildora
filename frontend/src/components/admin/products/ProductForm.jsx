@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { PlusCircle, Trash2 } from 'lucide-react';
-
+import ImageUpload, { ImagePreview } from '../ImageUpload';
 // Each variant now gets a temporary unique ID for stable keys in React
 const createNewVariant = () => ({ id: crypto.randomUUID(), name: '', price: '', stock: '', sku: '', unit: '' });
 const createNewAttribute = () => ({ id: crypto.randomUUID(), name: '', value: '' });
@@ -16,6 +16,7 @@ const initialProductState = {
     dimensions: { length: '', width: '', height: '', unit: 'cm' },
     weight: { value: '', unit: 'kg' },
     isActive: true,
+    images: [],
 };
 
 
@@ -35,6 +36,7 @@ const ProductForm = ({ onSubmit, initialData = null, isLoading = false, submitBu
                 images: initialData.images?.length ? initialData.images : [''],
                 attributes: initialData.attributes?.length ? initialData.attributes.map(a => ({...a, id: a._id || crypto.randomUUID()})) : [createNewAttribute()],
                 variants: initialData.variants?.length ? initialData.variants.map(v => ({...v, id: v._id || crypto.randomUUID()})) : [createNewVariant()],
+                images: initialData.images || [],
             }));
         }
     }, [initialData]);
@@ -91,6 +93,15 @@ const ProductForm = ({ onSubmit, initialData = null, isLoading = false, submitBu
         await onSubmit(dataToSubmit);
     };
     
+    const handleImageUpload = (url) => {
+        setFormData(prev => ({ ...prev, images: [...prev.images, url] }));
+    };
+
+    const handleImageDelete = (urlToDelete) => {
+        setFormData(prev => ({ ...prev, images: prev.images.filter(url => url !== urlToDelete) }));
+    };
+    
+
     const inputClass = "block w-full px-3 py-2 mt-1 placeholder-gray-400 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm";
     const labelClass = "block text-sm font-medium text-gray-700";
     
@@ -194,6 +205,18 @@ const ProductForm = ({ onSubmit, initialData = null, isLoading = false, submitBu
                     ))}
                     <button type="button" onClick={() => addArrayItem('attributes', createNewAttribute())} className="flex items-center px-3 py-1 mt-2 text-sm text-indigo-600 border border-indigo-300 rounded-md hover:bg-indigo-50"><PlusCircle size={16} className="mr-1" /> Add Attribute</button>
                 </div>
+            </fieldset>
+
+                {/* --- NEW Images Section --- */}
+             <fieldset className="p-4 border rounded-md">
+                <legend className="px-2 text-lg font-medium text-gray-800">Product Images</legend>
+                <div className="flex flex-wrap gap-4 mt-4">
+                    {formData.images.map((url) => (
+                        <ImagePreview key={url} url={url} onDelete={handleImageDelete} />
+                    ))}
+                    <ImageUpload onUploadSuccess={handleImageUpload} multiple />
+                </div>
+                <p className="mt-2 text-xs text-gray-500">The first image will be the main display image.</p>
             </fieldset>
             
             {/* --- Physical Properties --- */}
