@@ -6,6 +6,8 @@ const twilio = require('twilio');
 const ErrorResponse = require('../utils/errorResponse');
 const asyncHandler = require('../middleware/async');
 const client = twilio(process.env.TWILIO_SID, process.env.TWILIO_AUTH_TOKEN);
+const { getWelcomeEmailHTML } = require('../utils/emailTemplates');
+const sendEmail = require('../utils/sendEmail');
 
 // Email setup
 const transporter = nodemailer.createTransport({
@@ -55,39 +57,40 @@ const sendTokenResponse = (user, statusCode, res, message = 'Success') => {
 // sendTokenResponse(user, 200, res, "Password updated successfully");
 
 
+
+// const client = twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
+
 exports.signup = async (req, res) => {
-  const { name, email, password, phone } = req.body;
-// console.log(email, password, phone)
-  try {
-    const existing = await User.findOne({ email });
-    if (existing) {
-      // console.log(res.status(400).json({ message: 'User already exists' }))
-      return res.status(400).json({ message: 'User already exists' });
-    }
-    // let name = "manu"
+    const { name, email, password, phone } = req.body;
+    try {
+        const existing = await User.findOne({ email });
+        if (existing) {
+            return res.status(400).json({ message: 'User already exists' });
+        }
+        
+        const hashedPassword = await bcrypt.hash(password, 10);
+        const verificationToken = jwt.sign({ email }, process.env.JWT_ACCESS_SECRET, { expiresIn: '15m' });
 
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const verificationToken = jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: '15m' });
+        const user = await User.create({
+            name,
+            email,
+            phone,
+            password: hashedPassword,
+            verificationToken, // Store the token if you verify it on the backend
+        });
 
-    const user = await User.create({
-      name,
-      email,
-      phone,
-      password: hashedPassword,
-      verificationToken,
-      tokenExpiry: new Date(Date.now() + 15 * 60 * 1000)
-    });
+        const verificationLink = `http://localhost:3000/verify?token=${verificationToken}`;
 
-    const verificationLink = `http://localhost:3000/verify?token=${verificationToken}`;
+        // --- THIS IS THE KEY CHANGE ---
+        // Send the verification email using the new, reusable utility
+        await sendEmail({
+            to: email,
+            subject: 'Verify your Buildora account',
+            html: `<p>Welcome to Buildora! Please click the link below to verify your account.</p><p><a href="${verificationLink}">Verify Account</a></p>`
+        });
 
-    // Send Email
-    await transporter.sendMail({
-      to: email,
-      subject: 'Verify your Buildora account',
-      html: `<p>Click <a href="${verificationLink}">here</a> to verify your account.</p>`
-    });
-
-    // Send WhatsApp
+        // Send WhatsApp (optional, as before)
+          // Send WhatsApp
     if (phone) {
       console.log('Attempting to send WhatsApp to:', phone);
       await client.messages.create({
@@ -98,18 +101,19 @@ exports.signup = async (req, res) => {
       console.log('WhatsApp sent successfully:', phone);
     }
 
-    res.status(200).json({ message: 'Verification link sent to email and WhatsApp' });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: 'Signup failed' });
-  }
+        res.status(200).json({ message: 'Verification link sent to your email.' });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Signup failed' });
+    }
 };
+
 
 exports.verify = async (req, res) => {
   const { token } = req.query;
   console.log('entered')
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const decoded = jwt.verify(token, process.env.JWT_ACCESS_SECRET);
     const user = await User.findOne({ email: decoded.email });
   console.log('user found')
 
@@ -123,6 +127,16 @@ exports.verify = async (req, res) => {
     await user.save();
   console.log('user verified')
     
+   try {
+        await sendEmail({
+            email: user.email,
+            subject: 'Welcome to Buildora!',
+            html: getWelcomeEmailHTML(user)
+        });
+    } catch (err) {
+        console.error("Failed to send welcome email:", err);
+        // Do not block the user flow if email fails
+    }
 
     res.status(200).json({ message: 'Email verified successfully' });
   } catch (err) {

@@ -1,6 +1,9 @@
 const Order = require('../../models/Order');
+const User = require('../../models/User');
 const asyncHandler = require('../../middleware/async');
 const ErrorResponse = require('../../utils/errorResponse');
+const { getOrderStatusUpdateHTML } = require('../../utils/emailTemplates');
+const  sendEmail  = require('../../utils/sendEmail');
 
 // @desc    Get all orders
 // @route   GET /api/admin/orders
@@ -102,6 +105,23 @@ exports.updateOrderStatus = asyncHandler(async (req, res, next) => {
     // If status is 'Shipped', you could add a 'shippedAt' timestamp if needed
 
     const updatedOrder = await order.save();
+
+    
+    // --- SEND STATUS UPDATE EMAIL ---
+    if (updatedOrder.orderStatus === 'Shipped' || updatedOrder.orderStatus === 'Delivered') {
+        try {
+            const customer = await User.findById(updatedOrder.user);
+            if (customer) {
+                 await sendEmail({
+                    email: customer.email,
+                    subject: `Your Buildora Order #${updatedOrder._id} has been ${updatedOrder.orderStatus}`,
+                    html: getOrderStatusUpdateHTML(customer, updatedOrder)
+                });
+            }
+        } catch (err) {
+            console.error("Failed to send status update email:", err);
+        }
+    }
 
     res.status(200).json({
         success: true,

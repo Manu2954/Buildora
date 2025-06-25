@@ -47,6 +47,7 @@ exports.getOrderConfirmationHTML = (user, order) => {
 
 exports.getOrderStatusUpdateHTML = (user, order) => {
     let statusMessage = '';
+    console.log(user);
     if (order.orderStatus === 'Shipped') {
         statusMessage = `Your order #${order._id} has been shipped and is on its way!`;
     } else if (order.orderStatus === 'Delivered') {

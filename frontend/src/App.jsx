@@ -26,6 +26,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Dashboard from "./pages/Dasboard";
 import SecurityPage from "./pages/SecurityPage";
+import VerifyEmail from './pages/verify-email';
 
 import Profile from "./pages/ProfilePage";
 import OrderDetailPage from './pages/OrderDetailPage'; 
@@ -69,6 +70,7 @@ function App() {
                             {/* --- Standalone Routes (No Main Layout) --- */}
                             <Route path="/login" element={<Login />} />
                             <Route path="/register" element={<Register />} />
+                            <Route path="/verify" element={<VerifyEmail />} />
 
                             {/* --- Protected Customer Routes --- */}
                             {/* This grouping ensures all these routes use the new, robust PrivateRoute */}

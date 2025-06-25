@@ -2,6 +2,8 @@ const Order = require('../models/Order');
 const Company = require('../models/Company');
 const asyncHandler = require('../middleware/async');
 const ErrorResponse = require('../utils/errorResponse');
+const { getOrderConfirmationHTML } = require('../utils/emailTemplates');
+const  sendEmail  = require('../utils/sendEmail');
 
 // @desc    Create new order
 // @route   POST /api/orders
@@ -60,6 +62,17 @@ exports.addOrderItems = asyncHandler(async (req, res, next) => {
     });
 
     const createdOrder = await order.save();
+
+    // --- SEND ORDER CONFIRMATION EMAIL ---
+    try {
+        await sendEmail({
+            email: req.user.email,
+            subject: `Buildora Order Confirmation #${createdOrder._id}`,
+            html: getOrderConfirmationHTML(req.user, createdOrder)
+        });
+    } catch (err) {
+        console.error("Failed to send order confirmation email:", err);
+    }
 
     res.status(201).json({
         success: true,
