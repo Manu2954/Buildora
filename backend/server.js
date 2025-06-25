@@ -19,6 +19,7 @@ const bulkUploadRoutes = require('./routes/bulkUploadRoutes');
 const companyRoutes = require('./routes/companyRoutes');
 const reviewRoutes = require('./routes/reviewRoutes');
 const uploadRoutes = require('./routes/uploadRoutes'); // Your new upload routes
+const paymentRoutes = require('./routes/paymentRoutes');
 
 const app = express();
 app.use(express.json());
@@ -40,6 +41,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/storefront', storefrontRoutes); 
 app.use('/api/orders', orderRoutes); 
 app.use('/api/reviews', reviewRoutes);
+app.use('/api/payment', paymentRoutes);
 
 app.use('/api/admin', adminRoutes);
 app.use('/api/admin/users', userRoutes);
