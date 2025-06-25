@@ -25,7 +25,6 @@ app.use(express.json());
 const corsOptions = {
     origin: [
         'http://localhost:3000', // For your local development
-        'https://buildora-live-demo.loca.lt' // The public URL for your FRONTEND
     ],
     credentials: true,
 };

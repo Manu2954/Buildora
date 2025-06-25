@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { useAdminAuth } from '../../context/AdminAuthContext';
-import { uploadImage } from '../../services/adminImageUploadService';
+import { uploadSingleImage } from '../../services/adminImageUploadService'; // Corrected import
 import { UploadCloud, X } from 'lucide-react';
 
-const ImageUpload = ({ onUploadSuccess, multiple = false }) => {
+const ImageUpload = ({ onUploadSuccess }) => {
     const [isUploading, setIsUploading] = useState(false);
     const [error, setError] = useState('');
     const { token } = useAdminAuth();
@@ -14,8 +14,9 @@ const ImageUpload = ({ onUploadSuccess, multiple = false }) => {
         setError('');
 
         try {
-            const uploadedUrl = await uploadImage(file, token);
-            onUploadSuccess(uploadedUrl, multiple);
+            // Corrected function call
+            const uploadedUrl = await uploadSingleImage(file, token);
+            onUploadSuccess(uploadedUrl);
         } catch (err) {
             setError(err.message || 'An error occurred during upload.');
         } finally {

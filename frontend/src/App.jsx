@@ -46,11 +46,15 @@ import AdminOrdersPage from './pages/admin/order/AdminOrdersPage';
 import AdminOrderDetailPage from './pages/admin/order/AdminOrderDetailPage';
 import BulkUploadPage from './pages/admin/products/BulkUploadPage';
 import Products from './pages/admin/products/AllProductsPage';
+import ImageLibraryPage from './pages/admin/products/ImageLibraryPage';
+import { SiteProvider } from './context/SiteContext';
+
 
 function App() {
     return (
         <CustomerAuthProvider>
             <AdminAuthProvider>
+                <SiteProvider>
                 <CartProvider>
                     <Router>
                         <Routes>
@@ -97,11 +101,13 @@ function App() {
                                 <Route path="orders/:orderId" element={<AdminOrderDetailPage />} />
                                 <Route path="bulk-upload" element={<BulkUploadPage />} />
                                 <Route path="products" element={<Products />} />
+                                <Route path="image-library" element={<ImageLibraryPage />} /> 
                             </Route>
 
                         </Routes>
                     </Router>
                 </CartProvider>
+                </SiteProvider>
             </AdminAuthProvider>
         </CustomerAuthProvider>
     );

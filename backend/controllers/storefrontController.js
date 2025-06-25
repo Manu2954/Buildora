@@ -260,22 +260,34 @@ exports.getRelatedProducts = asyncHandler(async (req, res, next) => {
     });
 });
 
+// @desc    Get all data needed for the dynamic homepage
+// @route   GET /api/storefront/homepage
+// @access  Public
 exports.getHomePageData = asyncHandler(async (req, res, next) => {
 
     // Run aggregations in parallel for better performance
     const [
         featuredCategories,
-        bestsellingProducts
+        bestsellingProducts,
+        newArrivals
     ] = await Promise.all([
-        // Get top 3 categories with the most products
+        // Get top 3 categories and an image from one of the products in that category
         Company.aggregate([
             { $match: { isActive: true } },
             { $unwind: '$products' },
-            { $match: { 'products.isActive': true } },
-            { $group: { _id: '$products.category', productCount: { $sum: 1 } } },
+            { $match: { 'products.isActive': true, 'products.images.0': { $exists: true } } },
+            { $sort: { 'products.createdAt': -1 } },
+            {
+                $group: {
+                    _id: '$products.category',
+                    productCount: { $sum: 1 },
+                    // Get the image from the first product found in this category group
+                    image: { $first: { $arrayElemAt: ['$products.images', 0] } }
+                }
+            },
             { $sort: { productCount: -1 } },
             { $limit: 3 },
-            { $project: { _id: 0, name: '$_id' } }
+            { $project: { _id: 0, name: '$_id', image: 1 } }
         ]),
         // Get top 5 best-selling products (most ordered)
         Order.aggregate([
@@ -302,24 +314,24 @@ exports.getHomePageData = asyncHandler(async (req, res, next) => {
             },
             { $unwind: '$productInfo' },
             { $replaceRoot: { newRoot: '$productInfo' } }
+        ]),
+        // Get 5 newest products
+        Company.aggregate([
+             { $match: { isActive: true } },
+             { $unwind: '$products' },
+             { $match: { 'products.isActive': true } },
+             { $sort: { 'products.createdAt': -1 } },
+             { $limit: 5 },
+             { $replaceRoot: { newRoot: '$products' } }
         ])
     ]);
     
-    // Add placeholder images for categories
-    const categoriesWithImages = featuredCategories.map((cat, index) => {
-        const images = [
-            '/images/img1.jpg', // Example image
-            '/images/img1.jpg', // Example image
-            '/images/img1.jpg', // Example image
-        ];
-        return { ...cat, image: images[index] || images[0] };
-    });
-
     res.status(200).json({
         success: true,
         data: {
-            featuredCategories: categoriesWithImages,
-            bestsellingProducts
+            featuredCategories: featuredCategories,
+            bestsellingProducts,
+            newArrivals
         }
     });
 });

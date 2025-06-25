@@ -4,8 +4,39 @@ import { getHomePageData } from '../services/storefrontService';
 import ProductCard, { ProductCardSkeleton } from '../components/ProductCard';
 import { ArrowRight, Truck, ShieldCheck, Award } from 'lucide-react';
 
+// A reusable component for the promotional cards at the top of the page
+const PromoCard = ({ title, description, imageUrl, linkTo }) => (
+    <Link to={linkTo} className="flex flex-col gap-4 group">
+        <div className="overflow-hidden rounded-xl">
+            <img 
+                src={imageUrl} 
+                alt={title} 
+                className="w-full bg-center bg-no-repeat aspect-video bg-cover transition-transform duration-500 group-hover:scale-105" 
+                onError={(e) => { e.target.src = 'https://placehold.co/600x400/e2e8f0/475569?text=Promotion'; }}
+            />
+        </div>
+        <div>
+            <p className="text-lg font-bold text-gray-900">{title}</p>
+            <p className="mt-1 text-sm text-gray-600 line-clamp-2">{description}</p>
+        </div>
+    </Link>
+);
+
+// A reusable component for the large featured category cards
+const FeaturedCategoryCard = ({ category }) => (
+    <Link to={`/products?categories=${encodeURIComponent(category.name)}`} key={category.name} className="relative block overflow-hidden rounded-xl group">
+        <img src={category.image} alt={category.name} className="object-cover w-full h-80 transition-transform duration-500 group-hover:scale-105"/>
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+        <div className="absolute bottom-0 p-8">
+            <h3 className="text-3xl font-bold text-white">{category.name}</h3>
+            <p className="max-w-md mt-1 text-gray-200">Explore a wide array of materials to enhance your projects.</p>
+        </div>
+    </Link>
+);
+
+
 const HomePage = () => {
-    const [homeData, setHomeData] = useState({ featuredCategories: [], bestsellingProducts: [] });
+    const [homeData, setHomeData] = useState({ featuredCategories: [], bestsellingProducts: [], newArrivals: [] });
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
@@ -18,103 +49,97 @@ const HomePage = () => {
         fetchData();
     }, []);
 
-    const HeroSection = () => (
-        <div className="relative pt-16 pb-32 overflow-hidden text-center bg-gray-900">
-            {/* Placeholder for a background GIF or video */}
-            <div className="absolute inset-0">
-                 <video 
-                    autoPlay 
-                    loop 
-                    muted 
-                    playsInline 
-                    className="object-cover w-full h-full opacity-30"
-                >
-                    {/* The src now points directly to the file served by the backend */}
-                    {/* Make sure your video is an .mp4 or .webm file, not .mp3 */}
-                    <source src="/videos/vid1.mp4" type="video/mp4" />
-                    Your browser does not support the video tag.
-                </video>
-            </div>
-            <div className="relative container mx-auto px-4">
-                <h1 className="text-4xl font-extrabold tracking-tight text-white sm:text-5xl md:text-6xl">
-                    Buildora
-                </h1>
-                <p className="max-w-2xl mx-auto mt-6 text-xl text-gray-300">
-                    Everything You Need. Everywhere You Build.
-                </p>
-                <div className="mt-10">
-                    <Link to="/products" className="px-8 py-3 font-semibold text-white transition-transform duration-300 bg-indigo-600 rounded-md hover:bg-indigo-700 hover:scale-105">
-                        Shop All Products
-                    </Link>
-                </div>
-            </div>
-        </div>
-    );
-    
-    const CategoryCard = ({ category }) => (
-        <Link to={`/products?categories=${category.name}`} className="relative block overflow-hidden rounded-lg shadow-lg group">
-            <img src={category.image} alt={category.name} className="object-cover w-full h-64 transition-transform duration-500 group-hover:scale-110"/>
-            <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
-            <div className="absolute bottom-0 p-6">
-                <h3 className="text-2xl font-bold text-white">{category.name}</h3>
-                <span className="inline-flex items-center mt-2 text-sm font-semibold text-white transition-all duration-300 group-hover:text-indigo-300">
-                    Explore <ArrowRight size={16} className="ml-1"/>
-                </span>
-            </div>
-        </Link>
-    );
-
     return (
         <div className="bg-white">
-            <HeroSection />
+            <main>
+                {/* Top Promotional Section - White Background */}
+                <section className="px-4 py-16 mx-auto max-w-7xl sm:px-6 lg:px-8">
+                    <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
+                        <PromoCard 
+                            title="Everything You Need. Everywhere You Build."
+                            description="Discover a comprehensive range of institutional supplies, plywood items, and interior design materials. Shop now and build with confidence."
+                            imageUrl="/images/interior.png"
+                            linkTo="/products"
+                        />
+                        <PromoCard 
+                            title="Sourcing Made Simple. Building Made Easy."
+                            description="Simplify your sourcing and streamline your building process with our curated selection of high-quality materials."
+                            imageUrl="/images/school.png"
+                            linkTo="/products"
+                        />
+                    </div>
+                </section>
 
-            {/* Featured Categories Section */}
-            <section className="py-16 bg-gray-50">
-                <div className="container px-4 mx-auto">
-                     <h2 className="mb-8 text-3xl font-bold text-center text-gray-800">Shop by Category</h2>
-                     <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
-                         {isLoading ? (
-                            Array.from({ length: 3 }).map((_, i) => <div key={i} className="h-64 bg-gray-200 rounded-lg animate-pulse"></div>)
-                         ) : (
-                            homeData.featuredCategories.map(category => (
-                                <CategoryCard key={category.name} category={category} />
-                            ))
-                         )}
-                     </div>
-                </div>
-            </section>
-            
-            {/* Value Propositions Section */}
-            <section className="py-16 bg-white">
-                 <div className="container px-4 mx-auto">
-                     <div className="grid grid-cols-1 gap-8 text-center md:grid-cols-3">
-                        <div className="p-4"><Truck size={48} className="mx-auto text-indigo-600"/> <h3 className="mt-4 text-lg font-semibold">Fast & Reliable Shipping</h3><p className="mt-1 text-gray-600">Get your materials delivered on-site, on time.</p></div>
-                        <div className="p-4"><ShieldCheck size={48} className="mx-auto text-indigo-600"/> <h3 className="mt-4 text-lg font-semibold">Secure Payments</h3><p className="mt-1 text-gray-600">Your transactions are safe with our secure payment gateway.</p></div>
-                        <div className="p-4"><Award size={48} className="mx-auto text-indigo-600"/> <h3 className="mt-4 text-lg font-semibold">Quality Guaranteed</h3><p className="mt-1 text-gray-600">We source only the best materials from trusted companies.</p></div>
-                     </div>
-                 </div>
-            </section>
+                {/* Featured Categories Section - Light Gray Background for separation */}
+                <section className="py-20 bg-gray-50">
+                    <div className="container px-4 mx-auto max-w-7xl">
+                        <h2 className="text-3xl font-bold tracking-tight text-center text-gray-900">Featured Categories</h2>
+                        <div className="grid grid-cols-1 gap-8 mt-12 md:grid-cols-2">
+                            {isLoading ? (
+                                Array.from({ length: 2 }).map((_, i) => <div key={i} className="h-80 bg-gray-200 rounded-xl animate-pulse"></div>)
+                            ) : (
+                                (homeData.featuredCategories.slice(0, 2) || []).map(category => (
+                                    <FeaturedCategoryCard key={category.name} category={category} />
+                                ))
+                            )}
+                        </div>
+                    </div>
+                </section>
 
+                {/* New Arrivals Section - White Background */}
+                <section className="py-20">
+                    <div className="container px-4 mx-auto max-w-7xl">
+                        <h2 className="text-3xl font-bold tracking-tight text-center text-gray-900">New Arrivals</h2>
+                        <div className="grid grid-cols-1 gap-6 mt-12 sm:grid-cols-2 lg:grid-cols-4">
+                            {isLoading ? (
+                                Array.from({ length: 4 }).map((_, i) => <ProductCardSkeleton key={i} />)
+                            ) : (
+                                (homeData.newArrivals || []).slice(0,4).map(product => (
+                                    <ProductCard key={product._id} product={product} />
+                                ))
+                            )}
+                        </div>
+                    </div>
+                </section>
 
-            {/* Bestsellers Section */}
-            <section className="py-16 bg-gray-50">
-                 <div className="container px-4 mx-auto">
-                    <h2 className="mb-8 text-3xl font-bold text-center text-gray-800">Proven Bestsellers</h2>
-                     <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5">
-                         {isLoading ? (
-                             Array.from({ length: 5 }).map((_, i) => <ProductCardSkeleton key={i} />)
-                         ) : (
-                             homeData.bestsellingProducts.map(product => (
-                                <ProductCard key={product._id} product={product} />
-                            ))
-                         )}
-                     </div>
-                 </div>
-            </section>
-            
-            {/* Footer Section - This can be moved to a separate component later */}
-            <footer className="py-12 text-white bg-gray-800">
+                {/* Customer Favorites / Bestsellers Section - Light Gray Background */}
+                <section className="py-20 bg-gray-50">
+                     <div className="container px-4 mx-auto max-w-7xl">
+                        <h2 className="text-3xl font-bold tracking-tight text-center text-gray-900">Customer Favorites</h2>
+                        <div className="grid grid-cols-1 gap-6 mt-12 sm:grid-cols-2 lg:grid-cols-4">
+                            {isLoading ? (
+                                Array.from({ length: 4 }).map((_, i) => <ProductCardSkeleton key={i} />)
+                            ) : (
+                                (homeData.bestsellingProducts || []).slice(0,4).map(product => (
+                                    <ProductCard key={product._id} product={product} />
+                                ))
+                            )}
+                        </div>
+                    </div>
+                </section>
+
+                {/* Newsletter Section */}
+                <section className="py-20">
+                    <div className="max-w-4xl px-6 py-16 mx-auto text-center bg-indigo-700 rounded-2xl">
+                        <h2 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">Join Our Community</h2>
+                        <p className="max-w-xl mx-auto mt-4 text-lg text-indigo-200">Stay updated on the latest products, exclusive offers, and building tips. Sign up for our newsletter today.</p>
+                        <form className="flex justify-center max-w-sm mx-auto mt-8">
+                            <input type="email" placeholder="Enter your email" className="w-full px-4 py-3 border-gray-300 rounded-l-md focus:ring-indigo-500"/>
+                            <button type="submit" className="px-6 py-3 font-semibold text-white bg-indigo-500 rounded-r-md hover:bg-indigo-400">Subscribe</button>
+                        </form>
+                    </div>
+                </section>
+            </main>
+
+            {/* Footer Section */}
+            <footer className="py-20 text-gray-500 bg-gray-100 border-t">
                 <div className="container px-4 mx-auto text-center">
+                    <div className="flex flex-wrap items-center justify-center gap-6 mb-8">
+                        <Link to="/about" className="text-sm hover:text-indigo-600">About Us</Link>
+                        <Link to="/contact" className="text-sm hover:text-indigo-600">Contact</Link>
+                        <Link to="/faq" className="text-sm hover:text-indigo-600">FAQ</Link>
+                        <Link to="/privacy" className="text-sm hover:text-indigo-600">Privacy Policy</Link>
+                    </div>
                     <p>&copy; {new Date().getFullYear()} Buildora. All Rights Reserved.</p>
                 </div>
             </footer>
