@@ -124,7 +124,7 @@ const OrdersPage = () => {
                                 </div>
                             </div>
                             <Link 
-                                to={`/order/${order._id}`}
+                                to={`/account/orders/${order._id}`}
                                 className="flex items-center justify-center px-4 py-2 text-sm font-semibold text-white bg-indigo-600 rounded-md sm:ml-4 whitespace-nowrap hover:bg-indigo-700"
                             >
                                 View Order <ChevronRight size={16} className="ml-1"/>
