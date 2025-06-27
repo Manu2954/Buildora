@@ -60,7 +60,7 @@
 
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { LayoutDashboard, Users, Building, ShoppingBag, Upload, Image } from 'lucide-react';
+import { LayoutDashboard, Users, Building, ShoppingBag, Upload, Image, Megaphone } from 'lucide-react';
 
 const AdminSidebar = ({ isOpen, toggleSidebar }) => {
     const commonLinkClasses = "flex items-center px-4 py-3 text-gray-700 rounded-lg hover:bg-indigo-100 hover:text-indigo-700 transition-colors duration-150";
@@ -73,7 +73,9 @@ const AdminSidebar = ({ isOpen, toggleSidebar }) => {
           { to: "/admin/bulk-upload", icon: <Upload size={20} />, label: "Bulk Upload" },
         { to: "/admin/users", icon: <Users size={20} />, label: "Users" },
         { to: "/admin/image-library", icon: <Image size={20} />, label: "Image Library" }, // New Link
-        { to: "/admin/orders", icon: <ShoppingBag size={20} />, label: "Orders" }
+        { to: "/admin/orders", icon: <ShoppingBag size={20} />, label: "Orders" },
+        { to: "/admin/advertisements", icon: <Megaphone size={20} />, label: "Ads Management" }, // New Link
+
         
         // { to: "/admin/orders", icon: <Briefcase size={20} />, label: "Orders" },
         // { to: "/admin/settings", icon: <Settings size={20} />, label: "Settings" },

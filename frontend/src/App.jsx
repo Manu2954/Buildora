@@ -49,6 +49,7 @@ import BulkUploadPage from './pages/admin/products/BulkUploadPage';
 import Products from './pages/admin/products/AllProductsPage';
 import ImageLibraryPage from './pages/admin/products/ImageLibraryPage';
 import { SiteProvider } from './context/SiteContext';
+import AdManagementPage from './pages/admin/AdManagementPage';
 
 
 function App() {
@@ -104,6 +105,8 @@ function App() {
                                 <Route path="bulk-upload" element={<BulkUploadPage />} />
                                 <Route path="products" element={<Products />} />
                                 <Route path="image-library" element={<ImageLibraryPage />} /> 
+                                <Route path="advertisements" element={<AdManagementPage />} /> {/* New Route */}
+
                             </Route>
 
                         </Routes>

@@ -2,135 +2,153 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { getHomePageData } from '../services/storefrontService';
 import ProductCard, { ProductCardSkeleton } from '../components/ProductCard';
-import { ArrowRight, Truck, ShieldCheck, Award } from 'lucide-react';
-
-// A reusable component for the promotional cards at the top of the page
-const PromoCard = ({ title, description, imageUrl, linkTo }) => (
-    <Link to={linkTo} className="flex flex-col gap-4 group">
-        <div className="overflow-hidden rounded-xl">
-            <img 
-                src={imageUrl} 
-                alt={title} 
-                className="w-full bg-center bg-no-repeat aspect-video bg-cover transition-transform duration-500 group-hover:scale-105" 
-                onError={(e) => { e.target.src = 'https://placehold.co/600x400/e2e8f0/475569?text=Promotion'; }}
-            />
-        </div>
-        <div>
-            <p className="text-lg font-bold text-gray-900">{title}</p>
-            <p className="mt-1 text-sm text-gray-600 line-clamp-2">{description}</p>
-        </div>
-    </Link>
-);
-
-// A reusable component for the large featured category cards
-const FeaturedCategoryCard = ({ category }) => (
-    <Link to={`/products?categories=${encodeURIComponent(category.name)}`} key={category.name} className="relative block overflow-hidden rounded-xl group">
-        <img src={category.image} alt={category.name} className="object-cover w-full h-80 transition-transform duration-500 group-hover:scale-105"/>
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
-        <div className="absolute bottom-0 p-8">
-            <h3 className="text-3xl font-bold text-white">{category.name}</h3>
-            <p className="max-w-md mt-1 text-gray-200">Explore a wide array of materials to enhance your projects.</p>
-        </div>
-    </Link>
-);
-
+import Slider from "react-slick";
+import "slick-carousel/slick/slick.css"; 
+import "slick-carousel/slick/slick-theme.css";
 
 const HomePage = () => {
-    const [homeData, setHomeData] = useState({ featuredCategories: [], bestsellingProducts: [], newArrivals: [] });
+     const [homeData, setHomeData] = useState({ featuredCategories: [], bestsellingProducts: [], newArrivals: [], activeAdvertisements: [] });
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         const fetchData = async () => {
             setIsLoading(true);
             const data = await getHomePageData();
-            setHomeData(data);
+            setHomeData(data || { featuredCategories: [], bestsellingProducts: [], newArrivals: [], activeAdvertisements: [] });
             setIsLoading(false);
         };
         fetchData();
     }, []);
 
+    const adSliderSettings = {
+        dots: true,
+        infinite: true,
+        speed: 500,
+        slidesToShow: 1,
+        slidesToScroll: 1,
+        autoplay: true,
+        autoplaySpeed: 4000,
+        pauseOnHover: true,
+        arrows: false,
+    };
+
+
+    const SectionHeader = ({ title }) => (
+        <h2 className="text-3xl font-bold tracking-tight text-center text-gray-900">{title}</h2>
+    );
+
     return (
         <div className="bg-white">
             <main>
-                {/* Top Promotional Section - White Background */}
-                <section className="px-4 py-16 mx-auto max-w-7xl sm:px-6 lg:px-8">
-                    <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
-                        <PromoCard 
-                            title="Everything You Need. Everywhere You Build."
-                            description="Discover a comprehensive range of institutional supplies, plywood items, and interior design materials. Shop now and build with confidence."
-                            imageUrl="/images/interior.png"
-                            linkTo="/products"
-                        />
-                        <PromoCard 
-                            title="Sourcing Made Simple. Building Made Easy."
-                            description="Simplify your sourcing and streamline your building process with our curated selection of high-quality materials."
-                            imageUrl="/images/school.png"
-                            linkTo="/products"
-                        />
+                {/* --- Hero Section --- */}
+            <section className="bg-[#333132] text-white">
+                    <div className="container grid grid-cols-1 gap-8 px-4 py-20 mx-auto md:grid-cols-2 md:items-center">
+                        <div className="text-center md:text-left">
+                            <h1 className="text-4xl font-bold tracking-tight sm:text-5xl" style={{fontFamily: "'The Seasons', serif"}}>
+                                Modern Building & Design Studio
+                            </h1>
+                            <p className="max-w-xl mt-6 text-lg text-gray-300">
+                                Discover a comprehensive range of institutional supplies, plywood items, and interior design materials. Shop now and build with confidence.
+                            </p>
+                            <div className="flex flex-wrap justify-center gap-4 mt-8 md:justify-start">
+                                <Link to="/products" className="px-6 py-3 font-semibold text-white bg-indigo-600 rounded-full hover:bg-indigo-700">Shop Now</Link>
+                                <Link to="/products" className="px-6 py-3 font-semibold text-white border-2 border-gray-600 rounded-full hover:bg-gray-700">Explore</Link>
+                            </div>
+                        </div>
+                        <div className="flex justify-center">
+                            {/* --- THIS SECTION IS NOW A DYNAMIC SLIDER --- */}
+                            <div className="w-full max-w-lg rounded-lg shadow-2xl overflow-hidden">
+                                {isLoading ? (
+                                     <div className="w-full bg-gray-700 aspect-video animate-pulse"></div>
+                                ) : homeData.activeAdvertisements && homeData.activeAdvertisements.length > 0 ? (
+                                    <Slider {...adSliderSettings}>
+                                        {homeData.activeAdvertisements.map(ad => (
+                                            <div key={ad._id}>
+                                                <Link to={ad.linkTo} className="block">
+                                                    <img 
+                                                        src={ad.imageUrl} 
+                                                        alt={ad.name}
+                                                        className="object-cover w-full"
+                                                    />
+                                                </Link>
+                                            </div>
+                                        ))}
+                                    </Slider>
+                                ) : (
+                                    // Fallback to a static image if no active ads
+                                    <img 
+                                        src="/images/img1.jpg" 
+                                        alt="Modern interior with green sofa"
+                                        className="object-cover w-full"
+                                    />
+                                )}
+                            </div>
+                        </div>
                     </div>
                 </section>
-
-                {/* Featured Categories Section - Light Gray Background for separation */}
-                <section className="py-20 bg-gray-50">
-                    <div className="container px-4 mx-auto max-w-7xl">
-                        <h2 className="text-3xl font-bold tracking-tight text-center text-gray-900">Featured Categories</h2>
-                        <div className="grid grid-cols-1 gap-8 mt-12 md:grid-cols-2">
-                            {isLoading ? (
-                                Array.from({ length: 2 }).map((_, i) => <div key={i} className="h-80 bg-gray-200 rounded-xl animate-pulse"></div>)
-                            ) : (
-                                (homeData.featuredCategories.slice(0, 2) || []).map(category => (
-                                    <FeaturedCategoryCard key={category.name} category={category} />
-                                ))
-                            )}
+                
+                {/* --- Featured Products Section --- */}
+                <section className="py-20">
+                    <div className="container px-4 mx-auto">
+                        <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
+                             <div className="md:col-span-1">
+                                <h2 className="text-3xl font-bold text-gray-900">Crafted with excellent material.</h2>
+                                <p className="mt-4 text-gray-600">Discover durable and versatile items for all your construction and design needs.</p>
+                                <Link to="/products" className="inline-block px-6 py-3 mt-6 font-semibold text-white bg-gray-800 rounded-full hover:bg-gray-900">Explore</Link>
+                            </div>
+                            <div className="grid grid-cols-1 gap-8 md:col-span-2 sm:grid-cols-2 lg:grid-cols-3">
+                                {isLoading ? (
+                                    Array.from({ length: 3 }).map((_, i) => <ProductCardSkeleton key={i} />)
+                                ) : (
+                                    (homeData.bestsellingProducts || []).slice(0, 3).map(product => (
+                                        <ProductCard key={product._id} product={product} />
+                                    ))
+                                )}
+                            </div>
                         </div>
                     </div>
                 </section>
 
-                {/* New Arrivals Section - White Background */}
+                {/* You can add more sections here following the same pattern */}
+                {/* --- NEW: Featured Categories Section --- */}
+                <section className="py-20 bg-gray-50">
+                    <div className="container px-4 mx-auto">
+                        <SectionHeader title="Shop by Category" />
+                        <div className="grid grid-cols-1 gap-8 mt-12 sm:grid-cols-2 lg:grid-cols-3">
+                             {isLoading ? (
+                                Array.from({ length: 3 }).map((_, i) => <div className="h-64 bg-gray-200 rounded-lg animate-pulse"></div>)
+                             ) : (
+                                (homeData.featuredCategories || []).map(category => (
+                                    <Link key={category.name} to={`/products?categories=${encodeURIComponent(category.name)}`} className="relative block overflow-hidden rounded-lg shadow-lg group">
+                                        <img src={category.image} alt={category.name} className="object-cover w-full h-64 transition-transform duration-500 group-hover:scale-110"/>
+                                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                                        <div className="absolute bottom-0 p-6">
+                                            <h3 className="text-2xl font-bold text-white">{category.name}</h3>
+                                        </div>
+                                    </Link>
+                                ))
+                             )}
+                        </div>
+                    </div>
+                </section>
+
+                {/* --- NEW: New Arrivals Section --- */}
                 <section className="py-20">
-                    <div className="container px-4 mx-auto max-w-7xl">
-                        <h2 className="text-3xl font-bold tracking-tight text-center text-gray-900">New Arrivals</h2>
+                    <div className="container px-4 mx-auto">
+                        <SectionHeader title="New Arrivals" />
                         <div className="grid grid-cols-1 gap-6 mt-12 sm:grid-cols-2 lg:grid-cols-4">
-                            {isLoading ? (
-                                Array.from({ length: 4 }).map((_, i) => <ProductCardSkeleton key={i} />)
-                            ) : (
-                                (homeData.newArrivals || []).slice(0,4).map(product => (
+                             {isLoading ? (
+                                 Array.from({ length: 4 }).map((_, i) => <ProductCardSkeleton key={i} />)
+                             ) : (
+                                 (homeData.newArrivals || []).slice(0,4).map(product => (
                                     <ProductCard key={product._id} product={product} />
                                 ))
-                            )}
+                             )}
                         </div>
                     </div>
-                </section>
-
-                {/* Customer Favorites / Bestsellers Section - Light Gray Background */}
-                <section className="py-20 bg-gray-50">
-                     <div className="container px-4 mx-auto max-w-7xl">
-                        <h2 className="text-3xl font-bold tracking-tight text-center text-gray-900">Customer Favorites</h2>
-                        <div className="grid grid-cols-1 gap-6 mt-12 sm:grid-cols-2 lg:grid-cols-4">
-                            {isLoading ? (
-                                Array.from({ length: 4 }).map((_, i) => <ProductCardSkeleton key={i} />)
-                            ) : (
-                                (homeData.bestsellingProducts || []).slice(0,4).map(product => (
-                                    <ProductCard key={product._id} product={product} />
-                                ))
-                            )}
-                        </div>
-                    </div>
-                </section>
-
-                {/* Newsletter Section */}
-                <section className="py-20">
-                    <div className="max-w-4xl px-6 py-16 mx-auto text-center bg-indigo-700 rounded-2xl">
-                        <h2 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">Join Our Community</h2>
-                        <p className="max-w-xl mx-auto mt-4 text-lg text-indigo-200">Stay updated on the latest products, exclusive offers, and building tips. Sign up for our newsletter today.</p>
-                        <form className="flex justify-center max-w-sm mx-auto mt-8">
-                            <input type="email" placeholder="Enter your email" className="w-full px-4 py-3 border-gray-300 rounded-l-md focus:ring-indigo-500"/>
-                            <button type="submit" className="px-6 py-3 font-semibold text-white bg-indigo-500 rounded-r-md hover:bg-indigo-400">Subscribe</button>
-                        </form>
-                    </div>
-                </section>
+                </section>                
             </main>
-
+            
             {/* Footer Section */}
             <footer className="py-20 text-gray-500 bg-gray-100 border-t">
                 <div className="container px-4 mx-auto text-center">

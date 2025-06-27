@@ -20,6 +20,8 @@ const companyRoutes = require('./routes/companyRoutes');
 const reviewRoutes = require('./routes/reviewRoutes');
 const uploadRoutes = require('./routes/uploadRoutes'); // Your new upload routes
 const paymentRoutes = require('./routes/paymentRoutes');
+const advertisementRoutes = require('./routes/advertisementRoutes'); 
+// const companyRoutes = require('./routes/companyRoutes');
 
 const app = express();
 app.use(express.json());
@@ -48,9 +50,10 @@ app.use('/api/admin/users', userRoutes);
 app.use('/api/admin/dashboard', dashboardRoutes); 
 app.use('/api/admin/orders', adminOrderRoutes);
 app.use('/api/logs/search', searchLogRoutes);
-companyRoutes.use('/:companyId/products/bulk-upload', bulkUploadRoutes);
+// companyRoutes.use('/:companyId/products/bulk-upload', bulkUploadRoutes);
+app.use('/api/admin/companies', companyRoutes);
 app.use('/api/admin/upload', uploadRoutes); 
-
+app.use('/api/admin/advertisements', advertisementRoutes);
 
 const PORT = process.env.PORT || 5000;
 

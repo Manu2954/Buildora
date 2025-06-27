@@ -3,7 +3,7 @@ const Order = require('../models/Order');
 const asyncHandler = require('../middleware/async');
 const ErrorResponse = require('../utils/errorResponse');
 const mongoose = require('mongoose');
-
+const Advertisement = require('../models/Advertisement');
 // @desc    Get all data needed for filter sidebar (categories, companies)
 // @route   GET /api/storefront/filters
 // @access  Public
@@ -269,9 +269,11 @@ exports.getHomePageData = asyncHandler(async (req, res, next) => {
     const [
         featuredCategories,
         bestsellingProducts,
-        newArrivals
+        newArrivals,
+        activeAdvertisements
     ] = await Promise.all([
         // Get top 3 categories and an image from one of the products in that category
+        // Advertisement.findOne({ isActive: true }),
         Company.aggregate([
             { $match: { isActive: true } },
             { $unwind: '$products' },
@@ -323,7 +325,9 @@ exports.getHomePageData = asyncHandler(async (req, res, next) => {
              { $sort: { 'products.createdAt': -1 } },
              { $limit: 5 },
              { $replaceRoot: { newRoot: '$products' } }
-        ])
+        ]),
+        Advertisement.find({ isActive: true })
+
     ]);
     
     res.status(200).json({
@@ -331,7 +335,8 @@ exports.getHomePageData = asyncHandler(async (req, res, next) => {
         data: {
             featuredCategories: featuredCategories,
             bestsellingProducts,
-            newArrivals
+            newArrivals,
+            activeAdvertisements
         }
     });
 });

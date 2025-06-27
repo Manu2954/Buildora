@@ -16,6 +16,9 @@ const { adminAuth } = require('../middleware/adminAuth');
 // All routes in this file are adminAuthed and require an 'admin' role.
 router.use(adminAuth);
 // router.use(authorize('admin', 'superadmin'));
+const bulkUploadRoutes = require('./bulkUploadRoutes');
+router.use('/:companyId/products/bulk-upload', bulkUploadRoutes);
+
 
 // Route for getting all companies and creating a new one
 router.route('/')
