@@ -25,6 +25,7 @@ app.use(express.json());
 const corsOptions = {
     origin: [
         'http://localhost:3000', // For your local development
+        'https://www.buildoraenterprise.com'
     ],
     credentials: true,
 };
