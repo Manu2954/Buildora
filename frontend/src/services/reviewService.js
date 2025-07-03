@@ -1,6 +1,6 @@
 // This service handles API calls for creating product reviews.
 
-const API_BASE_URL = '/api/reviews';
+const API_BASE_URL = process.env.REACT_APP_API_URL ? `${process.env.REACT_APP_API_URL}/api/reviews` : '/api/reviews';
 
 // Reusable helper for authenticated API requests
 async function fetchProtectedApi(endpoint, options = {}) {

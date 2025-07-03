@@ -1,6 +1,6 @@
 // This service handles API calls for the admin to manage orders
 
-const API_BASE_URL = `${process.env.REACT_APP_API_URL}/api/admin/orders`;
+const API_BASE_URL = process.env.REACT_APP_API_URL ? `${process.env.REACT_APP_API_URL}/api/admin/orders` : '/api/admin/orders';
 
 // Reusable helper for authenticated admin API requests
 async function fetchAdminApi(endpoint, options = {}) {

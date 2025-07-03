@@ -1,6 +1,6 @@
 // This service will interact with the /api/admin/dashboard endpoints
 
-const API_BASE_URL = '/api/admin/dashboard';
+const API_BASE_URL = process.env.REACT_APP_API_URL ? `${process.env.REACT_APP_API_URL}/api/admin/dashboard` : '/api/admin/dashboard';
 
 // Reusable helper function for API requests
 async function fetchAdminApi(endpoint, options = {}) {

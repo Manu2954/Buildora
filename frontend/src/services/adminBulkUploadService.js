@@ -1,6 +1,6 @@
 // This service handles the bulk product upload API call.
 
-const API_BASE_URL = '/api/admin/companies';
+const API_BASE_URL = process.env.REACT_APP_API_URL ? `${process.env.REACT_APP_API_URL}/api/admin/companies` : '/api/admin/companies';
 
 // This helper is different from others as it sends multipart/form-data
 // instead of application/json.

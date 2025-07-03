@@ -1,4 +1,4 @@
-const API_BASE_URL = `${process.env.REACT_APP_API_URL}/api/admin`; 
+const API_BASE_URL = process.env.REACT_APP_API_URL ? `${process.env.REACT_APP_API_URL}/api/admin` : '/api/admin';
 
 // Helper function for API requests
 async function fetchApi(endpoint, options = {}) {
