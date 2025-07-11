@@ -31,11 +31,11 @@ const ProductCard = ({ product }) => {
     );
 };
 
-export const ProductCardSkeleton = () => (
-    <div className="flex flex-col animate-pulse">
-        <div className="w-full bg-gray-200 rounded-lg aspect-square"></div>
-        <div className="w-3/4 h-5 mx-auto mt-4 bg-gray-200 rounded"></div>
-        <div className="w-1/2 h-6 mx-auto mt-2 bg-gray-200 rounded"></div>
+export const ProductCardSkeleton = () => {
+        // <div className="flex flex-col animate-pulse">
+    //     <div className="w-full bg-gray-200 rounded-lg aspect-square"></div>
+    //     <div className="w-3/4 h-5 mx-auto mt-4 bg-gray-200 rounded"></div>
+    //     <div className="w-1/2 h-6 mx-auto mt-2 bg-gray-200 rounded"></div>
 
     const placeholderImage = `https://placehold.co/600x400/1a1a1a/667eea?text=${encodeURIComponent(product.name)}`;
 
@@ -138,7 +138,7 @@ export const ProductCardSkeleton = () => (
         </div>
     );
 };
-
+{/* 
 export const ProductCardSkeleton = () => ( 
     <div className="glass-card overflow-hidden animate-pulse">
         <div className="w-full h-48 sm:h-56 bg-gradient-to-br from-gray-800 to-gray-700 rounded-t-2xl"></div>
@@ -154,6 +154,6 @@ export const ProductCardSkeleton = () => (
         </div>
 
     </div>
-);
+); */}
 
 export default ProductCard;
