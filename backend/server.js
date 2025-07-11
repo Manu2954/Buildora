@@ -20,6 +20,7 @@ const companyRoutes = require('./routes/companyRoutes');
 const reviewRoutes = require('./routes/reviewRoutes');
 const uploadRoutes = require('./routes/uploadRoutes'); // Your new upload routes
 const paymentRoutes = require('./routes/paymentRoutes');
+
 const advertisementRoutes = require('./routes/advertisementRoutes'); 
 // const companyRoutes = require('./routes/companyRoutes');
 
@@ -28,6 +29,7 @@ app.use(express.json());
 const corsOptions = {
     origin: [
         'http://localhost:3000', // For your local development
+        'https://www.buildoraenterprise.com'
     ],
     credentials: true,
 };

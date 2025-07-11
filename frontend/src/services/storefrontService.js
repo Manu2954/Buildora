@@ -1,7 +1,7 @@
 // This service handles all public API calls for the customer storefront.
 
-const API_BASE_URL = `${process.env.REACT_APP_API_URL}/api/storefront`;
-console.log(API_BASE_URL)
+const API_BASE_URL = process.env.REACT_APP_API_URL ? `${process.env.REACT_APP_API_URL}/api/storefront` : '/api/storefront';
+
 async function fetchPublicApi(endpoint) {
     try {
         const response = await fetch(`${API_BASE_URL}${endpoint}`);
@@ -36,7 +36,6 @@ export const getProducts = async (params = {}) => {
 export const getFilterOptions = async () => {
     try {
         const data = await fetchPublicApi(`/filters`);
-        console.log(data)
         return data.data; // Return the nested data object { categories: [], companies: [] }
     } catch (error) {
         console.error('Failed to fetch filter options:', error);
@@ -62,7 +61,8 @@ export const logSearchTerm = async (term) => {
     if (!term || term.trim() === '') return;
     try {
         // This is a "fire and forget" request, we don't need to wait for the response
-        fetch('/api/logs/search', {
+        const logUrl = process.env.REACT_APP_API_URL ? `${process.env.REACT_APP_API_URL}/api/logs/search` : '/api/logs/search';
+        fetch(logUrl, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ term }),

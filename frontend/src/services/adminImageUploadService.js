@@ -1,6 +1,6 @@
 // This service handles uploading files to your self-hosted backend.
 
-const API_BASE_URL = '/api/admin/upload';
+const API_BASE_URL = process.env.REACT_APP_API_URL ? `${process.env.REACT_APP_API_URL}/api/admin/upload` : '/api/admin/upload';
 
 // This helper is for multipart/form-data requests
 async function uploadFilesApi(endpoint, formData, token) {
@@ -42,7 +42,7 @@ export const uploadSingleImage = async (file, token) => {
     try {
         const data = await uploadFilesApi('/single', formData, token);
         // The backend returns the relative path, e.g., /uploads/images/file-123.jpg
-        const backendUrl = window.location.origin.includes('localhost') ? 'http://localhost:5000' : '';
+        const backendUrl = process.env.REACT_APP_API_URL || (window.location.origin.includes('localhost') ? 'http://localhost:5000' : '');
         // Return a full, accessible URL
         return `${backendUrl}${data.data}`;
     } catch (error) {
@@ -62,7 +62,7 @@ export const uploadMultipleImages = async (files, token) => {
     try {
         const data = await uploadFilesApi('/multiple', formData, token);
         // The backend returns an array of relative paths
-        const backendUrl = window.location.origin.includes('localhost') ? 'http://localhost:5000' : '';
+        const backendUrl = process.env.REACT_APP_API_URL || (window.location.origin.includes('localhost') ? 'http://localhost:5000' : '');
         // Return an array of full, accessible URLs
         return data.data.map(path => `${backendUrl}${path}`);
     } catch (error) {

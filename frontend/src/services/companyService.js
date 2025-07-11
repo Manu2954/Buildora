@@ -1,6 +1,6 @@
 // This service will interact with the /api/admin/companies endpoints
 
-const API_BASE_URL = `${process.env.REACT_APP_API_URL}/api/admin`;
+const API_BASE_URL = process.env.REACT_APP_API_URL ? `${process.env.REACT_APP_API_URL}/api/admin` : '/api/admin';
 
 // Reusable helper function for API requests, similar to adminAuthService
 // Ensure you have a mechanism to get the admin token (e.g., from AdminAuthContext or localStorage)
