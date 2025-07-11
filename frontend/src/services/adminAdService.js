@@ -1,6 +1,6 @@
 // This service handles API calls for the admin to manage advertisements
 
-const API_BASE_URL = '/api/admin/advertisements';
+const API_BASE_URL = process.env.REACT_APP_API_URL ? `${process.env.REACT_APP_API_URL}/api/admin/advertisements` : '/api/admin/advertisements';
 
 async function fetchAdminApi(endpoint, options = {}) {
     const { token, ...restOptions } = options;
