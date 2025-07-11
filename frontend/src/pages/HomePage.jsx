@@ -164,7 +164,7 @@ const HomePage = () => {
         <div className="bg-white">
             <main>
                 {/* --- Hero Section --- */}
-            <section className="bg-[#333132] text-white">
+                <section className="bg-[#333132] text-white">
                     <div className="container grid grid-cols-1 gap-8 px-4 py-20 mx-auto md:grid-cols-2 md:items-center">
                         <div className="text-center md:text-left">
                             <h1 className="text-4xl font-bold tracking-tight sm:text-5xl" style={{fontFamily: "'The Seasons', serif"}}>
@@ -228,9 +228,9 @@ const HomePage = () => {
                                     ))
                                 )}
                             </div>
-                        </div>
-
-        <div className="min-h-screen">
+                        </div></div></section>
+ ̰
+            <div className="min-h-screen">
             {/* Hero Section */}
             <HeroSection />
             
@@ -351,8 +351,8 @@ const HomePage = () => {
                                     </Link>
                                 ))
                              )}
-                        </div>
-
+                        </div></div>
+</section>
             {/* Customer Favorites */}
             <Section>
                 <div className="text-center mb-16 fade-in">
@@ -377,34 +377,7 @@ const HomePage = () => {
                     )}
                 </div>
             </Section>
-
-
-                {/* --- NEW: New Arrivals Section --- */}
-                <section className="py-20">
-                    <div className="container px-4 mx-auto">
-                        <SectionHeader title="New Arrivals" />
-                        <div className="grid grid-cols-1 gap-6 mt-12 sm:grid-cols-2 lg:grid-cols-4">
-                             {isLoading ? (
-                                 Array.from({ length: 4 }).map((_, i) => <ProductCardSkeleton key={i} />)
-                             ) : (
-                                 (homeData.newArrivals || []).slice(0,4).map(product => (
-                                    <ProductCard key={product._id} product={product} />
-                                ))
-                             )}
-                        </div>
-                    </div>
-                </section>                
-            </main>
-            
-            {/* Footer Section */}
-            <footer className="py-20 text-gray-500 bg-gray-100 border-t">
-                <div className="container px-4 mx-auto text-center">
-                    <div className="flex flex-wrap items-center justify-center gap-6 mb-8">
-                        <Link to="/about" className="text-sm hover:text-indigo-600">About Us</Link>
-                        <Link to="/contact" className="text-sm hover:text-indigo-600">Contact</Link>
-                        <Link to="/faq" className="text-sm hover:text-indigo-600">FAQ</Link>
-                        <Link to="/privacy" className="text-sm hover:text-indigo-600">Privacy Policy</Link>
-
+      
             {/* Newsletter Section */}
             <Section className="bg-gradient-to-r from-blue-900/20 to-purple-900/20">
                 <div className="glass-card p-12 text-center rounded-3xl">
@@ -487,6 +460,8 @@ const HomePage = () => {
                     </div>
                 </div>
             </footer>
+        </div>
+        </main>
         </div>
     );
 };
