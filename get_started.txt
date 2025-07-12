@@ -1,0 +1,140 @@
+Buildora - Getting Started Guide
+This guide provides step-by-step instructions for setting up and running the Buildora project on a local development machine.
+
+1. Prerequisites
+Before you begin, ensure you have the following software installed on your system:
+
+Node.js: (v14 or higher) - Includes npm (Node Package Manager).
+
+MongoDB: A running instance of MongoDB, either locally or a cloud-based instance (like MongoDB Atlas). You will need the connection string.
+
+Git: For cloning the project repository.
+
+2. Project Setup
+First, clone the project repository to your local machine.
+
+git clone <your_project_repository_url>
+cd buildora
+
+The project is divided into two main folders: frontend and backend. You will need to run them in separate terminal windows.
+
+3. Backend Setup
+The backend is a Node.js/Express server that connects to the MongoDB database and serves the API.
+
+Navigate to the Backend Directory:
+
+cd backend
+
+Install Dependencies:
+Run the following command to install all the necessary npm packages for the server:
+
+npm install
+
+Create the Environment File (.env):
+
+In the root of the backend folder, create a new file named .env.
+
+This file will store all your secret keys and configuration variables. Copy the following content into your .env file and replace the placeholder values with your actual credentials.
+
+# Server Configuration
+NODE_ENV=development
+PORT=5000
+
+# MongoDB Connection String
+MONGO_URI=your_mongodb_connection_string_goes_here
+
+# JSON Web Token Secrets (use strong, random strings)
+JWT_ACCESS_SECRET=your_super_secret_access_key
+JWT_COOKIE_EXPIRE=30
+
+Start the Backend Server:
+Run the following command to start the server. It will automatically restart when you make changes to the code.
+
+npm run dev
+
+You should see a confirmation message in your terminal:
+Server running in development mode on port 5000
+MongoDB Connected...
+
+4. Frontend Setup
+The frontend is a React application that provides the user interface for both customers and administrators.
+
+Open a New Terminal: Keep your backend server running in its own terminal. Open a new, separate terminal window.
+
+Navigate to the Frontend Directory:
+
+cd frontend
+
+Install Dependencies:
+Run the following command to install all the necessary npm packages for the React app:
+
+npm install
+
+Set up the API Proxy:
+
+This is a crucial step for local development. It tells the React development server to send all API requests to your backend server running on port 5000.
+
+Open the package.json file in the frontend directory and add the following line:
+
+"proxy": "http://localhost:5000"
+
+Start the Frontend Application:
+Run the following command to start the React development server:
+
+npm start
+
+Your default web browser should automatically open to http://localhost:3000, where you will see the Buildora application running.
+
+You now have the complete Buildora application running locally. The frontend at localhost:3000 is communicating with the backend API at localhost:5000.
+
+5. Optional: Public Demo with localtunnel
+If you need to share a live demo of your locally running application with investors or team members, you can use localtunnel.
+
+Install Localtunnel:
+In a new terminal, install the package globally:
+
+npm install -g localtunnel
+
+Create Frontend .env file:
+This step tells your frontend app what the public backend URL will be.
+
+In your frontend directory, create a .env file.
+
+Add the following line. We'll use a custom subdomain to get a predictable URL.
+
+REACT_APP_API_URL=https://buildora-api-demo.loca.lt
+
+Update Frontend Service Files:
+You must update all of your service files (e.g., storefrontService.js, authService.js) to use this new environment variable. Change the API_BASE_URL line in each service file to look like this:
+
+const API_BASE_URL = process.env.REACT_APP_API_URL ? `${process.env.REACT_APP_API_URL}/api/storefront` : '/api/storefront'; 
+// (Ensure the path like '/api/storefront' matches the specific service)
+
+Configure Backend CORS:
+This step tells your backend to trust your new public frontend URL.
+
+Install cors in your backend: npm install cors.
+
+In your backend/server.js, add the following configuration:
+
+const cors = require('cors');
+const corsOptions = {
+    origin: [
+        'http://localhost:3000',
+        'https://buildora-live-demo.loca.lt' // Your public frontend URL
+    ],
+    credentials: true,
+};
+app.use(cors(corsOptions));
+
+Run Tunnels and Restart Servers:
+
+Restart Both Servers: After making the code changes, stop and restart both your frontend and backend servers.
+
+Run Tunnels: Open two new terminals and run these commands:
+
+Backend Tunnel: lt --port 5000 --subdomain buildora-api-demo
+
+Frontend Tunnel: lt --port 3000 --subdomain buildora-live-demo
+
+Test: You can now access your live demo at https://buildora-live-demo.loca.lt.
