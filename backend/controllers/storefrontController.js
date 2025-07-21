@@ -114,52 +114,110 @@ exports.getAllProducts = asyncHandler(async (req, res, next) => {
 
 // @desc    Get a single product by its ID
 // @route   GET /api/storefront/products/:productId
-// @access  Public
+// // @access  Public
+// exports.getProductById = asyncHandler(async (req, res, next) => {
+//     const { productId } = req.params;
+
+//     if (!mongoose.Types.ObjectId.isValid(productId)) {
+//         return next(new ErrorResponse('Invalid product ID format', 400));
+//     }
+
+//     // Use a more robust aggregation pipeline to find the exact product
+//     const aggregationPipeline = [
+//         // 1. Unwind the products array to treat each product as a separate document
+//         { $unwind: '$products' },
+        
+//         // 2. Match the exact product by its ID
+//         { $match: { 'products._id': new mongoose.Types.ObjectId(productId) } },
+        
+//         // 3. Project the fields into the desired shape, adding company info
+//         {
+//             $project: {
+//                 _id: '$products._id',
+//                 name: '$products.name',
+//                 description: '$products.description',
+//                 sku: '$products.sku',
+//                 category: '$products.category',
+//                 pricing: '$products.pricing',
+//                 stock: '$products.stock',
+//                 variants: '$products.variants',
+//                 images: '$products.images',
+//                 attributes: '$products.attributes',
+//                 dimensions: '$products.dimensions',
+//                 weight: '$products.weight',
+//                 isActive: '$products.isActive',
+//                 createdAt: '$products.createdAt',
+//                 companyId: '$_id',
+//                 companyName: '$name'
+//             }
+//         }
+//     ];
+
+//     const results = await Company.aggregate(aggregationPipeline);
+
+//     if (!results || results.length === 0) {
+//         return next(new ErrorResponse(`Product not found with id of ${productId}`, 404));
+//     }
+
+//     // The result should be an array with a single product
+//     const product = results[0];
+
+//     res.status(200).json({
+//         success: true,
+//         data: product,
+//     });
+// });
+
 exports.getProductById = asyncHandler(async (req, res, next) => {
     const { productId } = req.params;
 
+    // Validate if the productId is a valid MongoDB ObjectId format
     if (!mongoose.Types.ObjectId.isValid(productId)) {
         return next(new ErrorResponse('Invalid product ID format', 400));
     }
 
-    // Use a more robust aggregation pipeline to find the exact product
+    // Use an aggregation pipeline to find the specific product embedded within a company
     const aggregationPipeline = [
-        // 1. Unwind the products array to treat each product as a separate document
-        { $unwind: '$products' },
+        // 1. Deconstruct the products array to treat each product as a separate document
+        {
+            $unwind: '$products'
+        },
         
-        // 2. Match the exact product by its ID
-        { $match: { 'products._id': new mongoose.Types.ObjectId(productId) } },
+        // 2. Filter these documents to find the one with the matching product ID
+        {
+            $match: {
+                'products._id': new mongoose.Types.ObjectId(productId)
+            }
+        },
         
-        // 3. Project the fields into the desired shape, adding company info
+        // 3. Reshape the output to return a clean product object with company info
         {
             $project: {
                 _id: '$products._id',
                 name: '$products.name',
                 description: '$products.description',
-                sku: '$products.sku',
                 category: '$products.category',
-                pricing: '$products.pricing',
-                stock: '$products.stock',
                 variants: '$products.variants',
-                images: '$products.images',
-                attributes: '$products.attributes',
-                dimensions: '$products.dimensions',
-                weight: '$products.weight',
+                reviews: '$products.reviews',
+                ratingsAverage: '$products.ratingsAverage',
+                ratingsQuantity: '$products.ratingsQuantity',
                 isActive: '$products.isActive',
                 createdAt: '$products.createdAt',
-                companyId: '$_id',
-                companyName: '$name'
+                companyId: '$_id', // Add the parent company's ID
+                companyName: '$name' // Add the parent company's name
             }
         }
     ];
 
+    // Execute the aggregation on the Company collection
     const results = await Company.aggregate(aggregationPipeline);
 
+    // Check if the aggregation returned any result
     if (!results || results.length === 0) {
         return next(new ErrorResponse(`Product not found with id of ${productId}`, 404));
     }
 
-    // The result should be an array with a single product
+    // The result of the aggregation is an array, we need the first element
     const product = results[0];
 
     res.status(200).json({
@@ -167,7 +225,6 @@ exports.getProductById = asyncHandler(async (req, res, next) => {
         data: product,
     });
 });
-
 
 exports.getSearchSuggestions = asyncHandler(async (req, res, next) => {
     const query = req.query.q || '';
