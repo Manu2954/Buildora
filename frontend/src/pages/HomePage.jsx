@@ -66,7 +66,7 @@ const HomePage = () => {
                                             <div key={ad._id}>
                                                 <Link to={ad.linkTo} className="block">
                                                     <img 
-                                                        src={ad.imageUrl} 
+                                                        src={`${process.env.REACT_APP_API_URL}${ad.imageUrl}`}
                                                         alt={ad.name}
                                                         className="object-cover w-full"
                                                     />
