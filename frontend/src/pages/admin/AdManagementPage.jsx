@@ -95,7 +95,7 @@ const AdManagementPage = () => {
                          <label className="block text-sm font-medium">Banner Image/GIF</label>
                          {newImageUrl ? (
                              <div className="flex items-center gap-4 mt-2">
-                                <img src={newImageUrl} alt="Preview" className="h-24 border rounded-md"/>
+                                <img src={`${process.env.REACT_APP_API_URL}${newImageUrl}`} alt="Preview" className="h-24 border rounded-md"/>
                                 <button type="button" onClick={() => setNewImageUrl('')} className="text-sm text-red-600 hover:underline">Remove</button>
                              </div>
                          ) : (
@@ -116,7 +116,7 @@ const AdManagementPage = () => {
             <div className="space-y-4">
                 {ads.map(ad => (
                     <div key={ad._id} className="flex flex-col items-start gap-4 p-4 bg-white border rounded-lg shadow-sm md:flex-row md:items-center">
-                        <img src={ad.imageUrl} alt={ad.name} className="object-contain w-full h-24 border rounded-md md:w-48"/>
+                        <img src={`${process.env.REACT_APP_API_URL}${ad.imageUrl}`} alt={ad.name} className="object-contain w-full h-24 border rounded-md md:w-48"/>
                         <div className="flex-grow">
                             <p className="font-bold">{ad.name}</p>
                             <a href={ad.linkTo} target="_blank" rel="noopener noreferrer" className="text-xs text-indigo-600 hover:underline">{ad.linkTo}</a>
