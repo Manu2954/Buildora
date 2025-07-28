@@ -36,12 +36,12 @@ const corsOptions = {
 };
 app.use(cors(corsOptions));
 
-app.use('/images', express.static('public/images'));
-app.use('/videos', express.static('public/videos'));
+// app.use('/images', express.static('public/images'));
+// app.use('/videos', express.static('public/videos'));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
+app.use('/api/v1/upload', require('./routes/uploadRoutes'));
 app.use('/api/auth', authRoutes);
 app.use('/api/storefront', storefrontRoutes); 
 app.use('/api/orders', orderRoutes); 

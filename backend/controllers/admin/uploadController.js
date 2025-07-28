@@ -12,7 +12,7 @@ exports.uploadSingleImage = (req, res, next) => {
     // The file was uploaded successfully. Return its public URL.
     res.status(200).json({
         success: true,
-        message: 'Image uploaded successfully',
+        message: 'Image uploaded sauccessfully',
         data: `/uploads/images/${req.file.filename}` // The URL path to the file
     });
 };

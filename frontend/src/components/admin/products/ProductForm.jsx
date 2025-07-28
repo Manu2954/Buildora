@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { PlusCircle, Trash2, ChevronDown, ChevronUp, X } from 'lucide-react'; // Added X icon import
-import ImageUpload, { ImagePreview } from '../ImageUpload';
+import { PlusCircle, Trash2, ChevronDown, ChevronUp, X } from 'lucide-react';
+import { ImageUpload, ImagePreview } from '../ImageUpload';
 
 // --- Reusable Collapsible Section Component ---
 const CollapsibleSection = ({ title, children }) => {
@@ -11,7 +11,7 @@ const CollapsibleSection = ({ title, children }) => {
             <button
                 type="button"
                 onClick={() => setIsOpen(!isOpen)}
-                className="flex items-center justify-between w-full p-4 bg-gray-50"
+                className="flex items-center justify-between w-full p-4 bg-gray-50 hover:bg-gray-100"
             >
                 <span className="font-semibold text-gray-800">{title}</span>
                 {isOpen ? <ChevronUp className="w-5 h-5 text-gray-500" /> : <ChevronDown className="w-5 h-5 text-gray-500" />}
@@ -24,13 +24,14 @@ const CollapsibleSection = ({ title, children }) => {
 };
 
 
-// --- Helper functions are now defined outside the component ---
+// --- Helper functions ---
 const createNewAttribute = () => ({ id: crypto.randomUUID(), name: '', value: '' });
-const createNewVariant = () => ({ 
-    id: crypto.randomUUID(), 
-    name: '', 
-    sku: '', 
-    stock: '', 
+
+const createNewVariant = () => ({
+    id: crypto.randomUUID(),
+    name: '',
+    sku: '',
+    stock: '',
     pricing: { manufacturerPrice: '', mrp: '', ourPrice: '' },
     images: [],
     videos: [],
@@ -40,9 +41,9 @@ const createNewVariant = () => ({
 });
 
 const initialProductState = {
-    name: '', 
-    description: '', 
-    category: '', 
+    name: '',
+    description: '',
+    category: '',
     isActive: true,
     variants: [createNewVariant()]
 };
@@ -59,32 +60,21 @@ const ProductForm = ({ onSubmit, initialData = null, isLoading = false, submitBu
                 description: initialData.description || '',
                 category: initialData.category || '',
                 isActive: initialData.isActive !== undefined ? initialData.isActive : true,
-                variants: initialData.variants?.length 
+                variants: initialData.variants?.length
                     ? initialData.variants.map(v => ({
-                        ...v, 
-id: v._id || crypto.randomUUID(),
-            pricing: {
-              manufacturerPrice: v.pricing?.manufacturerPrice ?? '',
-              mrp: v.pricing?.mrp ?? '',
-              ourPrice: v.pricing?.ourPrice ?? ''
-            },
-            dimensions: v.dimensions || {
-              length: '',
-              width: '',
-              height: '',
-              unit: 'cm'
-            },
-            weight: v.weight || {
-              value: '',
-              unit: 'kg'
-            },
-            attributes: Array.isArray(v.attributes)
-              ? v.attributes.map((a) => ({
-                  ...a,
-                  id: a._id || crypto.randomUUID()
-                }))
-              : [createNewAttribute()]
-                    })) 
+                        id: v._id || crypto.randomUUID(),
+                        name: v.name || '',
+                        sku: v.sku || '',
+                        stock: v.stock || '',
+                        pricing: v.pricing || { manufacturerPrice: '', mrp: '', ourPrice: '' },
+                        images: v.images || [],
+                        videos: v.videos || [],
+                        dimensions: v.dimensions || { length: '', width: '', height: '', unit: 'cm' },
+                        weight: v.weight || { value: '', unit: 'kg' },
+                        attributes: Array.isArray(v.attributes) && v.attributes.length
+                            ? v.attributes.map((a) => ({ ...a, id: a._id || crypto.randomUUID() }))
+                            : [createNewAttribute()]
+                    }))
                     : [createNewVariant()],
             });
         }
@@ -100,9 +90,9 @@ id: v._id || crypto.randomUUID(),
             variants: prev.variants.map(v => v.id === variantId ? { ...v, [field]: value } : v)
         }));
     };
-    
+
     const handleNestedVariantChange = (variantId, parentKey, field, value) => {
-         setFormData(prev => ({
+        setFormData(prev => ({
             ...prev,
             variants: prev.variants.map(v => v.id === variantId ? { ...v, [parentKey]: { ...v[parentKey], [field]: value } } : v)
         }));
@@ -115,7 +105,7 @@ id: v._id || crypto.randomUUID(),
                 if (variant.id === variantId) {
                     return {
                         ...variant,
-                        attributes: variant.attributes.map(attr => 
+                        attributes: variant.attributes.map(attr =>
                             attr.id === attributeId ? { ...attr, [field]: value } : attr
                         )
                     };
@@ -124,11 +114,11 @@ id: v._id || crypto.randomUUID(),
             })
         }));
     };
-    
+
     const addAttribute = (variantId) => {
         setFormData(prev => ({
             ...prev,
-            variants: prev.variants.map(v => v.id === variantId ? {...v, attributes: [...v.attributes, createNewAttribute()]} : v)
+            variants: prev.variants.map(v => v.id === variantId ? { ...v, attributes: [...v.attributes, createNewAttribute()] } : v)
         }));
     };
 
@@ -138,13 +128,13 @@ id: v._id || crypto.randomUUID(),
             variants: prev.variants.map(v => {
                 if (v.id === variantId) {
                     const newAttributes = v.attributes.filter(a => a.id !== attributeId);
-                    return {...v, attributes: newAttributes.length ? newAttributes : [createNewAttribute()]};
+                    return { ...v, attributes: newAttributes.length ? newAttributes : [createNewAttribute()] };
                 }
                 return v;
             })
         }));
     };
-    
+
     const handleImageUpload = (variantId, url) => {
         setFormData(prev => ({
             ...prev,
@@ -159,7 +149,6 @@ id: v._id || crypto.randomUUID(),
         }));
     };
 
-
     const addVariant = () => {
         setFormData(prev => ({ ...prev, variants: [...prev.variants, createNewVariant()] }));
     };
@@ -169,11 +158,10 @@ id: v._id || crypto.randomUUID(),
             setFormData(prev => ({ ...prev, variants: prev.variants.filter(v => v.id !== variantId) }));
         }
     };
-    
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         const dataToSubmit = { ...formData };
-        // Clean up temporary IDs before sending to backend
         dataToSubmit.variants = dataToSubmit.variants.map(({ id, ...rest }) => ({
             ...rest,
             attributes: rest.attributes.map(({ id, ...attrRest }) => attrRest).filter(a => a.name && a.value)
@@ -181,10 +169,10 @@ id: v._id || crypto.randomUUID(),
         
         await onSubmit(dataToSubmit);
     };
-    
+
     const inputClass = "block w-full px-3 py-2 mt-1 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm";
     const labelClass = "block text-sm font-medium text-gray-700";
-    
+
     return (
         <form onSubmit={handleSubmit} className="space-y-8 text-gray-800">
             {/* --- Basic Product Info --- */}
@@ -200,12 +188,12 @@ id: v._id || crypto.randomUUID(),
             {/* --- Variants Section --- */}
             <div className="space-y-6">
                 <h2 className="text-lg font-medium text-gray-800">Product Variants</h2>
-                {formData.variants.map((variant, index) => (
+                {formData.variants.map((variant) => (
                     <div key={variant.id} className="relative p-4 border-2 border-gray-200 rounded-lg">
                         <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-                            <div><label className={labelClass}>Variant Name*</label><input type="text" value={variant.name} onChange={(e) => handleVariantChange(variant.id, 'name', e.target.value)} className={inputClass} placeholder="e.g., 50kg Bag, Red" required/></div>
+                            <div><label className={labelClass}>Variant Name*</label><input type="text" value={variant.name} onChange={(e) => handleVariantChange(variant.id, 'name', e.target.value)} className={inputClass} placeholder="e.g., 50kg Bag, Red" required /></div>
                             <div><label className={labelClass}>SKU</label><input type="text" value={variant.sku} onChange={(e) => handleVariantChange(variant.id, 'sku', e.target.value)} className={inputClass} /></div>
-                            <div><label className={labelClass}>Stock*</label><input type="number" value={variant.stock} onChange={(e) => handleVariantChange(variant.id, 'stock', e.target.value)} className={inputClass} required/></div>
+                            <div><label className={labelClass}>Stock*</label><input type="number" value={variant.stock} onChange={(e) => handleVariantChange(variant.id, 'stock', e.target.value)} className={inputClass} required /></div>
                         </div>
 
                         <div className="mt-6 space-y-6">
@@ -213,25 +201,29 @@ id: v._id || crypto.randomUUID(),
                                 <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
                                     <div><label className={labelClass}>Manufacturer Price (₹)</label><input type="number" value={variant.pricing.manufacturerPrice} onChange={(e) => handleNestedVariantChange(variant.id, 'pricing', 'manufacturerPrice', e.target.value)} className={inputClass} /></div>
                                     <div><label className={labelClass}>MRP (₹)</label><input type="number" value={variant.pricing.mrp} onChange={(e) => handleNestedVariantChange(variant.id, 'pricing', 'mrp', e.target.value)} className={inputClass} /></div>
-                                    <div><label className={labelClass}>Our Price (₹)*</label><input type="number" value={variant.pricing.ourPrice} onChange={(e) => handleNestedVariantChange(variant.id, 'pricing', 'ourPrice', e.target.value)} className={inputClass} required/></div>
-                                </div>
-                            </CollapsibleSection>
-
-                            <CollapsibleSection title="Images & Videos">
-                                <div className="flex flex-wrap gap-4">
-                                    {variant.images.map((url) => (<ImagePreview key={url} url={url} onDelete={() => handleImageDelete(variant.id, url)} />))}
-                                    <ImageUpload onUploadSuccess={(url) => handleImageUpload(variant.id, url)} />
+                                    <div><label className={labelClass}>Our Price (₹)*</label><input type="number" value={variant.pricing.ourPrice} onChange={(e) => handleNestedVariantChange(variant.id, 'pricing', 'ourPrice', e.target.value)} className={inputClass} required /></div>
                                 </div>
                             </CollapsibleSection>
                             
+                            <CollapsibleSection title="Images & Videos">
+                                <div className="flex flex-wrap gap-4">
+                                    {variant.images.map((url) => (<ImagePreview key={url} url={url} onDelete={() => handleImageDelete(variant.id, url)} />))}
+                                    <ImageUpload 
+                                        inputId={`image-upload-${variant.id}`}
+                                        variantId={variant.id}
+                                        onUploadSuccess={handleImageUpload} 
+                                    />
+                                </div>
+                            </CollapsibleSection>
+
                             <CollapsibleSection title="Physical Properties">
                                 <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                                     <div>
                                         <h4 className="font-medium">Dimensions</h4>
                                         <div className="grid grid-cols-3 gap-2 mt-2">
-                                            <div><label className="text-xs">Length</label><input type="number" value={variant.dimensions.length} onChange={(e) => handleNestedVariantChange(variant.id, 'dimensions', 'length', e.target.value)} className={inputClass}/></div>
-                                            <div><label className="text-xs">Width</label><input type="number" value={variant.dimensions.width} onChange={(e) => handleNestedVariantChange(variant.id, 'dimensions', 'width', e.target.value)} className={inputClass}/></div>
-                                            <div><label className="text-xs">Height</label><input type="number" value={variant.dimensions.height} onChange={(e) => handleNestedVariantChange(variant.id, 'dimensions', 'height', e.target.value)} className={inputClass}/></div>
+                                            <div><label className="text-xs">Length</label><input type="number" value={variant.dimensions.length} onChange={(e) => handleNestedVariantChange(variant.id, 'dimensions', 'length', e.target.value)} className={inputClass} /></div>
+                                            <div><label className="text-xs">Width</label><input type="number" value={variant.dimensions.width} onChange={(e) => handleNestedVariantChange(variant.id, 'dimensions', 'width', e.target.value)} className={inputClass} /></div>
+                                            <div><label className="text-xs">Height</label><input type="number" value={variant.dimensions.height} onChange={(e) => handleNestedVariantChange(variant.id, 'dimensions', 'height', e.target.value)} className={inputClass} /></div>
                                         </div>
                                         <label className="mt-2 text-xs">Unit</label>
                                         <select value={variant.dimensions.unit} onChange={(e) => handleNestedVariantChange(variant.id, 'dimensions', 'unit', e.target.value)} className={inputClass}><option>mm</option><option>cm</option><option>m</option><option>in</option><option>ft</option></select>
@@ -239,13 +231,13 @@ id: v._id || crypto.randomUUID(),
                                     <div>
                                         <h4 className="font-medium">Weight</h4>
                                         <div className="grid grid-cols-2 gap-2 mt-2">
-                                            <div><label className="text-xs">Value</label><input type="number" value={variant.weight.value} onChange={(e) => handleNestedVariantChange(variant.id, 'weight', 'value', e.target.value)} className={inputClass}/></div>
+                                            <div><label className="text-xs">Value</label><input type="number" value={variant.weight.value} onChange={(e) => handleNestedVariantChange(variant.id, 'weight', 'value', e.target.value)} className={inputClass} /></div>
                                             <div><label className="text-xs">Unit</label><select value={variant.weight.unit} onChange={(e) => handleNestedVariantChange(variant.id, 'weight', 'unit', e.target.value)} className={inputClass}><option>kg</option><option>g</option><option>lb</option></select></div>
                                         </div>
                                     </div>
                                 </div>
                             </CollapsibleSection>
-                            
+
                             <CollapsibleSection title="Custom Attributes">
                                 <div className="space-y-3">
                                     {variant.attributes.map(attr => (

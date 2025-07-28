@@ -2,68 +2,6 @@
 const mongoose = require('mongoose');
 const ReviewSchema = require('./Review');
 
-// const VariantSchema = new mongoose.Schema({
-//     name: {
-//         type: String,
-//         required: [true, 'Variant name (e.g., size, color) is required.'],
-//         trim: true
-//     },
-//     price: {
-//         type: Number,
-//         required: [true, 'Variant price is required.'],
-//     },
-//     stock: {
-//         type: Number,
-//         required: [true, 'Variant stock quantity is required.'],
-//         default: 0
-//     },
-//     sku: { // Optional: Each variant can have its own SKU
-//         type: String,
-//         trim: true
-//     },
-//     unit: { // e.g., 'kg', 'cm', 'sq. ft.', 'piece'
-//         type: String,
-//         trim: true
-//     }
-// });
-
-// // Updated Product Structure (embedded in Company)
-// const ProductSchema = new mongoose.Schema({
-//     name: { type: String, required: true },
-//     description: { type: String, required: true },
-//     sku: { type: String }, // Base SKU for the product
-//     category: { type: String, required: true },
-    
-//     // The basePrice and stock can now be considered defaults or a fallback
-//     // if no variants are present. The variant-specific price/stock takes precedence.
-//     pricing: {
-//         mrp: Number,
-//         basePrice: { type: Number, required: true },
-//     },
-//     stock: {
-//         quantity: { type: Number, required: true }
-//     },
-    
-//     // REPLACED 'sizes' with 'variants'
-//     variants: [VariantSchema], // An array of product variants
-//     reviews: [ReviewSchema], // Add the new reviews array
-    
-//     ratingsAverage: {
-//         type: Number,
-//         default: 0
-//     },
-//     ratingsQuantity: {
-//         type: Number,
-//         default: 0
-//     },
-//     images: [String],
-//     attributes: [{ name: String, value: String }],
-//     dimensions: { length: Number, width: Number, height: Number, unit: String },
-//     weight: { value: Number, unit: String },
-//     isActive: { type: Boolean, default: true }
-// }, {
-//     timestamps: true
-// });
 
 const VariantSchema = new mongoose.Schema({
     name: { type: String, required: true, trim: true }, // e.g., "50kg Bag", "Red Color"

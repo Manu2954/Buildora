@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import ImageUpload, { ImagePreview } from '../ImageUpload';
+import { ImageUpload, ImagePreview }from '../ImageUpload';
 
 const CompanyForm = ({ onSubmit, initialData = null, isLoading = false, submitButtonText = "Submit" }) => {
     const [formData, setFormData] = useState({

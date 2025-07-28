@@ -1,69 +1,86 @@
-import React, { useState } from 'react';
-import { useAdminAuth } from '../../context/AdminAuthContext';
-import { uploadSingleImage } from '../../services/adminImageUploadService'; // Corrected import
+import React, { useRef, useState, useMemo } from 'react';
 import { UploadCloud, X } from 'lucide-react';
+import { useAdminAuth } from '../../context/AdminAuthContext';
+import { uploadSingleImage } from '../../services/adminImageUploadService';
 
-const ImageUpload = ({ onUploadSuccess }) => {
-    const [isUploading, setIsUploading] = useState(false);
-    const [error, setError] = useState('');
-    const { token } = useAdminAuth();
-
-    const handleFileUpload = async (file) => {
-        if (!file) return;
-        setIsUploading(true);
-        setError('');
-
-        try {
-            // Corrected function call
-            const uploadedUrl = await uploadSingleImage(file, token);
-            onUploadSuccess(uploadedUrl);
-        } catch (err) {
-            setError(err.message || 'An error occurred during upload.');
-        } finally {
-            setIsUploading(false);
-        }
-    };
-
-    const onFileChange = (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            handleFileUpload(file);
-        }
-    };
-    
-    return (
-        <div className="w-full">
-            <label htmlFor="image-upload" className="relative flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100">
-                <div className="text-center">
-                    {isUploading ? (
-                        <p className="text-sm text-gray-500">Uploading...</p>
-                    ) : (
-                        <>
-                            <UploadCloud className="w-8 h-8 mx-auto text-gray-400" />
-                            <p className="mt-2 text-sm text-gray-600"><span className="font-semibold">Click to upload</span></p>
-                            <p className="text-xs text-gray-500">PNG, JPG up to 10MB</p>
-                        </>
-                    )}
-                </div>
-                 <input id="image-upload" type="file" className="sr-only" onChange={onFileChange} accept="image/png, image/jpeg" disabled={isUploading} />
-            </label>
-            {error && <p className="mt-2 text-xs text-red-600">{error}</p>}
-        </div>
-    );
-};
-
-// A component to display the image preview with a delete button
+// --- ImagePreview Component ---
 export const ImagePreview = ({ url, onDelete }) => (
-    <div className="relative group w-32 h-32">
-        <img src={url} alt="Uploaded preview" className="object-cover w-full h-full border rounded-lg"/>
-        <button 
-            type="button" 
-            onClick={() => onDelete(url)} 
-            className="absolute top-0 right-0 p-1 text-white transition-opacity bg-red-500 rounded-full opacity-0 cursor-pointer group-hover:opacity-100 transform -translate-y-1/2 translate-x-1/2 hover:bg-red-600"
+    <div className="relative w-24 h-24 group">
+        <img
+            src={url}
+            alt="Uploaded preview"
+            className="object-cover w-full h-full border border-gray-300 rounded-md"
+        />
+        <button
+            type="button"
+            onClick={onDelete}
+            className="absolute top-0 right-0 flex items-center justify-center w-5 h-5 transition-opacity bg-red-600 rounded-full opacity-0 group-hover:opacity-100"
+            aria-label="Delete image"
         >
-            <X size={14} />
+            <X className="w-4 h-4 text-white" />
         </button>
     </div>
 );
 
-export default ImageUpload;
+
+// --- ImageUpload Component (Main Component) ---
+// ✅ FIX: Changed from a default export to a named export to prevent circular dependency issues.
+export const ImageUpload = ({ onUploadSuccess, inputId, variantId }) => {
+    const [isUploading, setIsUploading] = useState(false);
+    const [error, setError] = useState('');
+    const fileInputRef = useRef(null);
+    const { token } = useAdminAuth();
+
+    const uniqueId = useMemo(() => inputId || `file-upload-${crypto.randomUUID()}`, [inputId]);
+
+    const handleFileChange = async (event) => {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        setIsUploading(true);
+        setError('');
+
+        try {
+            const uploadedUrl = await uploadSingleImage(file, token);
+            onUploadSuccess(variantId, uploadedUrl);
+        } catch (err) {
+            console.error("Upload failed:", err);
+            setError(err.message || 'An error occurred during upload.');
+        } finally {
+            setIsUploading(false);
+            if(fileInputRef.current) {
+                fileInputRef.current.value = "";
+            }
+        }
+    };
+
+    return (
+        <div className="flex flex-col items-center">
+            <label
+                htmlFor={uniqueId}
+                className={`flex flex-col items-center justify-center w-24 h-24 text-gray-500 border-2 border-dashed rounded-md cursor-pointer hover:bg-gray-100 hover:border-indigo-400 ${isUploading ? 'opacity-50 cursor-not-allowed' : ''}`}
+            >
+                {isUploading ? (
+                    <div className="w-6 h-6 border-2 border-gray-400 border-t-transparent rounded-full animate-spin"></div>
+                ) : (
+                    <>
+                        <UploadCloud size={24} />
+                        <span className="mt-1 text-xs text-center">Upload</span>
+                    </>
+                )}
+            </label>
+            <input
+                id={uniqueId}
+                type="file"
+                ref={fileInputRef}
+                onChange={handleFileChange}
+                className="hidden"
+                accept="image/png, image/jpeg, image/gif, image/webp"
+                disabled={isUploading}
+            />
+            {error && <p className="mt-1 text-xs text-red-600">{error}</p>}
+        </div>
+    );
+};
+
+// Note: No default export is used.

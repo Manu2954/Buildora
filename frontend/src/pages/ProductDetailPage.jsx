@@ -316,7 +316,7 @@ const ProductDetailPage = () => {
                         <div className="sticky top-24">
                             <div className="mb-4 overflow-hidden border border-gray-200 rounded-lg">
                                 <img
-                                    src={`${process.env.REACT_APP_API_URL}${images[selectedImageIndex]}`}
+                                    src={images[selectedImageIndex]}
                                     alt={product.name}
                                     className="object-contain w-full h-auto"
                                     onError={(e) => { e.target.src = `https://placehold.co/800x600/e2e8f0/475569?text=Image+Error`; }}
@@ -333,7 +333,7 @@ const ProductDetailPage = () => {
                                             }`}
                                     >
                                         <img
-                                            src={`${process.env.REACT_APP_API_URL}${img}`}
+                                            src={`${img}`}
                                             alt={`Thumbnail ${index + 1}`}
                                             className="object-contain w-full h-full"
                                         />

@@ -19,11 +19,12 @@ const EditProductInCompanyPage = () => {
         setIsLoading(true);
         setError(null);
         try {
-            const data = await getProductInCompany(companyId, productId, token);
-            setProductData(data);
+            // ✅ FIX: The actual product object is nested in the 'data' property of the response
+            const response = await getProductInCompany(companyId, productId, token);
+            setProductData(response.data); 
         } catch (err) {
             console.error("Failed to fetch product details:", err);
-            setError(err.message || "Could not load product details.");
+            setError(err.response?.data?.message || err.message || "Could not load product details.");
         } finally {
             setIsLoading(false);
         }
@@ -38,10 +39,12 @@ const EditProductInCompanyPage = () => {
         setError(null);
         try {
             await updateProductInCompany(companyId, productId, updatedData, token);
+            // Optionally, show a success toast message here
             navigate(`/admin/companies/${companyId}`);
         } catch (err) {
             console.error("Failed to update product:", err);
-            setError(err.data?.message || err.message || "An error occurred while updating the product.");
+            // ✅ FIX: More robust error message handling for API responses
+            setError(err.response?.data?.message || err.message || "An error occurred while updating the product.");
         } finally {
             setIsLoading(false);
         }
@@ -57,9 +60,10 @@ const EditProductInCompanyPage = () => {
     
     if (error && !productData) {
         return (
-            <div className="p-6 text-center text-red-600 bg-red-100 rounded-md">
+            <div className="p-6 text-center text-red-600 bg-red-50 rounded-md">
                 <AlertTriangle size={48} className="mx-auto mb-2 text-red-500" />
-                <p>{error}</p>
+                <p className="font-semibold">Failed to load product</p>
+                <p className="text-sm">{error}</p>
             </div>
         );
     }
@@ -78,7 +82,7 @@ const EditProductInCompanyPage = () => {
 
             {error && (
                 <div className="p-4 mb-4 text-sm text-red-700 bg-red-100 border border-red-400 rounded-md" role="alert">
-                    <strong className="font-bold">Error:</strong> {error}
+                    <strong className="font-bold">Update Error:</strong> {error}
                 </div>
             )}
 

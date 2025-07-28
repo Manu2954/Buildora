@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useAdminAuth } from '../../context/AdminAuthContext';
 import { getAds, createAd, updateAd, deleteAd } from '../../services/adminAdService';
-import ImageUpload from '../../components/admin/ImageUpload';
-import { Megaphone, Trash2, CheckCircle, Eye, EyeOff, AlertTriangle } from 'lucide-react';
+// Use a named import for ImageUpload to prevent circular dependency errors.
+import { ImageUpload, ImagePreview } from '../../components/admin/ImageUpload';
+import { Megaphone, Trash2, CheckCircle, EyeOff, AlertTriangle } from 'lucide-react';
 
 const AdManagementPage = () => {
     const [ads, setAds] = useState([]);
@@ -15,6 +16,11 @@ const AdManagementPage = () => {
     const [newImageUrl, setNewImageUrl] = useState('');
     const [newLinkTo, setNewLinkTo] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
+
+    // State for a non-blocking delete confirmation modal
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [adToDelete, setAdToDelete] = useState(null);
+
 
     const fetchAds = useCallback(async () => {
         setIsLoading(true);
@@ -57,19 +63,28 @@ const AdManagementPage = () => {
         try {
             await updateAd(adId, { isActive: !currentStatus }, token);
             fetchAds(); // Refresh the list
-        } catch (err) {
-            setError(err.message || 'Failed to update status.');
+        } catch (err)
+            {setError(err.message || 'Failed to update status.');
         }
     };
     
-    const handleDeleteAd = async (adId) => {
-        if(window.confirm('Are you sure you want to delete this advertisement?')) {
-            try {
-                await deleteAd(adId, token);
-                fetchAds();
-            } catch (err) {
-                setError(err.message || 'Failed to delete advertisement.');
-            }
+    // Opens the confirmation modal
+    const handleDeleteClick = (ad) => {
+        setAdToDelete(ad);
+        setShowDeleteModal(true);
+    };
+
+    // Performs the actual deletion
+    const confirmDeleteAd = async () => {
+        if (!adToDelete) return;
+        try {
+            await deleteAd(adToDelete._id, token);
+            fetchAds();
+        } catch (err) {
+            setError(err.message || 'Failed to delete advertisement.');
+        } finally {
+            setShowDeleteModal(false);
+            setAdToDelete(null);
         }
     };
 
@@ -95,11 +110,13 @@ const AdManagementPage = () => {
                          <label className="block text-sm font-medium">Banner Image/GIF</label>
                          {newImageUrl ? (
                              <div className="flex items-center gap-4 mt-2">
-                                <img src={`${process.env.REACT_APP_API_URL}${newImageUrl}`} alt="Preview" className="h-24 border rounded-md"/>
-                                <button type="button" onClick={() => setNewImageUrl('')} className="text-sm text-red-600 hover:underline">Remove</button>
+                                 <img src={newImageUrl} alt="Preview" className="h-24 border rounded-md"/>
+                                 <button type="button" onClick={() => setNewImageUrl('')} className="text-sm text-red-600 hover:underline">Remove</button>
                              </div>
                          ) : (
-                            <ImageUpload onUploadSuccess={(url) => setNewImageUrl(url)} />
+                             // ✅ FIX: The ImageUpload component now returns two arguments (variantId, url).
+                             // We ignore the first one and use the second one (the URL).
+                             <ImageUpload onUploadSuccess={(_variantId, url) => setNewImageUrl(url)} />
                          )}
                     </div>
                     <div className="text-right">
@@ -116,22 +133,42 @@ const AdManagementPage = () => {
             <div className="space-y-4">
                 {ads.map(ad => (
                     <div key={ad._id} className="flex flex-col items-start gap-4 p-4 bg-white border rounded-lg shadow-sm md:flex-row md:items-center">
-                        <img src={`${process.env.REACT_APP_API_URL}${ad.imageUrl}`} alt={ad.name} className="object-contain w-full h-24 border rounded-md md:w-48"/>
+                        <img src={ad.imageUrl} alt={ad.name} className="object-contain w-full h-24 border rounded-md md:w-48"/>
                         <div className="flex-grow">
                             <p className="font-bold">{ad.name}</p>
                             <a href={ad.linkTo} target="_blank" rel="noopener noreferrer" className="text-xs text-indigo-600 hover:underline">{ad.linkTo}</a>
                         </div>
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center self-end gap-2 md:self-center">
                             <button onClick={() => handleToggleActive(ad._id, ad.isActive)} className={`flex items-center gap-1 px-3 py-1 text-xs font-semibold rounded-full ${ad.isActive ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}`}>
                                 {ad.isActive ? <CheckCircle size={14}/> : <EyeOff size={14}/>} {ad.isActive ? 'Active' : 'Inactive'}
                             </button>
-                            <button onClick={() => handleDeleteAd(ad._id)} className="p-2 text-gray-500 rounded-full hover:bg-red-100 hover:text-red-600">
+                            <button onClick={() => handleDeleteClick(ad)} className="p-2 text-gray-500 rounded-full hover:bg-red-100 hover:text-red-600">
                                 <Trash2 size={16}/>
                             </button>
                         </div>
                     </div>
                 ))}
             </div>
+
+            {/* Delete Confirmation Modal */}
+            {showDeleteModal && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60">
+                    <div className="p-6 bg-white rounded-lg shadow-xl w-96">
+                        <h3 className="mb-4 text-lg font-bold">Confirm Deletion</h3>
+                        <p className="mb-6 text-sm text-gray-600">
+                            Are you sure you want to delete the ad "<strong>{adToDelete?.name}</strong>"? This action cannot be undone.
+                        </p>
+                        <div className="flex justify-end gap-4">
+                            <button onClick={() => setShowDeleteModal(false)} className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300">
+                                Cancel
+                            </button>
+                            <button onClick={confirmDeleteAd} className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700">
+                                Delete
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

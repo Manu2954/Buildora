@@ -1,12 +1,33 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-// A simpler, more modern product card for the new homepage design.
 const ProductCard = ({ product }) => {
-    if (!product) return null;
+    // Basic validation: if no product or no variants, don't render.
+    if (!product || !product.variants || product.variants.length === 0) {
+        return null;
+    }
+
+    // ✅ FIX: The component now directly uses the product's top-level properties
+    // and gets display-specific details from the first variant.
+    const displayVariant = product.variants[0];
+
+    // If for some reason the first variant is missing, we still don't render.
+    if (!displayVariant) {
+        return null;
+    }
 
     const placeholderImage = `https://placehold.co/600x600/f3f4f6/4b5563?text=${encodeURIComponent(product.name)}`;
-    const imageUrl = `${process.env.REACT_APP_API_URL}`+(product.images && product.images[0] ? product.images[0] : placeholderImage);
+    
+    // Get image from the first variant.
+    const imageUrl = displayVariant.images?.[0] || placeholderImage;
+    
+    // Get price from the first variant's pricing object.
+    const displayPrice = displayVariant.pricing?.ourPrice;
+
+    // Don't render a card if the price is missing.
+    if (displayPrice === undefined || displayPrice === null) {
+        return null;
+    }
 
     return (
         <Link to={`/products/${product._id}`} className="flex flex-col text-center group">
@@ -20,7 +41,7 @@ const ProductCard = ({ product }) => {
             </div>
             <h3 className="mt-4 text-base font-bold text-gray-800">{product.name}</h3>
             <p className="mt-1 text-lg font-semibold text-gray-900">
-                ₹{product.pricing?.basePrice.toFixed(2)}
+                ₹{displayPrice.toFixed(2)}
             </p>
         </Link>
     );

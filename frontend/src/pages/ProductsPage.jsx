@@ -1,8 +1,10 @@
 import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { useSearchParams, Link, useNavigate } from 'react-router-dom';
 import { getProducts, getFilterOptions, logSearchTerm } from '../services/storefrontService';
+// The ProductCard import remains the same, but the component itself will be updated.
 import ProductCard, { ProductCardSkeleton } from '../components/ProductCard';
-import { Search, X, ListFilter, AlertTriangle, ChevronDown, ChevronUp, SlidersHorizontal, Package, Tag } from 'lucide-react';
+import Pagination from '../components/common/Pagination';
+import { Search, X, ListFilter, AlertTriangle, ChevronDown, ChevronUp, SlidersHorizontal } from 'lucide-react';
 
 // Custom hook for debouncing input to prevent excessive API calls
 const useDebounce = (value, delay) => {
@@ -32,11 +34,11 @@ const AdvancedSearchBar = () => {
         const fetchSuggestions = async () => {
             if (debouncedSearchTerm) {
                 try {
-                    const response = await fetch(`/api/storefront/suggestions?q=${debouncedSearchTerm}`);
-                    const data = await response.json();
-                    if (data.success) {
-                        setSuggestions(data.data);
-                    }
+                    // This should be an API call to your backend
+                    const response = await getProducts({ search: debouncedSearchTerm, limit: 5 });
+                    // This is a placeholder for suggestion formatting logic
+                    const formattedSuggestions = (response.data || []).map(p => ({ name: p.name, type: 'Product' }));
+                    setSuggestions(formattedSuggestions);
                 } catch (error) {
                     console.error("Failed to fetch search suggestions:", error);
                 }
@@ -47,7 +49,6 @@ const AdvancedSearchBar = () => {
         fetchSuggestions();
     }, [debouncedSearchTerm]);
     
-    // Close suggestions when clicking outside the search component
     useEffect(() => {
         const handleClickOutside = (event) => {
             if (searchRef.current && !searchRef.current.contains(event.target)) {
@@ -84,29 +85,20 @@ const AdvancedSearchBar = () => {
             {isSuggestionsVisible && suggestions.length > 0 && (
                 <div className="absolute z-10 w-full mt-2 overflow-hidden text-left bg-white border border-gray-200 rounded-lg shadow-lg">
                     <ul className="divide-y divide-gray-100">
-                        {suggestions.map((suggestion, index) => {
-                            // --- THE FIX IS HERE ---
-                            // Conditionally create the correct URL based on suggestion type.
-                            const linkUrl = suggestion.type === 'Category' 
-                                ? `/products?categories=${suggestion.name}` 
-                                : `/products?search=${suggestion.name}`;
-
-                            return (
-                                <li key={index}>
-                                    <Link 
-                                        to={linkUrl} 
-                                        className="flex items-center w-full px-4 py-3 transition-colors hover:bg-gray-50"
-                                        onClick={() => {
-                                            setSearchTerm(suggestion.name);
-                                            setIsSuggestionsVisible(false);
-                                        }}
-                                    >
-                                        {suggestion.type === 'Product' ? <Package className="w-5 h-5 mr-3 text-gray-400"/> : <Tag className="w-5 h-5 mr-3 text-gray-400"/>}
-                                        <span>{suggestion.name}</span>
-                                    </Link>
-                                </li>
-                            );
-                        })}
+                        {suggestions.map((suggestion, index) => (
+                            <li key={index}>
+                                <Link 
+                                    to={`/products?search=${suggestion.name}`} 
+                                    className="flex items-center w-full px-4 py-3 transition-colors hover:bg-gray-50"
+                                    onClick={() => {
+                                        setSearchTerm(suggestion.name);
+                                        setIsSuggestionsVisible(false);
+                                    }}
+                                >
+                                    <span>{suggestion.name}</span>
+                                </Link>
+                            </li>
+                        ))}
                     </ul>
                 </div>
             )}
@@ -131,7 +123,7 @@ const FilterSection = ({ title, children }) => {
     );
 };
 
-// --- THIS COMPONENT IS NOW DEFINED OUTSIDE ---
+// FilterSidebar Component
 const FilterSidebar = ({ filterOptions, activeFilters, handleFilterChange, clearFilters, localSearchTerm, setLocalSearchTerm }) => (
     <aside className="p-6 bg-white rounded-lg shadow-sm h-fit">
         <div className="flex items-center justify-between pb-4 border-b">
@@ -195,7 +187,7 @@ const ProductsPage = () => {
             } else {
                 newParams.delete('search');
             }
-            newParams.delete('page');
+            newParams.set('page', '1'); // Reset to page 1 on new search
             setSearchParams(newParams, { replace: true });
         }
     }, [debouncedSearchTerm, searchParams, setSearchParams]);
@@ -207,6 +199,7 @@ const ProductsPage = () => {
             try {
                 const params = Object.fromEntries(searchParams.entries());
                 const [productData, filtersData] = await Promise.all([ getProducts(params), getFilterOptions() ]);
+                console.log(productData);
                 setProducts(productData.data || []);
                 setPagination(productData.pagination || {});
                 setFilterOptions(filtersData || { categories: [], companies: [] });
@@ -221,7 +214,7 @@ const ProductsPage = () => {
 
     const handleFilterChange = (key, value) => {
         const newParams = new URLSearchParams(searchParams);
-        newParams.delete('page');
+        newParams.set('page', '1'); // Reset to page 1 on any filter change
         if (key === 'categories' || key === 'companies') {
             const currentValues = newParams.getAll(key);
             if (currentValues.includes(value)) {
@@ -242,6 +235,7 @@ const ProductsPage = () => {
         const newParams = new URLSearchParams(searchParams);
         newParams.set('page', newPage.toString());
         setSearchParams(newParams);
+        window.scrollTo(0, 0); // Scroll to top on page change
     };
     
     const clearFilters = () => {
@@ -251,15 +245,15 @@ const ProductsPage = () => {
 
     return (
         <div className="min-h-screen bg-white">
-            {/* <header className="py-12 bg-gray-50 border-b"> */}
-                {/* <div className="container px-4 mx-auto text-center"> */}
-                    {/* <h1 className="text-4xl font-extrabold tracking-tight text-gray-900 sm:text-5xl">Buildora Marketplace</h1>
-                    <p className="max-w-2xl mx-auto mt-4 text-xl text-gray-600">Sourcing Made Simple. Building Made Easy.</p> */}
+            <header className="py-12 bg-gray-50 border-b">
+                <div className="container px-4 mx-auto text-center">
+                    <h1 className="text-4xl font-extrabold tracking-tight text-gray-900 sm:text-5xl">Buildora Marketplace</h1>
+                    <p className="max-w-2xl mx-auto mt-4 text-xl text-gray-600">Sourcing Made Simple. Building Made Easy.</p>
                     <div className="mt-8">
                         <AdvancedSearchBar />
                     </div>
-                {/* </div> */}
-            {/* </header> */}
+                </div>
+            </header>
 
             <div className="container px-4 py-12 mx-auto">
                 <div className="grid grid-cols-1 gap-8 lg:grid-cols-4">
@@ -281,14 +275,15 @@ const ProductsPage = () => {
                         ) : error ? ( <div className="flex flex-col items-center justify-center h-96 text-center text-red-700 bg-red-50 rounded-lg"><AlertTriangle size={48} className="mb-4" /><h3 className="text-xl font-semibold">An Error Occurred</h3><p>{error}</p></div>
                         ) : products.length === 0 ? ( <div className="flex flex-col items-center justify-center h-96 text-center text-gray-500 bg-gray-50 rounded-lg"><Search size={48} className="mb-4" /><h3 className="text-xl font-semibold">No Products Found</h3><p className="max-w-xs mx-auto">Try adjusting your search or filters.</p><button onClick={clearFilters} className="px-4 py-2 mt-4 font-semibold text-white bg-indigo-600 rounded-md hover:bg-indigo-700">Clear All Filters</button></div>
                         ) : ( <>
+                                {/* This grid now correctly renders the updated ProductCard */}
                                 <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">{products.map(product => <ProductCard key={product._id} product={product} />)}</div>
-                                <nav className="flex items-center justify-center mt-10">
-                                     <button onClick={() => handlePageChange(pagination.currentPage - 1)} disabled={!pagination.currentPage || pagination.currentPage === 1} className="px-3 py-1 mx-1 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">Prev</button>
-                                     {Array.from({ length: pagination.totalPages || 0 }, (_, i) => i + 1).map(page => (
-                                         <button key={page} onClick={() => handlePageChange(page)} className={`w-8 h-8 mx-1 text-sm font-medium border rounded-md ${pagination.currentPage === page ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'}`}>{page}</button>
-                                    ))}
-                                    <button onClick={() => handlePageChange(pagination.currentPage + 1)} disabled={!pagination.currentPage || pagination.currentPage === pagination.totalPages} className="px-3 py-1 mx-1 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">Next</button>
-                                </nav>
+                                <div className="mt-10">
+                                    <Pagination 
+                                        currentPage={pagination.currentPage}
+                                        totalPages={pagination.totalPages}
+                                        onPageChange={handlePageChange}
+                                    />
+                                </div>
                             </>
                         )}
                     </main>
