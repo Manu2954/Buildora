@@ -2,6 +2,26 @@ import React, { createContext, useContext, useReducer, useEffect } from 'react';
 
 const CartContext = createContext();
 
+// --- Safe localStorage Helper Functions ---
+const safeGetItem = (key) => {
+    try {
+        const item = localStorage.getItem(key);
+        return item ? JSON.parse(item) : null;
+    } catch (error) {
+        console.warn(`Could not access localStorage to get item '${key}':`, error);
+        return null;
+    }
+};
+
+const safeSetItem = (key, value) => {
+    try {
+        localStorage.setItem(key, JSON.stringify(value));
+    } catch (error) {
+        console.warn(`Could not access localStorage to set item '${key}':`, error);
+    }
+};
+// -----------------------------------------
+
 const cartReducer = (state, action) => {
     switch (action.type) {
         case 'ADD_TO_CART': {
@@ -41,28 +61,26 @@ const cartReducer = (state, action) => {
             return { ...state, items: [] };
         }
         case 'LOAD_CART': {
-            return action.payload.cart;
+            // Ensure payload and cart exist and have an items array
+            return action.payload?.cart?.items ? action.payload.cart : { items: [] };
         }
         default:
             return state;
     }
 };
 
+// FIX: Use the safe getter function to get the initial state.
 const getInitialState = () => {
-    try {
-        const localCart = localStorage.getItem('buildoraCart');
-        return localCart ? JSON.parse(localCart) : { items: [] };
-    } catch (error) {
-        console.error("Error parsing cart from localStorage", error);
-        return { items: [] };
-    }
+    const localCart = safeGetItem('buildoraCart');
+    return localCart || { items: [] };
 };
 
 export const CartProvider = ({ children }) => {
     const [state, dispatch] = useReducer(cartReducer, getInitialState());
 
     useEffect(() => {
-        localStorage.setItem('buildoraCart', JSON.stringify(state));
+        // FIX: Use the safe setter function to save state.
+        safeSetItem('buildoraCart', state);
     }, [state]);
 
     const addToCart = (item, quantity) => {
@@ -81,9 +99,8 @@ export const CartProvider = ({ children }) => {
         dispatch({ type: 'CLEAR_CART' });
     };
     
-    // CORRECTED: The cart item has a `price` property, not `item.pricing.basePrice`
     const cartCount = state.items.reduce((total, item) => total + item.quantity, 0);
-    const cartTotal = state.items.reduce((total, item) => total + item.price * item.quantity, 0);
+    const cartTotal = state.items.reduce((total, item) => total + (item.price || 0) * item.quantity, 0);
 
     const value = {
         cart: state,
