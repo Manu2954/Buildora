@@ -2,6 +2,14 @@
 
 const API_BASE_URL = `${process.env.REACT_APP_API_URL}/api/admin/dashboard`;
 
+const safeGetItem = (key) => {
+    try {
+        return localStorage.getItem(key);
+    } catch (error) {
+        console.warn(`Could not access localStorage to get item '${key}':`, error);
+        return null;
+    }
+};
 // Reusable helper function for API requests
 async function fetchAdminApi(endpoint, options = {}) {
     const { token, ...restOptions } = options;
@@ -10,7 +18,7 @@ async function fetchAdminApi(endpoint, options = {}) {
         ...restOptions.headers,
     };
 
-    const adminToken = token || localStorage.getItem('adminToken');
+    const adminToken = token || safeGetItem("adminToken");
 
     if (adminToken) {
         headers['Authorization'] = `Bearer ${adminToken}`;
