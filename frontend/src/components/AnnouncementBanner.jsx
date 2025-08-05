@@ -2,21 +2,40 @@ import React, { useState, useEffect } from 'react';
 import { Megaphone, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
+// Helper function to safely get an item from localStorage
+const safeGetItem = (key) => {
+    try {
+        return localStorage.getItem(key);
+    } catch (error) {
+        console.warn(`Could not access localStorage to get item '${key}':`, error);
+        return null;
+    }
+};
+
+// Helper function to safely set an item in localStorage
+const safeSetItem = (key, value) => {
+    try {
+        localStorage.setItem(key, value);
+    } catch (error) {
+        console.warn(`Could not access localStorage to set item '${key}':`, error);
+    }
+};
+
 const AnnouncementBanner = ({ message, linkTo, linkText }) => {
     const [isVisible, setIsVisible] = useState(false);
 
     useEffect(() => {
-        // Check localStorage to see if the user has previously dismissed the banner
-        const dismissed = localStorage.getItem('announcementDismissed');
+        // FIX: Use the safe getter to check if the banner was dismissed
+        const dismissed = safeGetItem('announcementDismissed');
         if (dismissed !== 'true') {
             setIsVisible(true);
         }
     }, []);
 
     const handleDismiss = () => {
-        // Hide the banner and set a value in localStorage
         setIsVisible(false);
-        localStorage.setItem('announcementDismissed', 'true');
+        // FIX: Use the safe setter to record the dismissal
+        safeSetItem('announcementDismissed', 'true');
     };
 
     if (!isVisible) {
@@ -36,8 +55,8 @@ const AnnouncementBanner = ({ message, linkTo, linkText }) => {
                             </Link>
                         )}
                     </p>
-                    <button 
-                        onClick={handleDismiss} 
+                    <button
+                        onClick={handleDismiss}
                         className="absolute p-1 transition-colors rounded-full top-1/2 right-4 -translate-y-1/2 hover:bg-white/20"
                         aria-label="Dismiss announcement"
                     >
