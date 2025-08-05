@@ -1,5 +1,14 @@
 // This service will interact with the /api/admin/companies endpoints
 
+const safeGetItem = (key) => {
+    try {
+        return localStorage.getItem(key);
+    } catch (error) {
+        console.warn(`Could not access localStorage to get item '${key}':`, error);
+        return null;
+    }
+};
+
 const API_BASE_URL = `${process.env.REACT_APP_API_URL}/api/admin`;
 
 // Reusable helper function for API requests, similar to adminAuthService
@@ -11,15 +20,17 @@ async function fetchAdminApi(endpoint, options = {}) {
         ...restOptions.headers,
     };
 
-    const adminToken = token || localStorage.getItem('adminToken'); // Fallback to localStorage if not passed directly
+    const adminToken = token || safeGetItem('adminToken');
 
     if (adminToken) {
         headers['Authorization'] = `Bearer ${adminToken}`;
     } else {
-        // Handle cases where token is not available, perhaps redirect to login or throw specific error
-        console.error('Admin token not available for API call to', endpoint);
-        throw new Error('Authentication required. Please login.');
+        // This part is fine, it correctly handles the case where no token is found
+        console.log("auth error);
+        throw new Error('Admin authentication required.');
     }
+
+        // throw new Error('Authentication required. Please login.');
 
     const response = await fetch(`${API_BASE_URL}${endpoint}`, {
         ...restOptions,
