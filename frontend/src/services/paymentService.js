@@ -2,10 +2,27 @@
 
 const API_BASE_URL = `${process.env.REACT_APP_API_URL}/api/payment`;
 
+const safeGetItem = (key) => {
+    try {
+        return localStorage.getItem(key);
+    } catch (error) {
+        console.warn(`Could not access localStorage to get item '${key}':`, error);
+        return null;
+    }
+};
+
 async function fetchProtectedApi(endpoint, options = {}) {
     const { token, ...restOptions } = options;
     const headers = { 'Content-Type': 'application/json', ...restOptions.headers };
-    const userToken = token || localStorage.getItem('token');
+    // const userToken = token || localStorage.getItem('token');
+    const userToken = token || safeGetItem('adminToken');
+
+    if (adminToken) {
+        headers['Authorization'] = `Bearer ${adminToken}`;
+    } else {
+        // This part is fine, it correctly handles the case where no token is found
+        throw new Error('Admin authentication required.');
+    }
 
     if (userToken) {
         headers['Authorization'] = `Bearer ${userToken}`;
