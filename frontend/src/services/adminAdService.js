@@ -2,17 +2,27 @@
 
 const API_BASE_URL = `${process.env.REACT_APP_API_URL}/api/admin/advertisements`;
 
+const safeGetItem = (key) => {
+    try {
+        return localStorage.getItem(key);
+    } catch (error) {
+        console.warn(`Could not access localStorage to get item '${key}':`, error);
+        return null;
+    }
+};
+
 async function fetchAdminApi(endpoint, options = {}) {
     const { token, ...restOptions } = options;
     const headers = {
         'Content-Type': 'application/json',
         ...restOptions.headers,
     };
-    const adminToken = token || localStorage.getItem('adminToken');
+     const adminToken = token || safeGetItem('adminToken');
 
     if (adminToken) {
         headers['Authorization'] = `Bearer ${adminToken}`;
     } else {
+        // This part is fine, it correctly handles the case where no token is found
         throw new Error('Admin authentication required.');
     }
 
