@@ -5,15 +5,43 @@ const AuthContext = createContext(null);
 
 export const useAuth = () => useContext(AuthContext);
 
+// Helper function to safely get an item from localStorage
+const safeGetItem = (key) => {
+    try {
+        return localStorage.getItem(key);
+    } catch (error) {
+        console.warn(`Could not access localStorage to get item '${key}':`, error);
+        return null;
+    }
+};
+
+// Helper function to safely set an item in localStorage
+const safeSetItem = (key, value) => {
+    try {
+        localStorage.setItem(key, value);
+    } catch (error) {
+        console.warn(`Could not access localStorage to set item '${key}':`, error);
+    }
+};
+
+// Helper function to safely remove an item from localStorage
+const safeRemoveItem = (key) => {
+    try {
+        localStorage.removeItem(key);
+    } catch (error) {
+        console.warn(`Could not access localStorage to remove item '${key}':`, error);
+    }
+};
+
+
 export const AuthProvider = ({ children }) => {
+    // FIX: Use the safe getter function to prevent crashes on initial load.
+    const [token, setToken] = useState(() => safeGetItem('token'));
     const [user, setUser] = useState(null);
-    const [token, setToken] = useState(() => localStorage.getItem('token'));
-    const [loading, setLoading] = useState(true); // This state is now ONLY for the initial app load check.
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        // This effect runs only once when the app first loads.
         const loadUserProfile = async (currentToken) => {
-        //   console.log("current", currentToken)
             if (currentToken) {
                 try {
                     const response = await getProfile(currentToken);
@@ -24,27 +52,24 @@ export const AuthProvider = ({ children }) => {
                     }
                 } catch (error) {
                     console.error('Initial auth check failed, clearing token.', error);
-                    localStorage.removeItem('token');
+                    // FIX: Use safe remove item
+                    safeRemoveItem('token');
                     setToken(null);
                 }
             }
-            // We are done with the initial load check.
             setLoading(false);
         };
-// console.log("loc", token)
-        loadUserProfile(token);
-    }, []); // Empty dependency array ensures this runs only once on mount.
 
-    // The login function is now fully responsible for the entire login flow.
+        loadUserProfile(token);
+    }, []); // This dependency is correct, it should only run once.
+
     const login = async (apiResponse) => {
         if (apiResponse && (apiResponse.token || apiResponse.accessToken)) {
             const newToken = apiResponse.token || apiResponse.accessToken;
-            console.log("new", newToken)
-            // Set the user and token state directly and synchronously after login.
-            // This prevents the app from navigating before the user state is updated.
             const profileResponse = await getProfile(newToken);
             if (profileResponse && profileResponse.data) {
-                localStorage.setItem('token', newToken);
+                // FIX: Use the safe setter function
+                safeSetItem('token', newToken);
                 setToken(newToken);
                 setUser(profileResponse.data);
             } else {
@@ -56,20 +81,20 @@ export const AuthProvider = ({ children }) => {
     };
 
     const logout = () => {
-        localStorage.removeItem('token');
+        // FIX: Use the safe remove function
+        safeRemoveItem('token');
         setToken(null);
         setUser(null);
-        window.location.href = '/login'; // Redirect after state is fully cleared
+        window.location.href = '/login';
     };
 
     const value = {
         user,
         token,
-        // isAuthenticated is now true only if there is a user.
         isAuthenticated: !!user,
         login,
         logout,
-        loading, // Expose the initial loading state.
+        loading,
     };
 
     return (
