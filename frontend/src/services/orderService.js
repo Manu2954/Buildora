@@ -22,12 +22,12 @@ async function fetchProtectedApi(endpoint, options = {}) {
     // const userToken = token || localStorage.getItem('token');
     const userToken = token || safeGetItem('token');
 
-    if (adminToken) {
-        headers['Authorization'] = `Bearer ${adminToken}`;
-    } else {
-        // This part is fine, it correctly handles the case where no token is found
-        throw new Error('Admin authentication required.');
-    }
+    // if (adminToken) {
+    //     headers['Authorization'] = `Bearer ${adminToken}`;
+    // } else {
+    //     // This part is fine, it correctly handles the case where no token is found
+    //     throw new Error('Admin authentication required.');
+    // }
 
     if (userToken) {
         headers['Authorization'] = `Bearer ${userToken}`;
