@@ -15,7 +15,7 @@ async function fetchProtectedApi(endpoint, options = {}) {
     const { token, ...restOptions } = options;
     const headers = { 'Content-Type': 'application/json', ...restOptions.headers };
     // const userToken = token || localStorage.getItem('token');
-    const userToken = token || safeGetItem('adminToken');
+    const userToken = token || safeGetItem('token');
 
     if (adminToken) {
         headers['Authorization'] = `Bearer ${adminToken}`;
