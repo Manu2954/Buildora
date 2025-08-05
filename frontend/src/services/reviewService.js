@@ -2,6 +2,14 @@
 
 const API_BASE_URL = `${process.env.REACT_APP_API_URL}/api/reviews`;
 
+const safeGetItem = (key) => {
+    try {
+        return localStorage.getItem(key);
+    } catch (error) {
+        console.warn(`Could not access localStorage to get item '${key}':`, error);
+        return null;
+    }
+};
 // Reusable helper for authenticated API requests
 async function fetchProtectedApi(endpoint, options = {}) {
     const { token, ...restOptions } = options;
@@ -10,7 +18,7 @@ async function fetchProtectedApi(endpoint, options = {}) {
         ...restOptions.headers,
     };
 
-    const userToken = token || localStorage.getItem('token');
+    const userToken = token || safeGetItem('token');
 
     if (userToken) {
         headers['Authorization'] = `Bearer ${userToken}`;
