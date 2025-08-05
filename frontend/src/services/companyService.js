@@ -26,7 +26,7 @@ async function fetchAdminApi(endpoint, options = {}) {
         headers['Authorization'] = `Bearer ${adminToken}`;
     } else {
         // This part is fine, it correctly handles the case where no token is found
-        console.log("auth error);
+        console.log("auth error");
         throw new Error('Admin authentication required.');
     }
 
