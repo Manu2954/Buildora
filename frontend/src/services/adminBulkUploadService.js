@@ -2,11 +2,19 @@
 
 const API_BASE_URL = `${process.env.REACT_APP_API_URL}/api/admin/companies`;
 
+const safeGetItem = (key) => {
+    try {
+        return localStorage.getItem(key);
+    } catch (error) {
+        console.warn(`Could not access localStorage to get item '${key}':`, error);
+        return null;
+    }
+};
 // This helper is different from others as it sends multipart/form-data
 // instead of application/json.
 async function uploadFileApi(endpoint, formData, token) {
     const headers = {};
-    const adminToken = token || localStorage.getItem('adminToken');
+    const adminToken = token || safeGetItem('adminToken');
 
     if (adminToken) {
         headers['Authorization'] = `Bearer ${adminToken}`;
