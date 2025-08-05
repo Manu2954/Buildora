@@ -20,7 +20,7 @@ async function fetchProtectedApi(endpoint, options = {}) {
 
     // Get the customer token from localStorage. It must exist for these calls.
     // const userToken = token || localStorage.getItem('token');
-    const userToken = token || safeGetItem('adminToken');
+    const userToken = token || safeGetItem('token');
 
     if (adminToken) {
         headers['Authorization'] = `Bearer ${adminToken}`;
