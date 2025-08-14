@@ -4,23 +4,25 @@ const express = require('express');
 const mongoose = require('mongoose');
 const path = require('path'); // Node.js module for working with file paths
 const cors = require('cors');
-const connectDB = require('./config/db'); 
+const connectDB = require('./config/db');
 
 
 const authRoutes = require('./auth/auth.routes');
 const adminRoutes = require('./routes/AdminRoutes');
 const userRoutes = require('./routes/userAdminRoutes');
 const dashboardRoutes = require('./routes/dashboardRoutes')
-const orderRoutes = require('./routes/orderRoutes'); 
+const orderRoutes = require('./routes/orderRoutes');
 const storefrontRoutes = require('./routes/storefrontRoutes');
 const adminOrderRoutes = require('./routes/adminOrderRoutes');
 const searchLogRoutes = require('./routes/searchLogRoutes');
-const bulkUploadRoutes = require('./routes/bulkUploadRoutes'); 
+const bulkUploadRoutes = require('./routes/bulkUploadRoutes');
 const companyRoutes = require('./routes/companyRoutes');
 const reviewRoutes = require('./routes/reviewRoutes');
 const uploadRoutes = require('./routes/uploadRoutes'); // Your new upload routes
 const paymentRoutes = require('./routes/paymentRoutes');
-const advertisementRoutes = require('./routes/advertisementRoutes'); 
+const advertisementRoutes = require('./routes/advertisementRoutes');
+const leadRoutes = require('./routes/leadRoutes');
+const adminLeadRoutes = require('./routes/adminLeadRoutes');
 // const companyRoutes = require('./routes/companyRoutes');
 
 const app = express();
@@ -28,7 +30,7 @@ app.use(express.json());
 const corsOptions = {
     origin: [
         'http://localhost:3000', // For your local development
-        'http://localhost:3001', 
+        'http://localhost:3001',
         'https://buildora-git-v1-mvp-manu2954s-projects.vercel.app',
         'https://www.buildoraenterprise.com'
     ],
@@ -43,20 +45,22 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use('/api/v1/upload', require('./routes/uploadRoutes'));
 app.use('/api/auth', authRoutes);
-app.use('/api/storefront', storefrontRoutes); 
-app.use('/api/orders', orderRoutes); 
+app.use('/api/storefront', storefrontRoutes);
+app.use('/api/orders', orderRoutes);
 app.use('/api/reviews', reviewRoutes);
 app.use('/api/payment', paymentRoutes);
+app.use('/api/leads', leadRoutes);
 
 app.use('/api/admin', adminRoutes);
 app.use('/api/admin/users', userRoutes);
-app.use('/api/admin/dashboard', dashboardRoutes); 
+app.use('/api/admin/dashboard', dashboardRoutes);
 app.use('/api/admin/orders', adminOrderRoutes);
 app.use('/api/logs/search', searchLogRoutes);
 // companyRoutes.use('/:companyId/products/bulk-upload', bulkUploadRoutes);
 app.use('/api/admin/companies', companyRoutes);
-app.use('/api/admin/upload', uploadRoutes); 
+app.use('/api/admin/upload', uploadRoutes);
 app.use('/api/admin/advertisements', advertisementRoutes);
+app.use('/api/admin/leads', adminLeadRoutes);
 
 const PORT = process.env.PORT || 5000;
 
