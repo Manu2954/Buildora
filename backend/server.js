@@ -15,13 +15,11 @@ const orderRoutes = require('./routes/orderRoutes');
 const storefrontRoutes = require('./routes/storefrontRoutes');
 const adminOrderRoutes = require('./routes/adminOrderRoutes');
 const searchLogRoutes = require('./routes/searchLogRoutes');
-const bulkUploadRoutes = require('./routes/bulkUploadRoutes');
+const bulkUploadRoutes = require('./routes/bulkUploadRoutes'); 
 const companyRoutes = require('./routes/companyRoutes');
 const reviewRoutes = require('./routes/reviewRoutes');
 const uploadRoutes = require('./routes/uploadRoutes'); // Your new upload routes
 const paymentRoutes = require('./routes/paymentRoutes');
-const leadRoutes = require('./routes/leadRoutes');
-const adminLeadRoutes = require('./routes/adminLeadRoutes');
 
 const app = express();
 app.use(express.json());
@@ -45,16 +43,14 @@ app.use('/api/storefront', storefrontRoutes);
 app.use('/api/orders', orderRoutes); 
 app.use('/api/reviews', reviewRoutes);
 app.use('/api/payment', paymentRoutes);
-app.use('/api/leads', leadRoutes);
 
 app.use('/api/admin', adminRoutes);
 app.use('/api/admin/users', userRoutes);
-app.use('/api/admin/dashboard', dashboardRoutes);
+app.use('/api/admin/dashboard', dashboardRoutes); 
 app.use('/api/admin/orders', adminOrderRoutes);
-app.use('/api/admin/leads', adminLeadRoutes);
 app.use('/api/logs/search', searchLogRoutes);
 companyRoutes.use('/:companyId/products/bulk-upload', bulkUploadRoutes);
-app.use('/api/admin/upload', uploadRoutes);
+app.use('/api/admin/upload', uploadRoutes); 
 
 
 const PORT = process.env.PORT || 5000;
