@@ -50,6 +50,8 @@ import Products from './pages/admin/products/AllProductsPage';
 import ImageLibraryPage from './pages/admin/products/ImageLibraryPage';
 import { SiteProvider } from './context/SiteContext';
 import AdManagementPage from './pages/admin/AdManagementPage';
+import LeadListPage from './pages/admin/lead/LeadListPage';
+import ViewLeadPage from './pages/admin/lead/ViewLeadPage';
 
 
 function App() {
@@ -104,8 +106,10 @@ function App() {
                                 <Route path="orders/:orderId" element={<AdminOrderDetailPage />} />
                                 <Route path="bulk-upload" element={<BulkUploadPage />} />
                                 <Route path="products" element={<Products />} />
-                                <Route path="image-library" element={<ImageLibraryPage />} /> 
+                                <Route path="image-library" element={<ImageLibraryPage />} />
                                 <Route path="advertisements" element={<AdManagementPage />} /> {/* New Route */}
+                                <Route path="leads" element={<LeadListPage />} />
+                                <Route path="leads/:leadId" element={<ViewLeadPage />} />
 
                             </Route>
 
