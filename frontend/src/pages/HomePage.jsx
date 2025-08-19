@@ -106,7 +106,10 @@ const HomePage = () => {
                                     <div className="inline-flex items-center justify-center w-20 h-20 bg-primary/20 text-primary rounded-full mb-6 animate-bounce">
                                         <Sparkles size={40} />
                                     </div>
-                                    <h1 className="text-4xl md:text-6xl font-bold text-text mb-6 tracking-tight">Welcome to Buildora</h1>
+                                    <div className="flex flex-col items-center mb-6">
+                                        <h1 className="text-4xl md:text-6xl font-bold text-text mb-4 tracking-tight">Welcome to</h1>
+                                        <Logo variant="full" size="xl" showText={true} textClassName="text-4xl md:text-6xl font-bold" />
+                                    </div>
                                     <p className="text-xl text-muted mb-8 leading-relaxed">Sourcing Made Simple. Building Made Easy.</p>
                                     <Link to="/products" className="inline-flex items-center gap-3 bg-primary hover:bg-primary-hover text-white font-semibold px-8 py-4 rounded-full transition-all duration-300 transform hover:scale-105 shadow-lg">
                                         <span>Start Shopping</span>
