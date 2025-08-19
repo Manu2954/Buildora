@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import { useSite } from '../context/SiteContext';
 import { ShoppingCart, User, Heart, Search, Menu, X, Sparkles } from 'lucide-react';
+import Logo from './Logo';
 
 const Navbar = () => {
     const { isAuthenticated } = useAuth();
