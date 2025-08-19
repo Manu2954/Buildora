@@ -43,21 +43,21 @@ const AnnouncementBanner = ({ message, linkTo, linkText }) => {
     }
 
     return (
-        <div className="relative bg-indigo-600">
-            <div className="container px-4 py-3 mx-auto text-white">
+        <div className="relative bg-primary">
+            <div className="container px-4 py-3 mx-auto text-surface">
                 <div className="flex items-center justify-center text-center">
                     <Megaphone size={20} className="hidden sm:inline-block mr-3 flex-shrink-0" />
                     <p className="text-sm font-medium">
                         {message}
                         {linkTo && linkText && (
-                            <Link to={linkTo} className="ml-2 font-bold underline hover:text-indigo-200">
+                            <Link to={linkTo} className="ml-2 font-bold underline hover:text-surface/80">
                                 {linkText} &rarr;
                             </Link>
                         )}
                     </p>
                     <button
                         onClick={handleDismiss}
-                        className="absolute p-1 transition-colors rounded-full top-1/2 right-4 -translate-y-1/2 hover:bg-white/20"
+                        className="absolute p-1 transition-colors rounded-full top-1/2 right-4 -translate-y-1/2 hover:bg-surface/20"
                         aria-label="Dismiss announcement"
                     >
                         <X size={18} />

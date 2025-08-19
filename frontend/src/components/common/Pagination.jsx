@@ -60,26 +60,26 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
     }
 
     return (
-        <div className="flex items-center justify-between mt-6 px-4 py-3 bg-white border-t border-gray-200 sm:px-6 rounded-b-lg shadow-md">
+        <div className="flex items-center justify-between mt-6 px-4 py-3 bg-surface border-t border-border sm:px-6 rounded-b-lg shadow-md">
             <div className="flex-1 flex justify-between sm:hidden">
                 <button
                     onClick={() => onPageChange(currentPage - 1)}
                     disabled={currentPage === 1}
-                    className="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50"
+                    className="relative inline-flex items-center px-4 py-2 border border-border text-sm font-medium rounded-md text-text bg-surface hover:bg-background disabled:opacity-50"
                 >
                     Previous
                 </button>
                 <button
                     onClick={() => onPageChange(currentPage + 1)}
                     disabled={currentPage === totalPages}
-                    className="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50"
+                    className="ml-3 relative inline-flex items-center px-4 py-2 border border-border text-sm font-medium rounded-md text-text bg-surface hover:bg-background disabled:opacity-50"
                 >
                     Next
                 </button>
             </div>
             <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
                 <div>
-                    <p className="text-sm text-gray-700">
+                    <p className="text-sm text-text">
                         Page <span className="font-medium">{currentPage}</span> of{' '}
                         <span className="font-medium">{totalPages}</span>
                     </p>
@@ -89,7 +89,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
                         <button
                             onClick={() => onPageChange(currentPage - 1)}
                             disabled={currentPage === 1}
-                            className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50"
+                            className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-border bg-surface text-sm font-medium text-muted hover:bg-background disabled:opacity-50"
                         >
                             <span className="sr-only">Previous</span>
                             <ChevronLeft className="h-5 w-5" aria-hidden="true" />
@@ -103,14 +103,14 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
                                     aria-current={currentPage === page ? 'page' : undefined}
                                     className={`relative inline-flex items-center px-4 py-2 border text-sm font-medium ${
                                         currentPage === page
-                                            ? 'z-10 bg-indigo-50 border-indigo-500 text-indigo-600'
-                                            : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50'
+                                            ? 'z-10 bg-primary/10 border-primary text-primary'
+                                            : 'bg-surface border-border text-muted hover:bg-background'
                                     }`}
                                 >
                                     {page}
                                 </button>
                             ) : (
-                                <span key={`ellipsis-${index}`} className="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700">
+                                <span key={`ellipsis-${index}`} className="relative inline-flex items-center px-4 py-2 border border-border bg-surface text-sm font-medium text-text">
                                     <MoreHorizontal className="h-5 w-5" />
                                 </span>
                             )
@@ -119,7 +119,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
                         <button
                             onClick={() => onPageChange(currentPage + 1)}
                             disabled={currentPage === totalPages}
-                            className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50"
+                            className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-border bg-surface text-sm font-medium text-muted hover:bg-background disabled:opacity-50"
                         >
                             <span className="sr-only">Next</span>
                             <ChevronRight className="h-5 w-5" aria-hidden="true" />

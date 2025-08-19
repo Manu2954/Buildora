@@ -31,7 +31,7 @@ const ProductCard = ({ product }) => {
 
     return (
         <Link to={`/products/${product._id}`} className="flex flex-col text-center group">
-            <div className="w-full overflow-hidden bg-gray-100 rounded-lg">
+            <div className="w-full overflow-hidden bg-background rounded-lg">
                 <img
                     src={imageUrl}
                     alt={product.name}
@@ -39,8 +39,8 @@ const ProductCard = ({ product }) => {
                     onError={(e) => { e.target.onerror = null; e.target.src = placeholderImage; }}
                 />
             </div>
-            <h3 className="mt-4 text-base font-bold text-gray-800">{product.name}</h3>
-            <p className="mt-1 text-lg font-semibold text-gray-900">
+            <h3 className="mt-4 text-base font-bold text-text">{product.name}</h3>
+            <p className="mt-1 text-lg font-semibold text-text">
                 ₹{displayPrice.toFixed(2)}
             </p>
         </Link>
@@ -49,9 +49,9 @@ const ProductCard = ({ product }) => {
 
 export const ProductCardSkeleton = () => (
     <div className="flex flex-col animate-pulse">
-        <div className="w-full bg-gray-200 rounded-lg aspect-square"></div>
-        <div className="w-3/4 h-5 mx-auto mt-4 bg-gray-200 rounded"></div>
-        <div className="w-1/2 h-6 mx-auto mt-2 bg-gray-200 rounded"></div>
+        <div className="w-full bg-border rounded-lg aspect-square"></div>
+        <div className="w-3/4 h-5 mx-auto mt-4 bg-border rounded"></div>
+        <div className="w-1/2 h-6 mx-auto mt-2 bg-border rounded"></div>
     </div>
 );
 

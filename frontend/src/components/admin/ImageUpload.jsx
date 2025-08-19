@@ -9,7 +9,7 @@ export const ImagePreview = ({ url, onDelete }) => (
         <img
             src={url}
             alt="Uploaded preview"
-            className="object-cover w-full h-full border border-gray-300 rounded-md"
+            className="object-cover w-full h-full border border-border rounded-md"
         />
         <button
             type="button"
@@ -58,10 +58,10 @@ export const ImageUpload = ({ onUploadSuccess, inputId, variantId }) => {
         <div className="flex flex-col items-center">
             <label
                 htmlFor={uniqueId}
-                className={`flex flex-col items-center justify-center w-24 h-24 text-gray-500 border-2 border-dashed rounded-md cursor-pointer hover:bg-gray-100 hover:border-indigo-400 ${isUploading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                className={`flex flex-col items-center justify-center w-24 h-24 text-muted border-2 border-dashed rounded-md cursor-pointer hover:bg-background hover:border-primary ${isUploading ? 'opacity-50 cursor-not-allowed' : ''}`}
             >
                 {isUploading ? (
-                    <div className="w-6 h-6 border-2 border-gray-400 border-t-transparent rounded-full animate-spin"></div>
+                    <div className="w-6 h-6 border-2 border-border border-t-transparent rounded-full animate-spin"></div>
                 ) : (
                     <>
                         <UploadCloud size={24} />

@@ -63,8 +63,8 @@ import { NavLink } from 'react-router-dom';
 import { LayoutDashboard, Users, Building, ShoppingBag, Upload, Image, Megaphone, PhoneCall } from 'lucide-react';
 
 const AdminSidebar = ({ isOpen, toggleSidebar }) => {
-    const commonLinkClasses = "flex items-center px-4 py-3 text-gray-700 rounded-lg hover:bg-indigo-100 hover:text-indigo-700 transition-colors duration-150";
-    const activeLinkClasses = "bg-indigo-100 text-indigo-700 font-semibold";
+    const commonLinkClasses = "flex items-center px-4 py-3 text-text rounded-lg hover:bg-primary/10 hover:text-primary transition-colors duration-150";
+    const activeLinkClasses = "bg-primary/20 text-primary font-semibold";
 
     const navItems = [
         { to: "/admin/dashboard", icon: <LayoutDashboard size={20} />, label: "Dashboard" },
@@ -99,7 +99,7 @@ const AdminSidebar = ({ isOpen, toggleSidebar }) => {
             >
                 <div className="p-4">
                     <NavLink to="/admin/dashboard" className="flex items-center justify-center mb-6">
-                        <span className="ml-2 text-2xl font-bold text-indigo-600">Buildora</span>
+                        <span className="ml-2 text-2xl font-bold text-primary">Buildora</span>
                     </NavLink>
                     <nav className="space-y-2">
                         {navItems.map(item => (
