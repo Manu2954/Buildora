@@ -50,7 +50,10 @@ const Login = () => {
         <div className="flex items-center justify-center min-h-screen px-4 bg-gray-50">
             <div className="w-full max-w-md p-8 space-y-6 bg-white rounded-lg shadow-lg">
                 <div className="text-center">
-                    <h2 className="text-3xl font-bold text-gray-800">Sign In to Buildora</h2>
+                    <div className="flex flex-col items-center mb-4">
+                        <Logo variant="full" size="large" showText={true} textClassName="text-3xl font-bold text-gray-800" />
+                    </div>
+                    <h2 className="text-2xl font-bold text-gray-800">Sign In</h2>
                     <p className="mt-2 text-sm text-gray-600">
                         Welcome back! Please enter your details.
                     </p>
