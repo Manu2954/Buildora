@@ -124,9 +124,9 @@ const AdminOrdersPage = () => {
                                 max={50000} // Set a reasonable max for the slider
                                 value={filters.priceRange}
                                 onChange={handlePriceRangeChange}
-                                trackStyle={[{ backgroundColor: '#4F46E5' }]}
-                                handleStyle={[{ borderColor: '#4F46E5', borderWidth: 2 }, { borderColor: '#4F46E5', borderWidth: 2 }]}
-                                railStyle={{ backgroundColor: '#E5E7EB' }}
+                                trackStyle={[{ backgroundColor: '#C69B4B' }]}
+                                handleStyle={[{ borderColor: '#C69B4B', borderWidth: 2 }, { borderColor: '#C69B4B', borderWidth: 2 }]}
+                                railStyle={{ backgroundColor: '#D9D9D9' }}
                             />
                         </div>
                         <div className="flex justify-between mt-2 text-xs text-gray-500">
@@ -167,7 +167,7 @@ const AdminOrdersPage = () => {
                                     </span>
                                 </td>
                                 <td className="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
-                                    <button onClick={() => navigate(`/admin/orders/${order._id}`)} className="p-1 text-indigo-600 hover:text-indigo-900" title="View Details">
+                                    <button onClick={() => navigate(`/admin/orders/${order._id}`)} className="p-1 text-primary hover:text-primary-hover" title="View Details">
                                         <Eye size={18} />
                                     </button>
                                 </td>

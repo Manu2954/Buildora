@@ -335,3 +335,45 @@ code {
         display: none !important;
     }
 }
+
+/* Legacy Color Overrides */
+@layer utilities {
+  /* Map old indigo and blue accents to the brand primary palette */
+  .bg-indigo-500,
+  .bg-indigo-600,
+  .bg-blue-500,
+  .bg-blue-600 {
+    @apply bg-primary;
+  }
+
+  .bg-indigo-700,
+  .bg-indigo-800,
+  .bg-blue-700,
+  .hover\:bg-indigo-500:hover,
+  .hover\:bg-indigo-600:hover,
+  .hover\:bg-indigo-700:hover,
+  .hover\:bg-indigo-800:hover,
+  .hover\:bg-blue-600:hover,
+  .hover\:bg-blue-700:hover {
+    @apply bg-primary-hover;
+  }
+
+  .text-indigo-500,
+  .text-indigo-600,
+  .text-blue-500,
+  .text-blue-600,
+  .text-blue-700,
+  .hover\:text-indigo-500:hover,
+  .hover\:text-indigo-600:hover,
+  .hover\:text-blue-600:hover,
+  .hover\:text-blue-700:hover {
+    @apply text-primary;
+  }
+
+  .text-indigo-700,
+  .text-indigo-800,
+  .hover\:text-indigo-700:hover,
+  .hover\:text-indigo-800:hover {
+    @apply text-primary-hover;
+  }
+}

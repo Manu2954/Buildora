@@ -96,7 +96,7 @@ const CheckoutPage = () => {
                     address: `${shippingAddress.address}, ${shippingAddress.city}`,
                 },
                 theme: {
-                    color: '#4F46E5', // Indigo color for the modal theme
+                    color: '#C69B4B', // Brand primary color for the modal theme
                 },
             };
 
@@ -118,7 +118,7 @@ const CheckoutPage = () => {
         displayRazorpay();
     };
 
-    const inputClass = "block w-full px-3 py-2 mt-1 placeholder-gray-400 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm";
+    const inputClass = "block w-full px-3 py-2 mt-1 placeholder-gray-400 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm";
 
     if (authLoading) {
         return <div className="flex items-center justify-center min-h-screen">Loading...</div>;
@@ -133,7 +133,7 @@ const CheckoutPage = () => {
                     <div className="md:col-span-2">
                         <form onSubmit={handleSubmit} className="space-y-8">
                             <div className="p-6 bg-white rounded-lg shadow-md">
-                                <h2 className="flex items-center text-xl font-bold text-gray-800"><MapPin className="mr-3 text-indigo-600"/> Shipping Address</h2>
+                                <h2 className="flex items-center text-xl font-bold text-gray-800"><MapPin className="mr-3 text-primary"/> Shipping Address</h2>
                                 <div className="grid grid-cols-1 gap-4 mt-6 sm:grid-cols-2">
                                     <div><label htmlFor="address" className="block text-sm font-medium text-gray-700">Address / Street</label><input type="text" name="address" id="address" value={shippingAddress.address} onChange={handleShippingChange} className={inputClass} required /></div>
                                     <div><label htmlFor="city" className="block text-sm font-medium text-gray-700">City</label><input type="text" name="city" id="city" value={shippingAddress.city} onChange={handleShippingChange} className={inputClass} required /></div>
@@ -143,18 +143,18 @@ const CheckoutPage = () => {
                                 </div>
                             </div>
                             <div className="p-6 bg-white rounded-lg shadow-md">
-                                 <h2 className="flex items-center text-xl font-bold text-gray-800"><CreditCard className="mr-3 text-indigo-600"/> Payment Method</h2>
+                                 <h2 className="flex items-center text-xl font-bold text-gray-800"><CreditCard className="mr-3 text-primary"/> Payment Method</h2>
                                 <p className="mt-4 text-sm text-gray-600">You will be redirected to our secure payment partner, Razorpay, to complete your purchase using UPI, Cards, Net Banking, and more.</p>
                             </div>
                              {error && <div className="flex items-center gap-2 p-3 mt-4 text-sm text-red-700 bg-red-100 rounded-md"><AlertTriangle size={18}/> {error}</div>}
-                             <button type="submit" disabled={isLoading} className="flex items-center justify-center w-full px-6 py-3 mt-8 font-semibold text-white bg-indigo-600 rounded-md hover:bg-indigo-700 disabled:bg-indigo-400 disabled:cursor-wait">
+                             <button type="submit" disabled={isLoading} className="flex items-center justify-center w-full px-6 py-3 mt-8 font-semibold text-white bg-primary rounded-md hover:bg-primary-hover disabled:bg-primary/50 disabled:cursor-wait">
                                 {isLoading ? 'Processing...' : 'Proceed to Payment'} <ShieldCheck size={20} className="ml-2" />
                             </button>
                         </form>
                     </div>
                     {/* Right Side: Order Summary */}
                      <div className="p-6 bg-white border rounded-lg shadow-md md:col-span-1 h-fit">
-                        <h2 className="flex items-center pb-4 text-xl font-bold text-gray-800 border-b"><ShoppingBag className="mr-3 text-indigo-600"/> Order Summary</h2>
+                        <h2 className="flex items-center pb-4 text-xl font-bold text-gray-800 border-b"><ShoppingBag className="mr-3 text-primary"/> Order Summary</h2>
                         <div className="py-4 space-y-3 text-sm text-gray-700 border-b">
                             {cart.items.map(item => (
                                 <div key={item.cartItemId} className="flex justify-between">
