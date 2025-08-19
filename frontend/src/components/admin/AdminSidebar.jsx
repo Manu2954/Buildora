@@ -100,7 +100,7 @@ const AdminSidebar = ({ isOpen, toggleSidebar }) => {
             >
                 <div className="p-4">
                     <NavLink to="/admin/dashboard" className="flex items-center justify-center mb-6">
-                        <span className="ml-2 text-2xl font-bold text-primary">Buildora</span>
+                        <Logo variant="full" size="large" showText={true} textClassName="text-2xl font-bold text-primary" />
                     </NavLink>
                     <nav className="space-y-2">
                         {navItems.map(item => (
