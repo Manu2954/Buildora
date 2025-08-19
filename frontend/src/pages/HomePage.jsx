@@ -254,7 +254,7 @@ const HomePage = () => {
                             <Link to="/privacy" className="text-surface/70 hover:text-primary transition-colors duration-300 font-medium">Privacy Policy</Link>
                         </div>
                         <div className="border-t border-surface/10 pt-8">
-                            <p className="text-surface/60">&copy; {new Date().getFullYear()} Buildora. All Rights Reserved. Sourcing Made Simple, Building Made Easy.</p>
+                            <p className="text-surface/60">&copy; {new Date().getFullYear()} <Logo variant="text" size="small" showText={true} textClassName="text-surface/60 inline" className="inline-flex" />. All Rights Reserved. Sourcing Made Simple, Building Made Easy.</p>
                         </div>
                     </div>
                 </div>
