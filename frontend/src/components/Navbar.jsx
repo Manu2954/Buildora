@@ -29,11 +29,12 @@ const Navbar = () => {
 
     const HeaderContent = () => (
         // --- THIS IS THE REDESIGNED HEADER ---
-        <header className={`flex items-center justify-between whitespace-nowrap border-b border-solid border-gray-700 px-4 sm:px-10 py-3 transition-all duration-300 bg-[#333132]`}>
+        <header className={`flex items-center justify-between whitespace-nowrap border-b border-solid border-white-700 px-4 sm:px-10 py-3 transition-all duration-300 bg-[#E8E8E8]`}>
             <div className="flex items-center gap-8">
                 <Link to="/" className="flex items-center gap-4">
                 <img 
-                src={`${process.env.REACT_APP_API_URL}/images/logo.png`}
+                src={`${process.env.REACT_APP_API_URL}/images/buildora-icon.png`}
+                // src={`http://localhost:5000/images/buildora-icon.png`}
                 alt="logo"
                 className="w-10 h-10 text-[#c59c46]" 
                 onError={(e) => { e.target.src = 'https://placehold.co/600x400/e2e8f0/475569?text=Promotion'; }}
