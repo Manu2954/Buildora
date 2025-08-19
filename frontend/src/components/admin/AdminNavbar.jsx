@@ -1,7 +1,8 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAdminAuth } from '../../context/AdminAuthContext';
-import { LogOut, User, Settings, LayoutDashboard } from 'lucide-react'; // Using lucide-react for icons
+import { LogOut, User, Settings, LayoutDashboard } from 'lucide-react';
+import Logo from '../Logo'; // Using lucide-react for icons
 
 const AdminNavbar = ({ toggleSidebar }) => {
     const { admin, logout } = useAdminAuth();
@@ -26,8 +27,9 @@ const AdminNavbar = ({ toggleSidebar }) => {
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16"></path>
                             </svg>
                         </button>
-                        <Link to="/admin/dashboard" className="text-xl font-bold text-primary">
-                            Buildora Admin
+                        <Link to="/admin/dashboard" className="flex items-center gap-2">
+                            <Logo variant="full" size="medium" showText={true} textClassName="text-xl font-bold text-primary" />
+                            <span className="text-lg font-semibold text-muted">Admin</span>
                         </Link>
                     </div>
                     <div className="flex items-center space-x-4">
