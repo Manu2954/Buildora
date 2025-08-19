@@ -245,8 +245,7 @@ const HomePage = () => {
                 <div className="container px-6 mx-auto max-w-7xl relative">
                     <div className="text-center">
                         <div className="inline-flex items-center gap-4 mb-8">
-                            <div className="w-8 h-8 bg-primary rounded-full"></div>
-                            <h3 className="text-2xl font-bold text-surface">BUILDORA</h3>
+                            <Logo variant="full" size="medium" showText={true} textClassName="text-2xl font-bold text-surface" />
                         </div>
                         <div className="flex flex-wrap items-center justify-center gap-8 mb-12">
                             <Link to="/about" className="text-surface/70 hover:text-primary transition-colors duration-300 font-medium">About Us</Link>
