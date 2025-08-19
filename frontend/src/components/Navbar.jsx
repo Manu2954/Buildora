@@ -152,7 +152,7 @@ const Navbar = () => {
                                 <div className="w-8 h-8 bg-gradient-primary rounded-lg flex items-center justify-center shadow-md">
                                     <Sparkles className="w-5 h-5 text-white" />
                                 </div>
-                                <span className="text-lg font-bold text-primary">BUILDORA</span>
+                                <Logo variant="text" size="medium" showText={true} />
                             </div>
                             <button 
                                 onClick={() => setMobileMenuOpen(false)} 
