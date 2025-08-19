@@ -18,8 +18,8 @@ const Navbar = () => {
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
-    const navLinkClasses = "text-gray-300 text-sm font-medium leading-normal transition-colors hover:text-white";
-    const activeNavLinkClasses = "text-white font-bold";
+    const navLinkClasses = "text-muted text-sm font-medium leading-normal transition-colors hover:text-primary";
+    const activeNavLinkClasses = "text-primary font-bold";
 
     // The navLinks array is now built dynamically from the context
     const navLinks = navCategories.map(category => ({
@@ -29,19 +29,19 @@ const Navbar = () => {
 
     const HeaderContent = () => (
         // --- THIS IS THE REDESIGNED HEADER ---
-        <header className={`flex items-center justify-between whitespace-nowrap border-b border-solid border-white-700 px-4 sm:px-10 py-3 transition-all duration-300 bg-[#E8E8E8]`}>
+        <header className={`flex items-center justify-between whitespace-nowrap border-b border-solid border-border px-4 sm:px-10 py-3 transition-all duration-300 bg-background`}>
             <div className="flex items-center gap-8">
                 <Link to="/" className="flex items-center gap-4">
-                <img 
+                <img
                 src={`${process.env.REACT_APP_API_URL}/images/buildora-icon.png`}
                 // src={`http://localhost:5000/images/buildora-icon.png`}
                 alt="logo"
-                className="w-10 h-10 text-[#c59c46]" 
+                className="w-10 h-10 text-primary"
                 onError={(e) => { e.target.src = 'https://placehold.co/600x400/e2e8f0/475569?text=Promotion'; }}
             />
                     {/* <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 text-[#c59c46]"><path d="M24 4C25.7818 14.2173 33.7827 22.2182 44 24C33.7827 25.7818 25.7818 33.7827 24 44C22.2182 33.7827 14.2173 25.7818 4 24C14.2173 22.2182 22.2182 14.2173 24 4Z" fill="currentColor"></path></svg> */}
                     {/* This requires you to load 'The Seasons' font in your project's main CSS file. */}
-                    <h2 className="text-xl font-bold uppercase text-[#c59c46]" style={{ fontFamily: "'The Seasons'" }}>
+                    <h2 className="text-xl font-bold uppercase text-primary" style={{ fontFamily: "'The Seasons'" }}>
                         BUILDORA
                     </h2>
                 </Link>
@@ -52,19 +52,19 @@ const Navbar = () => {
                 </div>
             </div>
             <div className="flex flex-1 justify-end items-center gap-4">
-                <div className="hidden sm:flex items-center h-10 px-3 bg-gray-700 rounded-full">
-                    <Search size={18} className="text-gray-400"/>
-                    <input placeholder="Search" className="w-24 ml-2 text-sm text-white bg-transparent border-none sm:w-32 focus:ring-0 focus:outline-none placeholder:text-gray-400" />
+                <div className="hidden sm:flex items-center h-10 px-3 bg-text rounded-full">
+                    <Search size={18} className="text-surface"/>
+                    <input placeholder="Search" className="w-24 ml-2 text-sm text-surface bg-transparent border-none sm:w-32 focus:ring-0 focus:outline-none placeholder:text-muted" />
                 </div>
                 <div className="flex gap-2">
-                    <button className="flex items-center justify-center w-10 h-10 bg-gray-700 rounded-full hover:bg-gray-600 text-white"><Heart size={20}/></button>
-                    <Link to="/cart" className="relative flex items-center justify-center w-10 h-10 bg-gray-700 rounded-full hover:bg-gray-600 text-white">
+                    <button className="flex items-center justify-center w-10 h-10 bg-primary rounded-full hover:bg-primary-hover text-white"><Heart size={20}/></button>
+                    <Link to="/cart" className="relative flex items-center justify-center w-10 h-10 bg-primary rounded-full hover:bg-primary-hover text-white">
                         <ShoppingCart size={20}/>
-                        {cartCount > 0 && <span className="absolute top-0 right-0 flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-red-500 rounded-full">{cartCount}</span>}
+                        {cartCount > 0 && <span className="absolute top-0 right-0 flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-error rounded-full">{cartCount}</span>}
                     </Link>
-                    <Link to={isAuthenticated ? "/account/dashboard" : "/login"} className="hidden sm:flex items-center justify-center w-10 h-10 bg-gray-700 rounded-full hover:bg-gray-600 text-white"><User size={20}/></Link>
+                    <Link to={isAuthenticated ? "/account/dashboard" : "/login"} className="hidden sm:flex items-center justify-center w-10 h-10 bg-primary rounded-full hover:bg-primary-hover text-white"><User size={20}/></Link>
                 </div>
-                 <button className="lg:hidden text-white" onClick={() => setMobileMenuOpen(true)}><Menu size={24}/></button>
+                 <button className="lg:hidden text-text" onClick={() => setMobileMenuOpen(true)}><Menu size={24}/></button>
             </div>
         </header>
     );
@@ -81,7 +81,7 @@ const Navbar = () => {
                         <button onClick={() => setMobileMenuOpen(false)} className="self-end p-2 mb-4"><X size={24}/></button>
                         <nav className="flex flex-col space-y-4">
                              {navLinks.map(link => (
-                                <NavLink key={link.text} to={link.href} onClick={() => setMobileMenuOpen(false)} className={({ isActive }) => `px-4 py-2 rounded-md text-lg ${isActive ? 'bg-indigo-50 text-indigo-600' : 'hover:bg-gray-100'}`}>{link.text}</NavLink>
+                                <NavLink key={link.text} to={link.href} onClick={() => setMobileMenuOpen(false)} className={({ isActive }) => `px-4 py-2 rounded-md text-lg ${isActive ? 'bg-primary/10 text-primary' : 'hover:bg-background'}`}>{link.text}</NavLink>
                             ))}
                         </nav>
                     </div>

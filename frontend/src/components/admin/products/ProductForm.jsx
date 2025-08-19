@@ -11,10 +11,10 @@ const CollapsibleSection = ({ title, children }) => {
             <button
                 type="button"
                 onClick={() => setIsOpen(!isOpen)}
-                className="flex items-center justify-between w-full p-4 bg-gray-50 hover:bg-gray-100"
+                className="flex items-center justify-between w-full p-4 bg-background hover:bg-border"
             >
-                <span className="font-semibold text-gray-800">{title}</span>
-                {isOpen ? <ChevronUp className="w-5 h-5 text-gray-500" /> : <ChevronDown className="w-5 h-5 text-gray-500" />}
+                <span className="font-semibold text-text">{title}</span>
+                {isOpen ? <ChevronUp className="w-5 h-5 text-muted" /> : <ChevronDown className="w-5 h-5 text-muted" />}
             </button>
             <div className={`transition-all duration-300 ease-in-out overflow-hidden ${isOpen ? 'max-h-screen p-4' : 'max-h-0'}`}>
                 {children}
@@ -170,14 +170,14 @@ const ProductForm = ({ onSubmit, initialData = null, isLoading = false, submitBu
         await onSubmit(dataToSubmit);
     };
 
-    const inputClass = "block w-full px-3 py-2 mt-1 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm";
-    const labelClass = "block text-sm font-medium text-gray-700";
+    const inputClass = "block w-full px-3 py-2 mt-1 bg-white border border-border rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm";
+    const labelClass = "block text-sm font-medium text-text";
 
     return (
-        <form onSubmit={handleSubmit} className="space-y-8 text-gray-800">
+        <form onSubmit={handleSubmit} className="space-y-8 text-text">
             {/* --- Basic Product Info --- */}
             <fieldset className="p-4 border rounded-lg">
-                <legend className="px-2 text-lg font-medium text-gray-800">Basic Product Information</legend>
+                <legend className="px-2 text-lg font-medium text-text">Basic Product Information</legend>
                 <div className="space-y-4">
                     <div><label htmlFor="name" className={labelClass}>Product Name*</label><input type="text" name="name" value={formData.name} onChange={(e) => handleChange(e, 'name')} className={inputClass} required /></div>
                     <div><label htmlFor="description" className={labelClass}>Description*</label><textarea name="description" value={formData.description} onChange={(e) => handleChange(e, 'description')} rows="4" className={inputClass} required></textarea></div>
@@ -187,9 +187,9 @@ const ProductForm = ({ onSubmit, initialData = null, isLoading = false, submitBu
 
             {/* --- Variants Section --- */}
             <div className="space-y-6">
-                <h2 className="text-lg font-medium text-gray-800">Product Variants</h2>
+                <h2 className="text-lg font-medium text-text">Product Variants</h2>
                 {formData.variants.map((variant) => (
-                    <div key={variant.id} className="relative p-4 border-2 border-gray-200 rounded-lg">
+                    <div key={variant.id} className="relative p-4 border-2 border-border rounded-lg">
                         <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
                             <div><label className={labelClass}>Variant Name*</label><input type="text" value={variant.name} onChange={(e) => handleVariantChange(variant.id, 'name', e.target.value)} className={inputClass} placeholder="e.g., 50kg Bag, Red" required /></div>
                             <div><label className={labelClass}>SKU</label><input type="text" value={variant.sku} onChange={(e) => handleVariantChange(variant.id, 'sku', e.target.value)} className={inputClass} /></div>
@@ -247,7 +247,7 @@ const ProductForm = ({ onSubmit, initialData = null, isLoading = false, submitBu
                                             <button type="button" onClick={() => removeAttribute(variant.id, attr.id)} className="p-2 text-red-500 hover:text-red-700"><Trash2 size={18} /></button>
                                         </div>
                                     ))}
-                                    <button type="button" onClick={() => addAttribute(variant.id)} className="flex items-center px-3 py-1 mt-2 text-sm text-indigo-600 border border-indigo-300 rounded-md hover:bg-indigo-50"><PlusCircle size={16} className="mr-1" /> Add Attribute</button>
+                                    <button type="button" onClick={() => addAttribute(variant.id)} className="flex items-center px-3 py-1 mt-2 text-sm text-primary border border-primary rounded-md hover:bg-primary/10"><PlusCircle size={16} className="mr-1" /> Add Attribute</button>
                                 </div>
                             </CollapsibleSection>
                         </div>
@@ -256,11 +256,11 @@ const ProductForm = ({ onSubmit, initialData = null, isLoading = false, submitBu
                         )}
                     </div>
                 ))}
-                <button type="button" onClick={addVariant} className="flex items-center px-4 py-2 mt-4 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-700"><PlusCircle size={18} className="mr-2" /> Add Another Variant</button>
+                <button type="button" onClick={addVariant} className="flex items-center px-4 py-2 mt-4 text-sm font-medium text-white bg-primary rounded-md hover:bg-primary-hover"><PlusCircle size={18} className="mr-2" /> Add Another Variant</button>
             </div>
             
             <div className="flex justify-end pt-6 mt-6 border-t">
-                <button type="submit" disabled={isLoading} className="px-6 py-2 font-semibold text-white bg-indigo-600 rounded-md hover:bg-indigo-700 disabled:bg-indigo-400">
+                <button type="submit" disabled={isLoading} className="px-6 py-2 font-semibold text-white bg-primary rounded-md hover:bg-primary-hover disabled:bg-primary/50">
                     {isLoading ? 'Saving...' : submitButtonText}
                 </button>
             </div>

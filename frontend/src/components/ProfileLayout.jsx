@@ -26,8 +26,8 @@ const ProfileLayout = () => {
     }, [location.pathname]);
 
 
-    const navLinkClasses = "flex items-center px-4 py-3 text-gray-600 transition-colors duration-200 rounded-lg hover:bg-indigo-50 hover:text-indigo-600";
-    const activeNavLinkClasses = "bg-indigo-100 text-indigo-600 font-semibold";
+    const navLinkClasses = "flex items-center px-4 py-3 text-muted transition-colors duration-200 rounded-lg hover:bg-primary/10 hover:text-primary";
+    const activeNavLinkClasses = "bg-primary/20 text-primary font-semibold";
 
     const accountNavLinks = [
         { href: "/account/dashboard", text: "Dashboard", icon: <LayoutDashboard size={20} /> },
@@ -39,12 +39,12 @@ const ProfileLayout = () => {
     const SidebarContent = () => (
         <div className="p-4 bg-white h-full flex flex-col">
             <div className="flex items-center mb-8 shrink-0">
-                <div className="flex items-center justify-center w-12 h-12 mr-4 text-xl font-bold text-white bg-indigo-600 rounded-full">
+                <div className="flex items-center justify-center w-12 h-12 mr-4 text-xl font-bold text-white bg-primary rounded-full">
                     {user?.name?.charAt(0).toUpperCase()}
                 </div>
                 <div>
-                    <p className="text-lg font-bold text-gray-800 line-clamp-1">{user?.name}</p>
-                    <p className="text-sm text-gray-500 line-clamp-1">{user?.email}</p>
+                    <p className="text-lg font-bold text-text line-clamp-1">{user?.name}</p>
+                    <p className="text-sm text-muted line-clamp-1">{user?.email}</p>
                 </div>
             </div>
             <nav className="flex flex-col justify-between flex-grow">
@@ -80,7 +80,7 @@ const ProfileLayout = () => {
     );
 
     return (
-        <div className="min-h-screen bg-gray-100">
+        <div className="min-h-screen bg-background">
              {/* --- SLIDE-OUT SIDEBAR (for all screen sizes) --- */}
             <div className={`fixed inset-0 z-50 flex ${sidebarOpen ? "" : "pointer-events-none"}`}>
                 {/* Overlay */}
@@ -91,7 +91,7 @@ const ProfileLayout = () => {
                 {/* Sidebar Content */}
                 <div className={`relative flex flex-col w-full max-w-xs bg-white shadow-xl transition-transform duration-300 ease-in-out ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
                      <div className="flex items-center justify-end p-2">
-                        <button onClick={() => setSidebarOpen(false)} className="p-2 rounded-full hover:bg-gray-100"><X size={24}/></button>
+                        <button onClick={() => setSidebarOpen(false)} className="p-2 rounded-full hover:bg-background"><X size={24}/></button>
                      </div>
                      <SidebarContent/>
                 </div>
@@ -100,7 +100,7 @@ const ProfileLayout = () => {
             <div className="container px-4 py-12 mx-auto">
                 <div className="p-6 bg-white rounded-lg shadow-lg">
                     {/* Menu Toggle Button (always visible) */}
-                    <button onClick={() => setSidebarOpen(true)} className="flex items-center gap-2 px-4 py-2 mb-6 font-semibold text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50">
+                    <button onClick={() => setSidebarOpen(true)} className="flex items-center gap-2 px-4 py-2 mb-6 font-semibold text-text bg-surface border border-border rounded-md hover:bg-background">
                         <Menu size={18}/> My Account Menu
                     </button>
                     {/* The Outlet will render the specific page component (Dashboard, Profile, etc.) */}

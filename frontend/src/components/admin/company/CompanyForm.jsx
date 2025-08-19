@@ -118,8 +118,8 @@ const CompanyForm = ({ onSubmit, initialData = null, isLoading = false, submitBu
         }
     };
 
-    const inputClass = "block w-full px-3 py-2 mt-1 placeholder-gray-400 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm";
-    const labelClass = "block text-sm font-medium text-gray-700";
+    const inputClass = "block w-full px-3 py-2 mt-1 placeholder-muted border border-border rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm";
+    const labelClass = "block text-sm font-medium text-text";
     const errorClass = "mt-1 text-xs text-red-600";
 
     return (
@@ -139,7 +139,7 @@ const CompanyForm = ({ onSubmit, initialData = null, isLoading = false, submitBu
 
             {/* Logo URL */}
             <div>
-                <label className="block text-sm font-medium text-gray-700">Company Logo</label>
+                <label className="block text-sm font-medium text-text">Company Logo</label>
                 <div className="flex items-center gap-4 mt-2">
                     {formData.logoUrl ? (
                         <ImagePreview url={formData.logoUrl} onDelete={handleLogoDelete} />
@@ -171,7 +171,7 @@ const CompanyForm = ({ onSubmit, initialData = null, isLoading = false, submitBu
 
             {/* Address Fields */}
             <fieldset className="p-4 border rounded-md">
-                <legend className="px-2 text-sm font-medium text-gray-700">Address</legend>
+                <legend className="px-2 text-sm font-medium text-text">Address</legend>
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                     <div>
                         <label htmlFor="street" className={labelClass}>Street</label>
@@ -204,9 +204,9 @@ const CompanyForm = ({ onSubmit, initialData = null, isLoading = false, submitBu
                     type="checkbox"
                     checked={formData.isActive}
                     onChange={handleChange}
-                    className="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
+                    className="w-4 h-4 text-primary border-border rounded focus:ring-primary"
                 />
-                <label htmlFor="isActive" className="block ml-2 text-sm text-gray-900">
+                <label htmlFor="isActive" className="block ml-2 text-sm text-text">
                     Company is Active
                 </label>
             </div>
@@ -216,14 +216,14 @@ const CompanyForm = ({ onSubmit, initialData = null, isLoading = false, submitBu
                  <button
                     type="button"
                     onClick={() => navigate(-1)} // Go back to previous page
-                    className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-200 border border-transparent rounded-md shadow-sm hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+                    className="px-4 py-2 text-sm font-medium text-text bg-background border border-transparent rounded-md shadow-sm hover:bg-border focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-border"
                 >
                     Cancel
                 </button>
                 <button
                     type="submit"
                     disabled={isLoading}
-                    className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 border border-transparent rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:bg-indigo-300"
+                    className="px-4 py-2 text-sm font-medium text-white bg-primary border border-transparent rounded-md shadow-sm hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary disabled:bg-primary/50"
                 >
                     {isLoading ? 'Saving...' : submitButtonText}
                 </button>
