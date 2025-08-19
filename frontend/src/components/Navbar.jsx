@@ -45,9 +45,7 @@ const Navbar = () => {
                             <div className="absolute -top-1 -right-1 w-3 h-3 bg-success rounded-full animate-pulse"></div>
                         </div>
                         <div className="flex flex-col">
-                            <h2 className="text-xl font-bold text-primary tracking-wide">
-                                BUILDORA
-                            </h2>
+                            <Logo variant="text" size="large" showText={true} />
                             <span className="text-xs text-muted font-medium -mt-1">
                                 Building Made Easy
                             </span>
