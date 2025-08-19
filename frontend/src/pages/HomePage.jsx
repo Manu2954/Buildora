@@ -4,6 +4,7 @@ import { getHomePageData } from '../services/storefrontService';
 import ProductCard, { ProductCardSkeleton } from '../components/ProductCard';
 import Slider from "react-slick";
 import { ArrowRight, Star, Sparkles } from 'lucide-react';
+import Logo from '../components/Logo';
 import "slick-carousel/slick/slick.css"; 
 
 const HomePage = () => {
