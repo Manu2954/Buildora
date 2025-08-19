@@ -3,6 +3,7 @@ import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { loginUser } from '../services/authService';
 import { AlertTriangle, LogIn } from 'lucide-react';
+import Logo from '../components/Logo';
 
 const Login = () => {
     const [email, setEmail] = useState('');
