@@ -1,7 +1,8 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAdminAuth } from '../../context/AdminAuthContext';
-import { LogOut, User, Settings, LayoutDashboard } from 'lucide-react'; // Using lucide-react for icons
+import { LogOut, User, Settings, LayoutDashboard } from 'lucide-react';
+import Logo from '../Logo'; // Using lucide-react for icons
 
 const AdminNavbar = ({ toggleSidebar }) => {
     const { admin, logout } = useAdminAuth();
