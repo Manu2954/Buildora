@@ -1,54 +1,61 @@
+// Logo.jsx (or .tsx if you prefer)
 import React from 'react';
 
-const Logo = ({ 
-    size = 'medium', 
-    variant = 'full', 
-    className = '',
-    showText = true,
-    textClassName = ''
+const Logo = ({
+  size = 'medium',
+  variant = 'full', // 'full' | 'icon' | 'text'
+  className = '',
+  showText = true,
+  textClassName = '',
+  as: As = 'span', // allow polymorphic wrapper if needed
 }) => {
-    const sizeClasses = {
-        small: 'w-6 h-6',
-        medium: 'w-8 h-8',
-        large: 'w-12 h-12',
-        xl: 'w-16 h-16'
-    };
+  const sizeClasses = {
+    small: 'w-6 h-6',
+    medium: 'w-8 h-8',
+    large: 'w-12 h-12',
+    xl: 'w-16 h-16',
+  };
 
-    const textSizeClasses = {
-        small: 'text-sm',
-        medium: 'text-lg',
-        large: 'text-xl',
-        xl: 'text-2xl'
-    };
+  const textSizeClasses = {
+    small: 'text-sm',
+    medium: 'text-lg',
+    large: 'text-xl',
+    xl: 'text-2xl',
+  };
 
-    return (
-        <div className={`flex items-center gap-2 ${className}`}>
-            {variant === 'full' || variant === 'icon' ? (
-                <img
-                    src="/buildora-icon.png"
-                    alt="Buildora Logo"
-                    className={`${sizeClasses[size]} object-contain`}
-                    onError={(e) => {
-                        // Fallback to alternative paths if the primary fails
-                        if (e.target.src.includes('/buildora-icon.png')) {
-                            e.target.src = '/logo.png';
-                        } else if (e.target.src.includes('/logo.png')) {
-                            e.target.src = '/asssets/images/logo.jpg';
-                        } else {
-                            // Hide image if all fail
-                            e.target.style.display = 'none';
-                        }
-                    }}
-                />
-            ) : null}
-            
-            {(variant === 'full' || variant === 'text') && showText ? (
-                <span className={`font-bold text-primary tracking-wide ${textSizeClasses[size]} ${textClassName}`}>
-                    BUILDORA
-                </span>
-            ) : null}
-        </div>
-    );
+  const initialSrc = "https://pub-a0507326095e47999eb50c28c682ef43.r2.dev/buildora-icon.jpg";
+  const fallbacks = ["/logo.png", "/assets/images/logo.jpg"]; // note: fixed 'assets' typo
+
+  const handleImgError = (e) => {
+    const el = e.currentTarget;
+    const idx = Number(el.dataset.fallbackIndex || "0");
+    if (idx < fallbacks.length) {
+      el.src = fallbacks[idx];
+      el.dataset.fallbackIndex = String(idx + 1);
+    } else {
+      // Hide image if all fallbacks fail
+      el.style.display = 'none';
+    }
+  };
+
+  return (
+    <As className={`inline-flex items-center gap-2 align-middle ${className}`}>
+      {(variant === 'full' || variant === 'icon') && (
+        <img
+          src={initialSrc}
+          alt="Buildora Logo"
+          className={`${sizeClasses[size]} object-contain`}
+          onError={handleImgError}
+        />
+        
+    )}
+     
+        <span className={`font-bold tracking-wide ${textSizeClasses[size]} ${textClassName}`}>
+          <span className="text-primary">BUILDORA</span>{' '}
+          <span style={{ color: 'black' }}>ENTERPRISE</span>
+        </span>
+    </As>
+  );
 };
 
 export default Logo;

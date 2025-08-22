@@ -38,17 +38,17 @@ const Navbar = () => {
                 {/* Logo Section */}
                 <div className="flex items-center gap-8">
                     <Link to="/" className="flex items-center gap-3 group">
-                        <div className="relative">
+                        {/* <div className="relative">
                             <div className="w-10 h-10 bg-gradient-primary rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-105">
                                 <Sparkles className="w-6 h-6 text-white" />
                             </div>
                             <div className="absolute -top-1 -right-1 w-3 h-3 bg-success rounded-full animate-pulse"></div>
-                        </div>
+                        </div> */}
                         <div className="flex flex-col">
-                            <Logo variant="text" size="large" showText={true} />
-                            <span className="text-xs text-muted font-medium -mt-1">
+                            <Logo variant="icon" size="large"/>
+                            {/* <span className="text-xs text-muted font-medium -mt-1">
                                 Building Made Easy
-                            </span>
+                            </span>  */}
                         </div>
                     </Link>
 
