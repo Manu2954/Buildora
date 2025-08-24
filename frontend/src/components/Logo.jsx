@@ -1,5 +1,5 @@
 // Logo.jsx (or .tsx if you prefer)
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 const Logo = ({
   size = 'medium',
@@ -9,11 +9,11 @@ const Logo = ({
   textClassName = '',
   as: As = 'span', // allow polymorphic wrapper if needed
 }) => {
-  const sizeClasses = {
-    small: 'w-6 h-6',
-    medium: 'w-8 h-8',
-    large: 'w-12 h-12',
-    xl: 'w-16 h-16',
+  const iconSizeClasses = {
+    small: 'text-xl',
+    medium: 'text-2xl',
+    large: 'text-3xl',
+    xl: 'text-4xl',
   };
 
   const textSizeClasses = {
@@ -23,37 +23,59 @@ const Logo = ({
     xl: 'text-2xl',
   };
 
-  const initialSrc = "https://pub-a0507326095e47999eb50c28c682ef43.r2.dev/buildora-icon.jpg";
-  const fallbacks = ["/logo.png", "/assets/images/logo.jpg"]; // note: fixed 'assets' typo
+  const buildoraRef = useRef(null);
+  const enterpriseRef = useRef(null);
+  const [spacing, setSpacing] = useState('0px');
 
-  const handleImgError = (e) => {
-    const el = e.currentTarget;
-    const idx = Number(el.dataset.fallbackIndex || "0");
-    if (idx < fallbacks.length) {
-      el.src = fallbacks[idx];
-      el.dataset.fallbackIndex = String(idx + 1);
-    } else {
-      // Hide image if all fallbacks fail
-      el.style.display = 'none';
-    }
-  };
+  useEffect(() => {
+    const updateSpacing = () => {
+      if (buildoraRef.current && enterpriseRef.current) {
+        const buildoraWidth = buildoraRef.current.offsetWidth;
+        enterpriseRef.current.style.letterSpacing = '0px';
+        const enterpriseWidth = enterpriseRef.current.offsetWidth;
+        const charCount =
+          (enterpriseRef.current.textContent || '').trim().length - 1;
+
+        if (charCount > 0) {
+          const newSpacing = (buildoraWidth - enterpriseWidth) / charCount;
+          setSpacing(`${newSpacing}px`);
+        }
+      }
+    };
+
+    updateSpacing();
+    window.addEventListener('resize', updateSpacing);
+    return () => window.removeEventListener('resize', updateSpacing);
+  }, []);
 
   return (
-    <As className={`inline-flex items-center gap-2 align-middle ${className}`}>
+    <As
+      className={`inline-flex items-center gap-2 align-middle ${className}`}
+      aria-label="Buildora Enterprise"
+    >
       {(variant === 'full' || variant === 'icon') && (
-        <img
-          src={initialSrc}
-          alt="Buildora Logo"
-          className={`${sizeClasses[size]} object-contain`}
-          onError={handleImgError}
-        />
+        <span
+          className={`font-brand font-bold text-primary ${iconSizeClasses[size]}`}
+          aria-hidden="true"
+        >
+          B
+        </span>
       )}
       {showText && (
         <span
           className={`font-brand font-bold ${textSizeClasses[size]} ${textClassName} leading-none text-center`}
+          aria-hidden="true"
         >
-          <span className="block text-primary">BUILDORA</span>
-          <span className="block tracking-[0.3em] text-gray-800">ENTERPRISE</span>
+          <span ref={buildoraRef} className="block text-primary">
+            BUILDORA
+          </span>
+          <span
+            ref={enterpriseRef}
+            className="block text-gray-800"
+            style={{ letterSpacing: spacing }}
+          >
+            ENTERPRISE
+          </span>
         </span>
       )}
     </As>
