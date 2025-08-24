@@ -237,7 +237,7 @@ const HomePage = () => {
             </main>
             
             {/* Enhanced Footer Section */}
-            <footer className="relative py-20 text-muted bg-text overflow-hidden">
+            <footer className="relative py-20 text-muted bg-background overflow-hidden">
                 <div className="absolute inset-0">
                     <div className="absolute top-0 left-0 w-96 h-96 bg-primary/5 rounded-full -translate-x-48 -translate-y-48 blur-3xl"></div>
                     <div className="absolute bottom-0 right-0 w-80 h-80 bg-primary/3 rounded-full translate-x-40 translate-y-40 blur-3xl"></div>
@@ -245,16 +245,43 @@ const HomePage = () => {
                 <div className="container px-6 mx-auto max-w-7xl relative">
                     <div className="text-center">
                         <div className="inline-flex items-center gap-4 mb-8">
-                            <Logo variant="full" size="medium" showText={true} textClassName="text-2xl font-bold text-surface" />
+                            <Logo
+                                variant="full"
+                                size="medium"
+                                showText={true}
+                                textClassName="text-2xl font-bold text-text"
+                            />
                         </div>
                         <div className="flex flex-wrap items-center justify-center gap-8 mb-12">
-                            <Link to="/about" className="text-surface/70 hover:text-primary transition-colors duration-300 font-medium">About Us</Link>
-                            <Link to="/contact" className="text-surface/70 hover:text-primary transition-colors duration-300 font-medium">Contact</Link>
-                            <Link to="/faq" className="text-surface/70 hover:text-primary transition-colors duration-300 font-medium">FAQ</Link>
-                            <Link to="/privacy" className="text-surface/70 hover:text-primary transition-colors duration-300 font-medium">Privacy Policy</Link>
+                            <Link
+                                to="/about"
+                                className="text-text/70 hover:text-primary transition-colors duration-300 font-medium"
+                            >
+                                About Us
+                            </Link>
+                            <Link
+                                to="/contact"
+                                className="text-text/70 hover:text-primary transition-colors duration-300 font-medium"
+                            >
+                                Contact
+                            </Link>
+                            <Link
+                                to="/faq"
+                                className="text-text/70 hover:text-primary transition-colors duration-300 font-medium"
+                            >
+                                FAQ
+                            </Link>
+                            <Link
+                                to="/privacy"
+                                className="text-text/70 hover:text-primary transition-colors duration-300 font-medium"
+                            >
+                                Privacy Policy
+                            </Link>
                         </div>
                         <div className="border-t border-surface/10 pt-8">
-                            <p className="text-surface/60">&copy; {new Date().getFullYear()} <Logo variant="text" size="small" showText={true} textClassName="text-surface/60 inline" className="inline-flex" />. All Rights Reserved. Sourcing Made Simple, Building Made Easy.</p>
+                            <p className="text-text/60">
+                                &copy; {new Date().getFullYear()} <Logo variant="text" size="small" showText={true} textClassName="text-text/60 inline" className="inline-flex" />. All Rights Reserved. Sourcing Made Simple, Building Made Easy.
+                            </p>
                         </div>
                     </div>
                 </div>
