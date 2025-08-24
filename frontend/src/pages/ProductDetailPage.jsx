@@ -451,7 +451,7 @@ const ProductDetailPage = () => {
                             </button>
                             <div className="mt-4 space-y-2 text-sm text-gray-600">
                                 <div className="flex items-center"><RefreshCw size={16} className="mr-2" /> <span>7 days Replacement</span></div>
-                                <div className="flex items-center"><Truck size={16} className="mr-2" /> <span>Buildora Delivered</span></div>
+                                <div className="flex items-center"><Truck size={16} className="mr-2" /> <span className="font-brand">Buildora Delivered</span></div>
                                 <div className="flex items-center"><Lock size={16} className="mr-2" /> <span>Secure transaction</span></div>
                             </div>
                         </div>

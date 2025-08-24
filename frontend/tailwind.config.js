@@ -15,6 +15,9 @@ module.exports = {
         error: '#DC2626',
         info: '#2563EB',
       },
+      fontFamily: {
+        brand: ['The Seasons', 'Playfair Display', 'serif'],
+      },
     },
   },
   plugins: [],

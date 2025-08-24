@@ -27,12 +27,12 @@ const Dashboard = () => {
                     Hello, {user?.name}!
                 </h1>
                 <p className="mt-2 text-lg text-gray-600">
-                    Welcome to your Buildora dashboard.
+                    Welcome to your <span className="font-brand">Buildora</span> dashboard.
                 </p>
             </div>
             
             <p className="mb-8 text-gray-700">
-                This is your personal space to manage all your activities on Buildora. From here, you can track your orders, update your personal information, and enhance your account security.
+                This is your personal space to manage all your activities on <span className="font-brand">Buildora</span>. From here, you can track your orders, update your personal information, and enhance your account security.
             </p>
 
             <div className="grid grid-cols-1 gap-8 md:grid-cols-2">

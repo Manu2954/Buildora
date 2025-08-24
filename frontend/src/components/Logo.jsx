@@ -50,7 +50,7 @@ const Logo = ({
         
     )}
      
-        <span className={`font-bold tracking-wide ${textSizeClasses[size]} ${textClassName}`}>
+        <span className={`font-brand font-bold tracking-wide ${textSizeClasses[size]} ${textClassName}`}>
           <span className="text-primary">BUILDORA</span>{' '}
           <span style={{ color: 'black' }}>ENTERPRISE</span>
         </span>
