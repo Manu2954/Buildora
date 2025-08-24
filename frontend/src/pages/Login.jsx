@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { loginUser } from '../services/authService';
 import { AlertTriangle, LogIn } from 'lucide-react';
@@ -13,8 +13,8 @@ const Login = () => {
     
     const { login, isAuthenticated } = useAuth();
     const navigate = useNavigate();
-    const [searchParams] = useSearchParams();
-    const redirectPath = searchParams.get('redirect') || '/dashboard';
+    const location = useLocation();
+    const redirectPath = location.state?.from?.pathname || '/';
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -33,7 +33,7 @@ const Login = () => {
             // Pass the entire response object to the context's login function
             login(response);
 
-            navigate(redirectPath);
+            navigate(redirectPath, { replace: true });
         } catch (err) {
             setError(err.message || 'Login failed. Please check your credentials.');
         } finally {
@@ -42,7 +42,7 @@ const Login = () => {
     };
 
     if (isAuthenticated) {
-        navigate(redirectPath);
+        navigate(redirectPath, { replace: true });
         return null;
     }
 
