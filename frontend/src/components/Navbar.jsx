@@ -194,7 +194,7 @@ const Navbar = () => {
                         <div className="p-6 border-t border-border">
                             <div className="grid grid-cols-2 gap-4">
                                 <Link 
-                                    to={isAuthenticated ? "/account/dashboard" : "/login"}
+                                    to={isAuthenticated ? "/" : "/login"}
                                     onClick={() => setMobileMenuOpen(false)}
                                     className="flex items-center justify-center gap-2 py-3 px-4 bg-primary text-white rounded-2xl font-semibold transition-all duration-300 hover:bg-primary-hover"
                                 >
