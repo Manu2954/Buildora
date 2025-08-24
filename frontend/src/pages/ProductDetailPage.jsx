@@ -449,9 +449,6 @@ const ProductDetailPage = () => {
                             <button onClick={handleAddToCart} disabled={isAdding || stock === 0} className="flex items-center justify-center w-full px-8 py-3 mt-6 text-base font-medium text-black bg-yellow-400 border border-transparent rounded-full hover:bg-yellow-500 disabled:bg-gray-300 disabled:cursor-not-allowed">
                                 {isAdding ? "Adding..." : "Add to Cart"}
                             </button>
-                            <button disabled={stock === 0} className="flex items-center justify-center w-full px-8 py-3 mt-3 text-base font-medium text-black bg-orange-400 border border-transparent rounded-full hover:bg-orange-500 disabled:bg-gray-300 disabled:cursor-not-allowed">
-                                Buy Now
-                            </button>
                             <div className="mt-4 space-y-2 text-sm text-gray-600">
                                 <div className="flex items-center"><RefreshCw size={16} className="mr-2" /> <span>7 days Replacement</span></div>
                                 <div className="flex items-center"><Truck size={16} className="mr-2" /> <span>Buildora Delivered</span></div>

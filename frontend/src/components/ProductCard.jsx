@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Star, Heart, ShoppingCart } from 'lucide-react';
+import { Star, ShoppingCart } from 'lucide-react';
 
 const ProductCard = ({ product }) => {
     // Basic validation: if no product or no variants, don't render.
@@ -42,10 +42,7 @@ const ProductCard = ({ product }) => {
                     <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                     
                     {/* Floating action buttons */}
-                    <div className="absolute top-4 right-4 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-x-4 group-hover:translate-x-0">
-                        <button className="flex items-center justify-center w-10 h-10 bg-surface/90 backdrop-blur-sm hover:bg-primary hover:text-white text-text rounded-full shadow-lg transition-all duration-300 hover:scale-110">
-                            <Heart size={18} />
-                        </button>
+                    <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-x-4 group-hover:translate-x-0">
                         <button className="flex items-center justify-center w-10 h-10 bg-surface/90 backdrop-blur-sm hover:bg-primary hover:text-white text-text rounded-full shadow-lg transition-all duration-300 hover:scale-110">
                             <ShoppingCart size={18} />
                         </button>

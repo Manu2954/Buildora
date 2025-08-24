@@ -3,7 +3,7 @@ import { NavLink, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import { useSite } from '../context/SiteContext';
-import { ShoppingCart, User, Heart, Search, Menu, X, Sparkles } from 'lucide-react';
+import { ShoppingCart, User, Search, Menu, X, Sparkles } from 'lucide-react';
 import Logo from './Logo';
 
 const Navbar = () => {
@@ -91,17 +91,11 @@ const Navbar = () => {
 
                     {/* Action Buttons */}
                     <div className="flex gap-3">
-                        {/* Wishlist Button */}
-                        <button className="relative flex items-center justify-center w-12 h-12 bg-surface hover:bg-primary/10 text-muted hover:text-primary rounded-2xl transition-all duration-300 hover:scale-105 border border-border hover:border-primary/20 shadow-sm hover:shadow-md group">
-                            <Heart size={20} className="transition-transform duration-300 group-hover:scale-110" />
-                            <div className="absolute -top-1 -right-1 w-3 h-3 bg-error rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                        </button>
-
                         {/* Cart Button */}
-                        <Link 
-                            to="/cart" 
-                            className="relative flex items-center justify-center w-12 h-12 bg-primary hover:bg-primary-hover text-white rounded-2xl transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl group"
-                        >
+                            <Link
+                                to="/cart"
+                                className="relative flex items-center justify-center w-12 h-12 bg-primary hover:bg-primary-hover text-white rounded-2xl transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl group"
+                            >
                             <ShoppingCart size={20} className="transition-transform duration-300 group-hover:scale-110" />
                             {cartCount > 0 && (
                                 <span className="absolute -top-2 -right-2 flex items-center justify-center min-w-[20px] h-5 px-1 text-xs font-bold text-white bg-error rounded-full animate-bounce-in border-2 border-surface">
@@ -111,8 +105,8 @@ const Navbar = () => {
                         </Link>
 
                         {/* User Button */}
-                        <Link 
-                            to={isAuthenticated ? "/account/dashboard" : "/login"} 
+                        <Link
+                            to={isAuthenticated ? "/account/dashboard" : "/login"}
                             className="hidden sm:flex items-center justify-center w-12 h-12 bg-surface hover:bg-primary/10 text-muted hover:text-primary rounded-2xl transition-all duration-300 hover:scale-105 border border-border hover:border-primary/20 shadow-sm hover:shadow-md group"
                         >
                             <User size={20} className="transition-transform duration-300 group-hover:scale-110" />
@@ -207,10 +201,6 @@ const Navbar = () => {
                                     <User size={18} />
                                     <span>{isAuthenticated ? 'Account' : 'Login'}</span>
                                 </Link>
-                                <button className="flex items-center justify-center gap-2 py-3 px-4 bg-background text-text rounded-2xl font-semibold border border-border transition-all duration-300 hover:bg-border/20">
-                                    <Heart size={18} />
-                                    <span>Wishlist</span>
-                                </button>
                             </div>
                         </div>
                     </div>
