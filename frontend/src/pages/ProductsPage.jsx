@@ -247,7 +247,7 @@ const ProductsPage = () => {
         <div className="min-h-screen bg-white">
             <header className="py-12 bg-gray-50 border-b">
                 <div className="container px-4 mx-auto text-center">
-                    <h1 className="text-4xl font-extrabold tracking-tight text-gray-900 sm:text-5xl">Buildora Marketplace</h1>
+                    <h1 className="font-brand text-4xl font-extrabold tracking-tight text-gray-900 sm:text-5xl">Buildora Marketplace</h1>
                     <p className="max-w-2xl mx-auto mt-4 text-xl text-gray-600">Sourcing Made Simple. Building Made Easy.</p>
                     <div className="mt-8">
                         <AdvancedSearchBar />
