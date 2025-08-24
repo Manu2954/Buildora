@@ -47,13 +47,15 @@ const Logo = ({
           className={`${sizeClasses[size]} object-contain`}
           onError={handleImgError}
         />
-        
-    )}
-     
-        <span className={`font-brand font-bold tracking-wide ${textSizeClasses[size]} ${textClassName}`}>
-          <span className="text-primary">BUILDORA</span>{' '}
-          <span style={{ color: 'black' }}>ENTERPRISE</span>
+      )}
+      {showText && (
+        <span
+          className={`font-brand font-bold ${textSizeClasses[size]} ${textClassName} leading-none text-center`}
+        >
+          <span className="block text-primary">BUILDORA</span>
+          <span className="block tracking-[0.3em] text-gray-800">ENTERPRISE</span>
         </span>
+      )}
     </As>
   );
 };
