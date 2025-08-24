@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { NavLink, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
@@ -11,14 +11,7 @@ const Navbar = () => {
     const { cartCount } = useCart();
     const { navCategories } = useSite();
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-    const [isScrolled, setIsScrolled] = useState(false);
     const [searchFocused, setSearchFocused] = useState(false);
-
-    useEffect(() => {
-        const handleScroll = () => setIsScrolled(window.scrollY > 10);
-        window.addEventListener('scroll', handleScroll);
-        return () => window.removeEventListener('scroll', handleScroll);
-    }, []);
 
     const navLinkClasses = "text-muted text-sm font-medium leading-normal transition-all duration-300 hover:text-primary relative group py-2";
     const activeNavLinkClasses = "text-primary font-semibold";
@@ -29,11 +22,7 @@ const Navbar = () => {
     }));
 
     const HeaderContent = () => (
-        <header className={`sticky top-0 z-50 transition-all duration-500 ${
-            isScrolled 
-                ? 'bg-surface/95 backdrop-blur-lg border-b border-border/50 shadow-lg' 
-                : 'bg-background border-b border-border'
-        }`}>
+        <header className="sticky top-0 z-50 transition-all duration-500 bg-background border-b border-border">
             <div className="flex items-center justify-between whitespace-nowrap px-4 sm:px-6 lg:px-10 py-4">
                 {/* Logo Section */}
                 <div className="flex items-center gap-8">
