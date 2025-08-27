@@ -37,31 +37,6 @@ const Logo = ({
     }
   };
 
-  const buildoraRef = useRef(null);
-  const enterpriseRef = useRef(null);
-  const [enterpriseSpacing, setEnterpriseSpacing] = useState('');
-
-  useEffect(() => {
-    const updateSpacing = () => {
-      const build = buildoraRef.current;
-      const enter = enterpriseRef.current;
-      if (build && enter) {
-        const buildWidth = build.offsetWidth;
-        const enterWidth = enter.offsetWidth;
-        const letters = enter.textContent.length - 1;
-        if (letters > 0) {
-          const diff = buildWidth - enterWidth;
-          const spacing = diff / letters;
-          setEnterpriseSpacing(`${spacing}px`);
-        }
-      }
-    };
-
-    updateSpacing();
-    window.addEventListener('resize', updateSpacing);
-    return () => window.removeEventListener('resize', updateSpacing);
-  }, []);
-
   return (
     <As className={`inline-flex items-center gap-2 align-middle ${className}`}>
       {(variant === 'full' || variant === 'icon') && (
@@ -76,13 +51,12 @@ const Logo = ({
         <span
           className={`font-brand font-bold ${textSizeClasses[size]} ${textClassName} leading-none text-center`}
         >
-          <span ref={buildoraRef} className="block text-primary">
+          <span style={{letterSpacing: '1px', paddingBottom: '1px', fontSize: 'x-large'}} className="block text-primary">
             BUILDORA
           </span>
           <span
-            ref={enterpriseRef}
             className="block text-gray-800"
-            style={{ letterSpacing: enterpriseSpacing }}
+            style={{ letterSpacing: '2px', fontSize: 'large', paddingLeft: '1px' }}
           >
             ENTERPRISE
           </span>
