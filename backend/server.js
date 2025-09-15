@@ -33,7 +33,8 @@ const corsOptions = {
         'http://localhost:3001',
         'https://buildora-git-v1-mvp-manu2954s-projects.vercel.app',
         'https://www.buildoraenterprise.com',
-        'https://cta.buildoraenterprise.com'
+        'https://cta.buildoraenterprise.com',
+        'https://products.buildoraenterprise.com'
     ],
     credentials: true,
 };
